@@ -1,0 +1,8 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "REST API FONOMED",
+        "description": "Directorio y Telemedicina El Salvador"
+    }
+}
