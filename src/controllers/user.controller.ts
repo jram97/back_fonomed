@@ -9,6 +9,8 @@ import User, { IUser } from "../models/user";
 import Verify from "../models/verify";
 
 const client = require('twilio')(twilio.accountSID, twilio.authToken);
+const AccessToken = require('twilio').jwt.AccessToken;
+const VideoGrant = AccessToken.VideoGrant;
 
 /** GENERACION DE TOKEN CON JWT */
 function createToken(user: IUser) {
@@ -22,6 +24,34 @@ async function createNewPassword(password: string) {
   const hash = await bcrypt.hash(password, salt);
   return hash;
 }
+
+/** SEND TOKEN :: NOMBRE */
+export const sendTokenForCall = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+
+  if (!req.query || !req.query.userName) {
+    return res.status(400).send('Username parameter is required');
+  }
+  const accessToken = new AccessToken(
+    process.env.TWILIO_ACCOUNTID_VIDEOCALL,
+    process.env.TWILIO_SERVICEID_VIDEOCALL,
+    process.env.TWILIO_AUTH_TOKEN_VIDEOCALL,
+  );
+
+  accessToken.identity = req.query.userName;
+
+  var grant = new VideoGrant();
+  accessToken.addGrant(grant);
+
+  var jwt = accessToken.toJwt();
+  
+  return res.status(200).json({
+    jwt: jwt,
+    who: req.query.userName,
+  });  
+};
 
 /** CAMBIAR CONTRASEÑA */
 export const cambiarContrasenia = async (
