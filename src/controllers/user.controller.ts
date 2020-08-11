@@ -8,9 +8,9 @@ import { sendEmail, generateCode, sendEmailCambioPassword } from "../libs/functi
 import User, { IUser } from "../models/user";
 import Verify from "../models/verify";
 
-const client = require('twilio')(twilio.accountSID, twilio.authToken);
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
+const client = require('twilio')(twilio.accountSID, twilio.authToken);
 
 /** GENERACION DE TOKEN CON JWT */
 function createToken(user: IUser) {
@@ -34,23 +34,31 @@ export const sendTokenForCall = async (
   if (!req.query || !req.query.userName) {
     return res.status(400).send('Username parameter is required');
   }
-  const accessToken = new AccessToken(
-    process.env.TWILIO_ACCOUNTID_VIDEOCALL,
-    process.env.TWILIO_SERVICEID_VIDEOCALL,
-    process.env.TWILIO_AUTH_TOKEN_VIDEOCALL,
+  var ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
+  var API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
+  var API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
+
+  var accessToken = new AccessToken(
+    ACCOUNT_SID,
+    API_KEY_SID,
+    API_KEY_SECRET,
   );
 
   accessToken.identity = req.query.userName;
+  accessToken.signature = config.jwtSecret
+  
+  var grant = new VideoGrant({
+    room: 'fonomed',
+  });
 
-  var grant = new VideoGrant();
   accessToken.addGrant(grant);
 
   var jwt = accessToken.toJwt();
-  
+
   return res.status(200).json({
     jwt: jwt,
     who: req.query.userName,
-  });  
+  });
 };
 
 /** CAMBIAR CONTRASEÑA */
@@ -138,15 +146,15 @@ export const verifySendEmail = async (
 export const enviarSMS = async (req: Request, res: Response): Promise<Response> => {
   return await client.verify
     .services(twilio.serviceSID)
-    .verifications.create({to: `+${req.query.to}`, channel: 'sms'})  
-    .then( data => {
+    .verifications.create({ to: `+${req.query.to}`, channel: 'sms' })
+    .then(data => {
       res.status(201).json({
         message: "Se a enviado el codigo al telefono.",
         phonenumber: `+${req.query.to}`,
         info: data,
       });
     })
-    .catch( err => {
+    .catch(err => {
       res.status(400).json({
         message: "No se pudo enviar el mensaje",
         phonenumber: `+${req.query.to}`,
@@ -428,10 +436,10 @@ export const verifySendEmailCambioPassword = async (
 ): Promise<Response> => {
   const { email } = req.body;
 
-  const userExists = await User.findOne({ email: email});
+  const userExists = await User.findOne({ email: email });
   const verify = await Verify.findOne({ email: email });
 
-  if(userExists){
+  if (userExists) {
     if (!verify) {
       let code = generateCode();
       const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
@@ -441,13 +449,13 @@ export const verifySendEmailCambioPassword = async (
         code: "201",
         message: "Se a enviado el codigo al correo.",
       });
-    }else{
+    } else {
       return res.status(200).json({
         code: "200",
         message: "Codigo ya a sido enviado anteriormente.",
       });
     }
-  }else{
+  } else {
     return res.status(404).json({
       code: "404",
       message: "Usuario no existe.",
