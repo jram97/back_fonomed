@@ -60,18 +60,11 @@ export const nuevo = async (
                 && (existeCita.usuario == req.user['id'] || existeCita.usuario != req.user['id'])
             ) {
 
-                const nuevaCita = new Cita({
-                    dia: dayName,
-                    inicio: req.body.inicio,
-                    fin: req.body.fin,
-                    tarjeta: req.body.tarjeta,
-                    cancelado: req.body.cancelado,
-                    comentario: req.body.comentario,
-                    fecha: new Date(),
-                    medio: req.body.medio,
-                    doctor: req.body.doctor,
-                    usuario: req.user['id']
-                });
+                const nuevaCita = new Cita(req.body);
+                nuevaCita.dia = dayName;
+                nuevaCita.fecha = new Date();
+                nuevaCita.usuario = req.user['id'];
+
                 await nuevaCita.save();
                 return res.status(201).json({
                     errorCode: "0",
@@ -85,18 +78,11 @@ export const nuevo = async (
                 });
             }
         } else {
-            const nuevaCita = new Cita({
-                dia: dayName,
-                inicio: req.body.inicio,
-                fin: req.body.fin,
-                tarjeta: req.body.tarjeta,
-                cancelado: req.body.cancelado,
-                comentario: req.body.comentario,
-                fecha: new Date(),
-                medio: req.body.medio,
-                doctor: req.body.doctor,
-                usuario: req.user['id']
-            });
+            const nuevaCita = new Cita(req.body);
+            nuevaCita.dia = dayName;
+            nuevaCita.fecha = new Date();
+            nuevaCita.usuario = req.user['id'];
+
             await nuevaCita.save();
             return res.status(201).json({
                 errorCode: "0",
@@ -106,7 +92,7 @@ export const nuevo = async (
     }
 };
 
-/** ACTUALIZACION DE PAISES :: RECIBE EL ID */
+/** ACTUALIZACION DE CITAS :: RECIBE EL ID */
 export const actualizar = async (
     req: Request,
     res: Response
@@ -125,7 +111,7 @@ export const actualizar = async (
     });
 };
 
-/** ELIMINACION DE PAISES :: RECIBE EL ID */
+/** ELIMINACION DE CITAS :: RECIBE EL ID */
 export const eliminar = async (
     req: Request,
     res: Response
