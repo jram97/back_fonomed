@@ -39,8 +39,8 @@ export const sendTokenForCall = async (
   var API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
 
   var accessToken = new AccessToken(
-    ACCOUNT_SID,
     API_KEY_SID,
+    ACCOUNT_SID,
     API_KEY_SECRET,
   );
 
