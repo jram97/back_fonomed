@@ -20,59 +20,59 @@ export interface ICita extends Document {
   updatedAt: Date;
 }
 
-const citaSchema = new Schema(
-  {
-    doctor: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      require: false,
-    },
-    usuario: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      require: false,
-    },
-    dia: {
-      type: String
-    },
-    inicio: {
-      type: String
-    },
-    fin: {
-      type: String
-    },
-    fecha: {
-      type: Date
-    },
-    medio: {
-      type: Schema.Types.ObjectId,
-      ref: "Medio",
-      require: false,
-    },
-    tarjeta: {
-      type: Schema.Types.ObjectId,
-      ref: "Tarjeta",
-      require: false,
-    },
-    cancelado: {
-      type: String,
-      enum: ["Pendiente", "Cancelado"],
-      default: "Pendiente"
-    },
-    comentario: {
-      type: String,
-      default: ""
-    },
-    estados: {
-      type: String,
-      enum: ["Pendiente", "Recibido", "En Proceso", "Completado"],
-      default: "Pendiente"
-    },
-    estado: {
-      type: Boolean,
-      default: true
-    }
+const citaSchema = new Schema({
+
+  doctor: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: false,
   },
+  usuario: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: false,
+  },
+  dia: {
+    type: String
+  },
+  inicio: {
+    type: String
+  },
+  fin: {
+    type: String
+  },
+  fecha: {
+    type: Date
+  },
+  medio: {
+    type: Schema.Types.ObjectId,
+    ref: "Medio",
+    require: false,
+  },
+  tarjeta: {
+    type: Schema.Types.ObjectId,
+    ref: "Tarjeta",
+    require: false,
+  },
+  cancelado: {
+    type: String,
+    enum: ["Pendiente", "Cancelado"],
+    default: "Pendiente"
+  },
+  comentario: {
+    type: String,
+    default: ""
+  },
+  estados: {
+    type: String,
+    enum: ["Pendiente", "Recibido", "En Proceso", "Completado"],
+    default: "Pendiente"
+  },
+  estado: {
+    type: Boolean,
+    default: true
+  }
+},
   { timestamps: true }
 );
 

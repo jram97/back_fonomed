@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import Especialidades from "../models/especialidad";
 import Pais from "../models/pais";
 
+import { response } from '../libs/functions';
 
 export const cargarData = async (req: Request, res: Response): Promise<Response> => {
 
@@ -59,12 +60,12 @@ export const cargarData = async (req: Request, res: Response): Promise<Response>
         })
         await pais7.save();
 
-        return res.json({
-            msg: "Data ya cargada."
-        });
+        return res.status(200).json(
+          response(200, 'Ejecutado con exito', true, null, null)
+        );
     }else {
-        return res.json({
-            msg: "Data ya a sigo cargada."
-        });
+      return res.status(404).json(
+        response(404, null, false, 'Data ya sido cargada', null)
+      );
     }
 };

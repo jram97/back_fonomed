@@ -7,7 +7,7 @@ const router = Router();
 import { getAll, nuevo, eliminar, actualizar } from "../controllers/emergencia.controller";
 
 /** Todas los números de emergencia */
-router.get("/bugs",  passport.authenticate("jwt", { session: false }), getAll);
+router.get("/bugs", passport.authenticate("jwt", { session: false }), getAll);
 /** Registro de números de emergencia */
 router.route('/bugs').post(upload.single('foto'), passport.authenticate("jwt", { session: false }), nuevo);
 /** Update de números de emergencia */

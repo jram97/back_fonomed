@@ -1,20 +1,19 @@
 import { Router } from "express";
 import {
-    signIn,
-    enviarSMS,
-    recibirSMS,
-    signUp,
-    update,
-    updateStatus,
-    verifySendEmail,
-    verifyRecibirEmail,
-    cambiarContrasenia,
-    verifySendEmailCambioPassword,
-    verifyRecibirEmailCambioPassword
+  signIn,
+  enviarSMS,
+  recibirSMS,
+  signUp,
+  update,
+  updateStatus,
+  verifySendEmail,
+  verifyRecibirEmail,
+  cambiarContrasenia,
+  verifySendEmailCambioPassword,
+  verifyRecibirEmailCambioPassword
 } from "../controllers/user.controller";
 
 import upload from "../libs/multer";
-import { limitAPI } from "../libs/functions";
 
 import passport from "passport";
 
@@ -26,23 +25,23 @@ router.get("/sendverify", enviarSMS);
 router.get("/comprobarverify", recibirSMS);
 /** Registro :: La foto es opcional */
 router.route("/signup").post(
-    upload.fields([
-        { name: "documentos", maxCount: 3 },
-        { name: "foto", maxCount: 1 },
-        { name: "dui", maxCount: 1 },
-    ]),
-    signUp
+  upload.fields([
+    { name: "documentos", maxCount: 3 },
+    { name: "foto", maxCount: 1 },
+    { name: "dui", maxCount: 1 },
+  ]),
+  signUp
 );
 /** Login :: Email & Password */
 router.post("/signin", signIn);
 /** Update perfil :: La foto es opcional */
 router.route("/perfil/update/:id").post(
-    upload.fields([
-        { name: "documentos", maxCount: 3 },
-        { name: "foto", maxCount: 1 },
-        { name: "dui", maxCount: 1 },
-    ]),
-    update
+  upload.fields([
+    { name: "documentos", maxCount: 3 },
+    { name: "foto", maxCount: 1 },
+    { name: "dui", maxCount: 1 },
+  ]),
+  update
 );
 /** Cambiar estado */
 router.put("/perfil/update/status/:id", updateStatus);

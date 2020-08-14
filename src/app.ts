@@ -1,5 +1,5 @@
 require('dotenv').config();
-const path = require('path');
+import path from 'path';
 import express from 'express'
 import passport from 'passport'
 import passportMiddleware from './middlewares/passport';
@@ -17,7 +17,7 @@ import mediosRoutes from './routes/medio.routes';
 import tarjetasRoutes from './routes/tarjeta.routes';
 import citasRoutes from './routes/cita.routes';
 import pagosRoutes from './routes/pago.routes';
-import testRoutes from './routes/test.routes';
+import extraRoutes from './routes/extra.routes';
 
 const app = express();
 
@@ -27,7 +27,7 @@ app.set('port', process.env.PORT);
 // middlewares
 app.use(morgan('dev'));
 app.use(cors());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(passport.initialize());
 passport.use(passportMiddleware);
@@ -47,7 +47,7 @@ app.use(tarjetasRoutes);
 app.use(mediosRoutes);
 app.use(citasRoutes);
 app.use(pagosRoutes);
-app.use(testRoutes);
+app.use(extraRoutes);
 
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

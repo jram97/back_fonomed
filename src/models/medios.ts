@@ -8,25 +8,24 @@ export interface IMedio extends Document {
   estado: boolean;
 }
 
-const medioSchema = new Schema(
-  {
+const medioSchema = new Schema({
 
-    nombre: {
-        type: String
-    },
-    precio: {
-        type: Number
-    },
-    doctor: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      require: false,
-    },
-    estado: {
-      type: Boolean,
-      default: true
-    }
+  nombre: {
+    type: String
   },
+  precio: {
+    type: Number
+  },
+  doctor: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: false,
+  },
+  estado: {
+    type: Boolean,
+    default: true
+  }
+},
   { timestamps: true }
 );
 

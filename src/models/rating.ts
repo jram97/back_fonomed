@@ -8,27 +8,27 @@ export interface IRating extends Document {
   estado: boolean;
 }
 
-const ratingSchema = new Schema(
-  {
-    score: {
-        type: Number,
-        default: 0     
-    },
-    doctor: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      require: false,
-    },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      require: false,
-    },
-    estado: {
-      type: Boolean,
-      default: true
-    }
+const ratingSchema = new Schema({
+
+  score: {
+    type: Number,
+    default: 0
   },
+  doctor: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: false,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    require: false,
+  },
+  estado: {
+    type: Boolean,
+    default: true
+  }
+},
   { timestamps: true }
 );
 

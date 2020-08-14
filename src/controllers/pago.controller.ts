@@ -4,108 +4,141 @@ import { sendEmailPago, sendEmailPagoCancelar } from '../libs/functions';
 import Pago from "../models/pago";
 import User from "../models/user";
 
+import { response } from '../libs/functions';
+
+/** PAGOS DOCTOR :: TOKEN */
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
+  try {
     const pagos = await Pago.find({ doctor: req.user["id"] });
-    return res.json({
-        errorCode: "0",
-        errorMsg: "Servicio ejecutado con exito.",
-        data: pagos
-    });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, pagos)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };
 
+/** PAGOS DOCTOR :: ID */
 export const getAllByDoctorID = async (req: Request, res: Response): Promise<Response> => {
+  try {
     const doctor = await User.findOne({ _id: req.params.id })
     const pagos = await Pago.find({ doctor: doctor._id });
-    return res.json({
-        errorCode: "0",
-        errorMsg: "Servicio ejecutado con exito.",
-        data: pagos
-    });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, pagos)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };
 
 /** REGISTRO DE PAGOS */
 export const nuevo = async (
-    req: Request,
-    res: Response
+  req: Request,
+  res: Response
 ): Promise<Response> => {
-    if (!req.body) {
-        return res
-            .status(400)
-            .json({ errorCode: "404", errorMsg: "Completa los campos." });
-    }
+  if (!req.body) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Campos incompletos.', null));
+  }
+  try {
     const nuevoPago = new Pago(req.body);
     nuevoPago.doctor = req.user['id']
     await nuevoPago.save();
+
     const user = await User.findByIdAndUpdate(req.user['id'], {
-        premium: {
-            recurrente: true,
-            fecha: new Date()
-        }
+      premium: {
+        recurrente: true,
+        fecha: new Date()
+      }
     });
 
     sendEmailPago(user.nombre_completo, user.email);
 
-
-    return res.status(201).json({
-        errorCode: "0",
-        errorMsg: "Servicio ejecutado con exito."
-    });
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };
 
 /** ACTUALIZACION DE PAGOS :: RECIBE EL ID */
 export const actualizar = async (
-    req: Request,
-    res: Response
+  req: Request,
+  res: Response
 ): Promise<Response> => {
-    if (!req.body || !req.params.id) {
-        return res
-            .status(400)
-            .json({ errorCode: "404", errorMsg: "Campos incompletos o falta parametros en la URL." });
-    }
-
+  if (!req.body || !req.params.id) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Campos incompletos o faltan parametros en la URL.', null));
+  }
+  try {
     await Pago.findByIdAndUpdate(req.params.id, { ...req.body });
 
-    return res.status(201).json({
-        errorCode: "0",
-        errorMsg: "Servicio ejecutado con exito."
-    });
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };
 
 /** CANCELAR DE PAGOS */
 export const cancelar = async (
-    req: Request,
-    res: Response
+  req: Request,
+  res: Response
 ): Promise<Response> => {
 
+  try {
     const user = await User.findByIdAndUpdate(req.user['id'], {
-        premium: {
-            recurrente: false,
-            fecha: new Date()
-        }
+      premium: {
+        recurrente: false,
+        fecha: new Date()
+      }
     });
 
     sendEmailPagoCancelar(user.nombre_completo, user.email);
 
-    return res.status(201).json({
-        errorCode: "0",
-        errorMsg: "Servicio ejecutado con exito."
-    });
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };
 
-/** ELIMINACION DE HORARIO :: RECIBE EL ID */
+/** ELIMINACION DE PAGOS :: RECIBE EL ID */
 export const eliminar = async (
-    req: Request,
-    res: Response
+  req: Request,
+  res: Response
 ): Promise<Response> => {
-    if (!req.params.id) {
-        return res
-            .status(400)
-            .json({ errorCode: "404", errorMsg: "Faltan parametros en URL." });
-    }
-
+  if (!req.params.id) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Faltan parametros en la URL.', null));
+  }
+  try {
     await Pago.findByIdAndDelete(req.params.id);
-    return res.status(201).json({
-        errorCode: "0",
-        errorMsg: "Servicio ejecutado con exito."
-    });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };

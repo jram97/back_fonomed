@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import config from "../config/config";
 import twilio from "../config/twilio";
-import { sendEmail, generateCode, sendEmailCambioPassword } from "../libs/functions";
+import { response, sendEmail, generateCode, sendEmailCambioPassword } from "../libs/functions";
 
 import User, { IUser } from "../models/user";
 import Verify from "../models/verify";
@@ -32,33 +32,40 @@ export const sendTokenForCall = async (
 ): Promise<Response> => {
 
   if (!req.query || !req.query.userName) {
-    return res.status(400).send('Username parameter is required');
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Faltan parametros en la URL.', null));
   }
-  var ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
-  var API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
-  var API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
+  try {
+    var ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
+    var API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
+    var API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
 
-  var accessToken = new AccessToken(
-    API_KEY_SID,
-    ACCOUNT_SID,
-    API_KEY_SECRET,
-  );
+    var accessToken = new AccessToken(
+      API_KEY_SID,
+      ACCOUNT_SID,
+      API_KEY_SECRET,
+    );
 
-  accessToken.identity = req.query.userName;
-  accessToken.signature = config.jwtSecret
-  
-  var grant = new VideoGrant({
-    room: 'fonomed',
-  });
+    accessToken.identity = req.query.userName;
+    accessToken.signature = config.jwtSecret
 
-  accessToken.addGrant(grant);
+    var grant = new VideoGrant({
+      room: 'fonomed',
+    });
 
-  var jwt = accessToken.toJwt();
+    accessToken.addGrant(grant);
 
-  return res.status(200).json({
-    jwt: jwt,
-    who: req.query.userName,
-  });
+    var jwt = accessToken.toJwt();
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, { jwt: jwt, who: req.query.userName })
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
 };
 
 /** CAMBIAR CONTRASEÑA */
@@ -66,30 +73,33 @@ export const cambiarContrasenia = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { password, r_password } = req.body;
+  try {
+    const { password, r_password } = req.body;
 
-  if (password == r_password) {
-    const user = await User.findOne({ email: req.user["email"] });
-    if (user) {
-      await User.findByIdAndUpdate(user._id, {
-        password: await createNewPassword(password),
-      });
+    if (password == r_password) {
+      const user = await User.findOne({ email: req.user["email"] });
+      if (user) {
+        await User.findByIdAndUpdate(user._id, {
+          password: await createNewPassword(password),
+        });
 
-      return res.status(200).json({
-        code: "200",
-        message: "Contraseña cambiada con exito.",
-      });
+        return res.status(201).json(
+          response(201, "Contrasena fue actualizada", true, null, null)
+        );
+      } else {
+        return res.status(404).json(
+          response(404, null, false, 'Algo salio mal', null)
+        );
+      }
     } else {
-      return res.status(404).json({
-        code: "404",
-        message: "Algo salio mal.",
-      });
+      return res.status(404).json(
+        response(404, null, false, 'No son iguales', null)
+      );
     }
-  } else {
-    return res.status(404).json({
-      code: "404",
-      message: "Contraseñas no son iguales.",
-    });
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };
 
@@ -98,21 +108,26 @@ export const verifyRecibirEmail = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { code, email } = req.body;
+  try {
+    const { code, email } = req.body;
 
-  const verify = await Verify.findOne({ code: code, email: email });
-  if (verify) {
-    await Verify.findByIdAndDelete(verify._id);
+    const verify = await Verify.findOne({ code: code, email: email });
+    if (verify) {
+      await Verify.findByIdAndDelete(verify._id);
 
-    return res.status(200).json({
-      code: "200",
-      message: "Codigo valido.",
-    });
-  } else {
-    return res.status(404).json({
-      code: "404",
-      message: "Codigo no valido.",
-    });
+      return res.status(201).json(
+        response(201, "Codigo valido", true, null, null)
+      );
+    } else {
+      return res.status(404).json(
+        response(404, null, false, 'Codigo no valido', null)
+      );
+    }
+
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };
 
@@ -121,24 +136,28 @@ export const verifySendEmail = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { nombre, email } = req.body;
+  try {
+    const { nombre, email } = req.body;
 
-  const verify = await Verify.findOne({ email: email });
-  if (verify) {
-    sendEmail(verify.nombre, verify.email, verify.code);
-    return res.status(200).json({
-      code: "200",
-      message: "Se a enviado nuevamente el codigo al correo.",
-    });
-  } else {
-    let code = generateCode();
-    sendEmail(nombre, email, code);
-    const newVerify = new Verify({ nombre, email, code });
-    await newVerify.save();
-    return res.status(201).json({
-      code: "201",
-      message: "Se a enviado el codigo al correo.",
-    });
+    const verify = await Verify.findOne({ email: email });
+    if (verify) {
+      sendEmail(verify.nombre, verify.email, verify.code);
+      return res.status(201).json(
+        response(201, "Se ha enviado el codigo a tu correo", true, null, null)
+      );
+    } else {
+      let code = generateCode();
+      sendEmail(nombre, email, code);
+      const newVerify = new Verify({ nombre, email, code });
+      await newVerify.save();
+      return res.status(201).json(
+        response(201, "Se ha enviado el codigo a tu correo", true, null, null)
+      );
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };
 
@@ -147,19 +166,15 @@ export const enviarSMS = async (req: Request, res: Response): Promise<Response> 
   return await client.verify
     .services(twilio.serviceSID)
     .verifications.create({ to: `+${req.query.to}`, channel: 'sms' })
-    .then(data => {
-      res.status(201).json({
-        message: "Se a enviado el codigo al telefono.",
-        phonenumber: `+${req.query.to}`,
-        info: data,
-      });
+    .then((data: any) => {
+      return res.status(201).json(
+        response(201, "Se a enviado el codigo al telefono: " + req.query.to, true, null, data)
+      );
     })
-    .catch(err => {
-      res.status(400).json({
-        message: "No se pudo enviar el mensaje",
-        phonenumber: `+${req.query.to}`,
-        info: err,
-      });
+    .catch((err: any) => {
+      return res.status(404).json(
+        response(404, null, false, 'No se pudo enviar el mensaje: ' + err, req.query.to)
+      );
     });
 };
 
@@ -171,19 +186,15 @@ export const recibirSMS = async (req: Request, res: Response) => {
       to: `+${req.query.phonenumber}`,
       code: req.query.code,
     })
-    .then((data) => {
+    .then((data: any) => {
       if (data.status === "approved") {
-        res.status(201).json({
-          code: "200",
-          message: "Codigo valido.",
-          info: data,
-        });
+        return res.status(201).json(
+          response(201, "Codigo valido", true, null, data)
+        );
       } else {
-        res.status(404).json({
-          code: "404",
-          message: "Codigo no valido.",
-          info: data,
-        });
+        return res.status(404).json(
+          response(404, null, false, 'Codigo no valido', data)
+        );
       }
     });
 };
@@ -196,68 +207,80 @@ export const signUp = async (
   /** Campos requeridos */
   if (!req.body.email || !req.body.password) {
     return res
-      .status(403)
-      .json({ code: "403", message: "Completa los campos." });
+      .status(404)
+      .json(response(404, null, false, 'Campos incompletos.', null));
   }
 
   /** Constrasenas iguales */
   if (!req.body.password || !req.body.r_password) {
     return res
-      .status(403)
-      .json({ code: "403", message: "Contrasena no son iguales." });
+      .status(404)
+      .json(response(404, null, false, 'Contrasenas no son iguales.', null));
   }
 
-  /** Existencia de usuario */
-  const user = await User.findOne({ email: req.body.email });
-  if (user)
-    return res
-      .status(400)
-      .json({
-        code: "400",
-        message: "Este correo ya esta asociado a una cuenta.",
-      });
+  try {
+    /** Existencia de usuario */
+    const user = await User.findOne({ email: req.body.email });
+    if (user)
+      return res
+        .status(404)
+        .json(response(404, null, false, 'Cuenta ya existe.', null));
 
-  /** Validacion (foto) y persistir */
-  if (req.files["foto"] && req.files["dui"]) {
-    if (req.files["documentos"]) {
-      let element = [];
-      for (let index = 0; index < req.files["documentos"].length; index++) {
-        element.push(req.files["documentos"][index]["filename"]);
+    /** Validacion (foto) y persistir */
+    if (req.files["foto"] && req.files["dui"]) {
+      if (req.files["documentos"]) {
+        let element = [];
+        for (let index = 0; index < req.files["documentos"].length; index++) {
+          element.push(req.files["documentos"][index]["filename"]);
+        }
+        const newUser = new User(req.body);
+        newUser.documento_ui = req.files["dui"][0]["filename"]
+        newUser.foto = req.files["foto"][0]["filename"]
+        newUser.especialidades = { especialidad: req.body.especialidad, imagen: element };
+
+        const userNew = await newUser.save();
+        return res.status(201).json(
+          response(201, "Ejecutado con exito", true, null, userNew)
+        );
+      } else {
+        const newUser = new User(req.body);
+        newUser.documento_ui = req.files["dui"][0]["filename"]
+        newUser.foto = req.files["foto"][0]["filename"]
+
+        const userNew = await newUser.save();
+        return res.status(201).json(
+          response(201, "Ejecutado con exito", true, null, userNew)
+        );
       }
-      const newUser = new User(req.body);
-      newUser.documento_ui = req.files["dui"][0]["filename"]
-      newUser.foto = req.files["foto"][0]["filename"]
-      newUser.especialidades = { especialidad: req.body.especialidad, imagen: element };
-
-      const userNew = await newUser.save();
-      return res.status(201).json(userNew);
     } else {
-      const newUser = new User(req.body);
-      newUser.documento_ui = req.files["dui"][0]["filename"]
-      newUser.foto = req.files["foto"][0]["filename"]
+      if (req.files["documentos"]) {
+        let element = [];
+        for (let index = 0; index < req.files["documentos"].length; index++) {
+          element.push(req.files["documentos"][index]["filename"]);
+        }
+        const newUser = new User(req.body);
+        newUser.especialidades = { especialidad: req.body.especialidad, imagen: element };
+        newUser.foto = `https://ui-avatars.com/api/?name=${req.body.nombre_completo}`;
 
-      const userNew = await newUser.save();
-      return res.status(201).json(userNew);
-    }
-  } else {
-    if (req.files["documentos"]) {
-      let element = [];
-      for (let index = 0; index < req.files["documentos"].length; index++) {
-        element.push(req.files["documentos"][index]["filename"]);
+        const userNew = await newUser.save();
+        return res.status(201).json(
+          response(201, "Ejecutado con exito", true, null, userNew)
+        );
+      } else {
+        const newUser = new User(req.body);
+        newUser.foto = `https://ui-avatars.com/api/?name=${req.body.nombre_completo}`;
+
+        const userNew = await newUser.save();
+        return res.status(201).json(
+          response(201, "Ejecutado con exito", true, null, userNew)
+        );
       }
-      const newUser = new User(req.body);
-      newUser.especialidades = { especialidad: req.body.especialidad, imagen: element };
-      newUser.foto = `https://ui-avatars.com/api/?name=${req.body.nombre_completo}`;
-
-      const userNew = await newUser.save();
-      return res.status(201).json(userNew);
-    } else {
-      const newUser = new User(req.body);
-      newUser.foto = `https://ui-avatars.com/api/?name=${req.body.nombre_completo}`;
-
-      const userNew = await newUser.save();
-      return res.status(201).json(userNew);
     }
+
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };
 
@@ -266,74 +289,23 @@ export const update = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  /** Campos requeridos */
-  if (
-    !req.body.email ||
-    !req.body.nombre_completo ||
-    !req.body.genero ||
-    !req.body.telefono
-  ) {
-    return res
-      .status(403)
-      .json({ code: "403", message: "Completa los campos." });
-  }
 
-  /** Existencia de usuario */
-  const user = await User.findById({ _id: req.params.id });
-  if (!user)
-    return res.status(404).json({ code: "404", message: "Usuario no existe." });
+  try {
+    /** Existencia de usuario */
+    const user = await User.findById({ _id: req.params.id });
+    if (!user)
+      return res.status(404).json(response(404, null, false, 'Codigo del usuario no existe.', null));
 
-  /** Recepcion de datos */
-  const {
-    nombre_completo,
-    email,
-    password,
-    genero,
-    fecha_nacimiento,
-    telefono,
-    documento_ui,
-    tipo,
-    especialidades,
-    jvmp,
-    tarifa_g,
-    tarifa_m,
-  } = req.body;
+    /** Validacion (foto) y persistir (update) */
+    const updateUser = await User.findByIdAndUpdate(req.params.id, { ...req.body });
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, updateUser)
+    );
 
-  /** Validacion (foto) y persistir (update) */
-  if (req.file) {
-    const updateUser = await User.findByIdAndUpdate(req.params.id, {
-      nombre_completo,
-      email,
-      password,
-      genero,
-      fecha_nacimiento,
-      telefono,
-      documento_ui,
-      tipo,
-      especialidades,
-      jvmp,
-      tarifa_g,
-      tarifa_m,
-      foto: req.file.filename,
-    });
-    return res.status(200).json(updateUser);
-  } else {
-    const updateUser = await User.findByIdAndUpdate(req.params.id, {
-      nombre_completo,
-      email,
-      password,
-      genero,
-      fecha_nacimiento,
-      telefono,
-      documento_ui,
-      tipo,
-      especialidades,
-      jvmp,
-      tarifa_g,
-      tarifa_m,
-      foto: `https://ui-avatars.com/api/?name=${nombre_completo}`,
-    });
-    return res.status(200).json(updateUser);
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };
 
@@ -342,16 +314,25 @@ export const updateStatus = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  /** Existencia de usuario */
-  const user = await User.findById({ _id: req.params.id });
-  if (!user) {
-    return res.status(404).json({ code: "404", message: "Usuario no existe." });
+  try {
+    /** Existencia de usuario */
+    const user = await User.findById({ _id: req.params.id });
+    if (!user) {
+      return res.status(404).json(response(404, null, false, 'Codigo del usuario no existe.', null));
+    }
+    /** Recepcion de datos */
+    const { aprobado } = req.body;
+    /** Persistir (Update) */
+    const updateUser = await User.findByIdAndUpdate(req.params.id, { aprobado });
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, updateUser)
+    );
+
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
-  /** Recepcion de datos */
-  const { aprobado } = req.body;
-  /** Persistir (Update) */
-  const updateUser = await User.findByIdAndUpdate(req.params.id, { aprobado });
-  return res.status(200).json(updateUser);
 };
 
 /** LOGIN :: EMAIL Y PASSWORD */
@@ -362,47 +343,49 @@ export const signIn = async (
   /** Campos requeridos */
   if (!req.body.email || !req.body.password) {
     return res
-      .status(403)
-      .json({ code: "403", message: "Completa los campos." });
-  }
-
-  /** Existencia de usuario */
-  const user = await User.findOne({ email: req.body.email, estado: true }).populate("especialidades.especialidad", "nombre");
-  if (!user) {
-    return res
       .status(404)
-      .json({
-        code: "404",
-        message: "El correo no esta asociado a ninguna cuenta.",
-      });
+      .json(response(404, null, false, 'Campos incompletos.', null));
   }
-  /** Match de contrasena, validacion de Bcrypt */
-  const isMatch = await user.comparePassword(req.body.password);
-  if (isMatch) {
-    return res.status(200).json({
-      code: "0",
-      message: "Servicio ejecutado con exito.",
-      data: {
-        id: user._id,
-        email: user.email,
-        nombre: user.nombre_completo,
-        genero: user.genero || "",
-        fecNac: user.fecha_nacimiento,
-        pagadito: user.cuenta_pagadito || "",
-        foto: user.foto,
-        especialidades: user.especialidades,
-        rating: user.rating,
-        nVotos: user.num_votes,
-        telefono: user.telefono,
-        premium: user.premium,
-        role: user.tipo,
-        token: createToken(user),
-      },
-    });
+  try {
+    /** Existencia de usuario */
+    const user = await User.findOne({ email: req.body.email, estado: true }).populate("especialidades.especialidad", "nombre").populate("pais");
+    if (!user) {
+      return res.status(404).json(
+        response(404, null, false, 'Correo no esta asociado a ninguna cuenta.', null)
+      );
+    }
+    /** Match de contrasena, validacion de Bcrypt */
+    const isMatch = await user.comparePassword(req.body.password);
+    if (isMatch) {
+      return res.status(201).json(
+        response(201, "Ejecutado con exito", true, null, {
+          id: user._id,
+          email: user.email,
+          nombre: user.nombre_completo,
+          genero: user.genero || "",
+          fecNac: user.fecha_nacimiento,
+          pagadito: user.cuenta_pagadito || "",
+          foto: user.foto,
+          pais: user.pais,
+          especialidades: user.especialidades,
+          rating: user.rating,
+          nVotos: user.num_votes,
+          telefono: user.telefono,
+          premium: user.premium,
+          role: user.tipo,
+          token: createToken(user),
+        })
+      );
+    } else {
+      return res.status(404).json(
+        response(404, null, false, 'El correo o contrasena es incorrecto.', null)
+      );
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
-  return res.status(403).json({
-    msg: "El correo o contrasena es incorrecto",
-  });
 };
 
 
@@ -411,21 +394,26 @@ export const verifyRecibirEmailCambioPassword = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { code, email } = req.body;
 
-  const verify = await Verify.findOne({ code: code, email: email });
-  if (verify) {
-    await Verify.findByIdAndDelete(verify._id);
+  try {
+    const { code, email } = req.body;
 
-    return res.status(200).json({
-      code: "200",
-      message: "Codigo valido.",
-    });
-  } else {
-    return res.status(404).json({
-      code: "404",
-      message: "Codigo no valido.",
-    });
+    const verify = await Verify.findOne({ code: code, email: email });
+    if (verify) {
+      await Verify.findByIdAndDelete(verify._id);
+
+      return res.status(201).json(
+        response(201, "Codigo valido", true, null, null)
+      );
+    } else {
+      return res.status(404).json(
+        response(404, null, false, 'Codigo no valido.', null)
+      );
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };
 
@@ -434,31 +422,36 @@ export const verifySendEmailCambioPassword = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-  const userExists = await User.findOne({ email: email });
-  const verify = await Verify.findOne({ email: email });
+    const userExists = await User.findOne({ email: email });
+    const verify = await Verify.findOne({ email: email });
 
-  if (userExists) {
-    if (!verify) {
-      let code = generateCode();
-      const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
-      sendEmailCambioPassword(userExists.nombre_completo, newVerify.email, code);
-      await newVerify.save();
-      return res.status(201).json({
-        code: "201",
-        message: "Se a enviado el codigo al correo.",
-      });
+    if (userExists) {
+      if (!verify) {
+        let code = generateCode();
+        const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
+        sendEmailCambioPassword(userExists.nombre_completo, newVerify.email, code);
+        await newVerify.save();
+
+        return res.status(201).json(
+          response(201, "Se a enviado el codigo al correo.", true, null, null)
+        );
+      } else {
+        return res.status(201).json(
+          response(201, "Codigo ya a sido enviado anteriormente.", true, null, null)
+        );
+      }
     } else {
-      return res.status(200).json({
-        code: "200",
-        message: "Codigo ya a sido enviado anteriormente.",
-      });
+      return res.status(404).json(
+        response(404, null, false, 'Usuario no existe.', null)
+      );
     }
-  } else {
-    return res.status(404).json({
-      code: "404",
-      message: "Usuario no existe.",
-    });
+
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
   }
 };

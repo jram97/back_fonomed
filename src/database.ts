@@ -1,4 +1,4 @@
-import mongoose, { ConnectionOptions} from 'mongoose';
+import mongoose, { ConnectionOptions } from 'mongoose';
 import config from './config/config';
 
 const dbOptions: ConnectionOptions = {

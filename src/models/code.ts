@@ -5,17 +5,17 @@ export interface ICode extends Document {
   correlativo: number;
 }
 
-const codeSchema = new Schema(
-  {
-    code: {
-      type: String,
-      default: ""
-    },
-    correlativo: {
-        type: Number,
-        default: 0
-    }
+const codeSchema = new Schema({
+
+  code: {
+    type: String,
+    default: ""
   },
+  correlativo: {
+    type: Number,
+    default: 0
+  }
+},
   { timestamps: true }
 );
 
