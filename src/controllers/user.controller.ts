@@ -10,6 +10,8 @@ import Verify from "../models/verify";
 
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
+const ChatGrant = AccessToken.ChatGrant;
+
 const client = require('twilio')(twilio.accountSID, twilio.authToken);
 
 /** GENERACION DE TOKEN CON JWT */
@@ -25,7 +27,52 @@ async function createNewPassword(password: string) {
   return hash;
 }
 
-/** SEND TOKEN :: NOMBRE */
+
+/** SEND TOKEN / CHAT :: NOMBRE */
+export const sendTokenForChat = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+
+  if (!req.query || !req.query.email) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Faltan parametros en la URL.', null));
+  }
+  try {
+    const ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
+    const API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
+    const API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
+    const API_KEY_SID_CHAT = process.env.TWILIO_API_KEY_SID_CHAT;
+
+    let accessToken = new AccessToken(
+      API_KEY_SID,
+      ACCOUNT_SID,
+      API_KEY_SECRET,
+    );
+
+    accessToken.identity = req.query.email;
+    accessToken.signature = config.jwtSecret
+
+    const grant = new ChatGrant({
+      serviceSid: API_KEY_SID_CHAT
+    });
+
+    accessToken.addGrant(grant);
+
+    const jwt = accessToken.toJwt();
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, { jwt: jwt, who: req.query.email })
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+/** SEND TOKEN / VIDEOCALL / CALL :: NOMBRE */
 export const sendTokenForCall = async (
   req: Request,
   res: Response
@@ -37,11 +84,11 @@ export const sendTokenForCall = async (
       .json(response(404, null, false, 'Faltan parametros en la URL.', null));
   }
   try {
-    var ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
-    var API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
-    var API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
+    const ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
+    const API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
+    const API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
 
-    var accessToken = new AccessToken(
+    let accessToken = new AccessToken(
       API_KEY_SID,
       ACCOUNT_SID,
       API_KEY_SECRET,
@@ -50,13 +97,13 @@ export const sendTokenForCall = async (
     accessToken.identity = req.query.userName;
     accessToken.signature = config.jwtSecret
 
-    var grant = new VideoGrant({
+    const grant = new VideoGrant({
       room: 'fonomed',
     });
 
     accessToken.addGrant(grant);
 
-    var jwt = accessToken.toJwt();
+    const jwt = accessToken.toJwt();
 
     return res.status(201).json(
       response(201, "Ejecutado con exito", true, null, { jwt: jwt, who: req.query.userName })
@@ -348,7 +395,7 @@ export const signIn = async (
   }
   try {
     /** Existencia de usuario */
-    const user = await User.findOne({ email: req.body.email, estado: true }).populate("especialidades.especialidad", "nombre").populate("pais");
+    const user = await User.findOne({ email: req.body.email, estado: true }).populate("especialidades.especialidad", "nombre").populate("pais").populate("tarjeta");
     if (!user) {
       return res.status(404).json(
         response(404, null, false, 'Correo no esta asociado a ninguna cuenta.', null)
@@ -362,11 +409,12 @@ export const signIn = async (
           id: user._id,
           email: user.email,
           nombre: user.nombre_completo,
-          genero: user.genero || "",
-          fecNac: user.fecha_nacimiento,
-          pagadito: user.cuenta_pagadito || "",
+          genero: user.genero || null,
+          fecNac: user.fecha_nacimiento || null,
+          pagadito: user.cuenta_pagadito || null,
           foto: user.foto,
-          pais: user.pais,
+          pais: user.pais || null,
+          tarjeta: user.tarjeta || null,
           especialidades: user.especialidades,
           rating: user.rating,
           nVotos: user.num_votes,

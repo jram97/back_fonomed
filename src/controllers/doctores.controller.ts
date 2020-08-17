@@ -18,6 +18,8 @@ export const getAll = async (
 
     const user = await User.find({ aprobado: true, tipo: role })
       .populate("especialidades.especialidad", "nombre")
+      .populate("pais")
+      .populate("tarjeta")
       .sort({ create_at: filtro });
 
     return res.status(200).json(
@@ -46,7 +48,7 @@ export const getById = async (
       const user = await User.findOne({ _id: id }).populate(
         "especialidades.especialidad",
         "nombre"
-      );
+      ).populate("pais").populate("tarjeta");
 
       if (user) {
         return res.status(200).json(
@@ -71,7 +73,8 @@ export const getByToken = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const user = await User.findOne({ _id: req.user['id'] }).select('premium')
+    const user = await User.findOne({ _id: req.user['id'] }).select('premium').populate("pais").populate("tarjeta")
+
 
     return res.status(200).json(
       response(200, 'Ejecutado con exito', true, null, user)
@@ -92,7 +95,7 @@ export const getSearch = async (
   try {
 
     const { especialidad, genero, min = 0, max, calificacion } = req.query;
-    const user = await User.find({ tipo: "DOC" }).populate("especialidades.especialidad");
+    const user = await User.find({ tipo: "DOC" }).populate("especialidades.especialidad").populate("pais").populate("tarjeta");
     let data = [];
 
     user.filter( (x) => {

@@ -17,6 +17,7 @@ export interface IUser extends Document {
   aprobado: Boolean;
   premium: any;
   pais: any;
+  tarjeta: any;
   especialidades: any;
   num_votes: any,
   total_score: any,
@@ -96,6 +97,11 @@ const userSchema = new Schema({
   pais: {
     type: Schema.Types.ObjectId,
     ref: "Pais",
+    require: false,
+  },
+  tarjeta: {
+    type: Schema.Types.ObjectId,
+    ref: "Tarjeta",
     require: false,
   },
   especialidades: {
