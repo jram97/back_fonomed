@@ -4,6 +4,7 @@ export interface IPais extends Document {
   codigo: string;
   iso: string;
   nombre: string;
+  estado: boolean;
 }
 
 const paisSchema = new Schema({
@@ -18,6 +19,10 @@ const paisSchema = new Schema({
   nombre: {
     type: String,
     require: true
+  },
+  estado: {
+    type: Boolean,
+    default: true
   }
 
 }, { timestamps: true }

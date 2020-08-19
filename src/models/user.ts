@@ -22,6 +22,9 @@ export interface IUser extends Document {
   num_votes: any,
   total_score: any,
   rating: any,
+  codigo_postal: any;
+  ciudad: any;
+  direccion: any;
   comparePassword: (password: string) => Promise<Boolean>;
 }
 
@@ -127,6 +130,15 @@ const userSchema = new Schema({
   rating: {
     type: Number,
     default: 0
+  },
+  codigo_postal: {
+    type: String
+  },
+  ciudad: {
+    type: String
+  },
+  direccion: {
+    type: String
   },
   estado: {
     type: Boolean,
