@@ -3,7 +3,7 @@ import passport from "passport";
 
 const router = Router();
 
-import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar } from "../controllers/cita.controller";
+import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados } from "../controllers/cita.controller";
 
 /** Todos los citas */
 router.get("/citas", passport.authenticate("jwt", { session: false }), getAllByDoctor);
@@ -11,7 +11,8 @@ router.get("/citas", passport.authenticate("jwt", { session: false }), getAllByD
 router.get("/citas/me", passport.authenticate("jwt", { session: false }), getAllByUser);
 /** Registro de citas */
 router.post("/citas", passport.authenticate("jwt", { session: false }), nuevo);
-//router.post("/citas", nuevo);
+/** Buscar por estado */
+router.get("/citas", passport.authenticate("jwt", { session: false }), getAllEstados);
 
 /** Update de citas */
 router.put("/citas/:id", passport.authenticate("jwt", { session: false }), actualizar);

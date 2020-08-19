@@ -13,7 +13,7 @@ export interface ICita extends Document {
   tarjeta: ITarjeta;
   cancelado: boolean;
   comentario: string,
-  estados: string;
+  estados: any;
   estado: boolean;
   fecha: Date;
   createdAt: Date;

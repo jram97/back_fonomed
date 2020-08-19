@@ -10,7 +10,6 @@ import Verify from "../models/verify";
 
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
-const ChatGrant = AccessToken.ChatGrant;
 
 const client = require('twilio')(twilio.accountSID, twilio.authToken);
 
@@ -26,51 +25,6 @@ async function createNewPassword(password: string) {
   const hash = await bcrypt.hash(password, salt);
   return hash;
 }
-
-
-/** SEND TOKEN / CHAT :: NOMBRE */
-export const sendTokenForChat = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-
-  if (!req.query || !req.query.email) {
-    return res
-      .status(404)
-      .json(response(404, null, false, 'Faltan parametros en la URL.', null));
-  }
-  try {
-    const ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID_VIDEOCALL;
-    const API_KEY_SID = process.env.TWILIO_API_KEY_SID_VIDEOCALL;
-    const API_KEY_SECRET = process.env.TWILIO_API_KEY_SECRET_VIDEOCALL;
-    const API_KEY_SID_CHAT = process.env.TWILIO_API_KEY_SID_CHAT;
-
-    let accessToken = new AccessToken(
-      API_KEY_SID,
-      ACCOUNT_SID,
-      API_KEY_SECRET,
-    );
-
-    accessToken.identity = req.query.email;
-    accessToken.signature = config.jwtSecret
-
-    const grant = new ChatGrant({
-      serviceSid: API_KEY_SID_CHAT
-    });
-
-    accessToken.addGrant(grant);
-
-    const jwt = accessToken.toJwt();
-
-    return res.status(201).json(
-      response(201, "Ejecutado con exito", true, null, { jwt: jwt, who: req.query.email })
-    );
-  } catch (error) {
-    return res.status(404).json(
-      response(404, null, false, 'Algo salio mal: ' + error, null)
-    );
-  }
-};
 
 /** SEND TOKEN / VIDEOCALL / CALL :: NOMBRE */
 export const sendTokenForCall = async (
@@ -343,7 +297,6 @@ export const update = async (
     if (!user)
       return res.status(404).json(response(404, null, false, 'Codigo del usuario no existe.', null));
 
-    /** Validacion (foto) y persistir (update) */
     const updateUser = await User.findByIdAndUpdate(req.params.id, { ...req.body });
     return res.status(201).json(
       response(201, "Ejecutado con exito", true, null, updateUser)

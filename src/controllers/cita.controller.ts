@@ -5,6 +5,21 @@ import Horario from "../models/horario";
 
 import { response } from '../libs/functions';
 
+/** CITAS ESTADOS */
+export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const citas = await Cita.find({ estados: req.query.estado });
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, citas)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 /** CITAS DEL DOCTOR */
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
   try {

@@ -34,15 +34,9 @@ router.route("/signup").post(
 );
 /** Login :: Email & Password */
 router.post("/signin", signIn);
-/** Update perfil :: La foto es opcional */
-router.route("/perfil/update/:id").post(
-  upload.fields([
-    { name: "documentos", maxCount: 3 },
-    { name: "foto", maxCount: 1 },
-    { name: "dui", maxCount: 1 },
-  ]),
-  update
-);
+/** Update perfil */
+router.post("/perfil/update/:id", passport.authenticate("jwt", { session: false }), update);
+
 /** Cambiar estado */
 router.put("/perfil/update/status/:id", updateStatus);
 /** Enviar email */

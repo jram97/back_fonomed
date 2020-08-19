@@ -6,10 +6,40 @@ import User from "../models/user";
 
 import { response } from '../libs/functions';
 
+/** PAGOS POR ESTADOS */
+export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const pagos = await Pago.find({ estado: req.query.estados });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, pagos)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 /** PAGOS DOCTOR :: TOKEN */
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
   try {
     const pagos = await Pago.find({ doctor: req.user["id"] });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, pagos)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+/** PAGOS USER :: TOKEN */
+export const getAllByUsuario = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const pagos = await Pago.find({ usuario: req.user["id"] });
 
     return res.status(201).json(
       response(201, "Ejecutado con exito", true, null, pagos)

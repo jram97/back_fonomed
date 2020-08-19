@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken } from '../controllers/doctores.controller'
-import { sendTokenForCall, sendTokenForChat } from '../controllers/user.controller';
+import { sendTokenForCall } from '../controllers/user.controller';
 
 const router = Router();
 
@@ -17,8 +17,6 @@ router.get('/doctores/search', getSearch);
 
 /** Send token call and videocall */
 router.get('/doctores/videocall', passport.authenticate("jwt", { session: false }), sendTokenForCall);
-/** Send token chat */
-router.get('/doctores/chat', passport.authenticate("jwt", { session: false }), sendTokenForChat);
 
 
 /** USERS FUNCTIONS */

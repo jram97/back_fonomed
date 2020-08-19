@@ -5,10 +5,11 @@ import { IUser } from './user';
 export interface IPago extends Document {
   fecha: Date;
   doctor: IUser;
+  usuario: IUser;
   tarjeta: ITarjeta;
   servicio: string;
   code: string;
-  estado: string;
+  estado: any;
   recurrente: boolean;
 };
 
@@ -19,6 +20,10 @@ const pagoSchema = new Schema({
     default: Date.now()
   },
   doctor: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  usuario: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
