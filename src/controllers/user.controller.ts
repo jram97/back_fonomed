@@ -373,10 +373,12 @@ export const signIn = async (
           nVotos: user.num_votes,
           telefono: user.telefono,
           premium: user.premium,
+          informacion_pago: {
+            direccion: user.direccion || null,
+            codigo_postal: user.codigo_postal || null,
+            ciudad: user.ciudad || null
+          },
           role: user.tipo,
-          direccion: user.direccion || null,
-          codigo_postal: user.codigo_postal || null,
-          ciudad: user.ciudad || null,
           token: createToken(user),
         })
       );
