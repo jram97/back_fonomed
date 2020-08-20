@@ -73,7 +73,7 @@ export const getByToken = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const user = await User.findOne({ _id: req.user['id'] }).select('premium').populate("pais").populate("tarjeta")
+    const user = await User.findOne({ _id: req.user['id'] }).select('premium tarjeta nombre_completo').populate("pais").populate("tarjeta")
 
 
     return res.status(200).json(
