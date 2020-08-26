@@ -13,8 +13,7 @@ export interface IHorario extends Document {
 const horarioSchema = new Schema({
 
   fecha: {
-    type: String,
-    default: ""
+    type: Date,
   },
   dia: {
     type: String,

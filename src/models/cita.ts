@@ -10,7 +10,6 @@ export interface ICita extends Document {
   inicio: string;
   fin: string;
   medio: IMedio;
-  tarjeta: ITarjeta;
   cancelado: string;
   comentario: string,
   estados: any;
