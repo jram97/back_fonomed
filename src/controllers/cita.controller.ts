@@ -71,8 +71,16 @@ export const nuevo = async (
     const today = new Date(req.body.date);
     const dayName = days[today.getDay() + 1];
     var existeHorario = false, horarioDisponible = true;
+    var horarios; 
 
-    const horarios = await Horario.find({ doctor: req.body.doctor, dia: dayName });
+    const especiales = await Horario.find({dia: "Especial", fecha: today});
+
+    if(especiales.length > 0){
+      horarios = especiales
+    }else{
+      horarios = await Horario.find({ doctor: req.body.doctor, dia: dayName });
+      console.log(horarios);
+    }
 
     if (horarios.length == 0) {
       return res

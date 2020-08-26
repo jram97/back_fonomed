@@ -3,7 +3,7 @@ import { IUser } from "./user";
 
 export interface IHorario extends Document {
   dia: string;
-  fecha: string;
+  fecha: Date;
   inicio: string;
   fin: string;
   doctor: IUser;
