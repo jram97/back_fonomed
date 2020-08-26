@@ -2,8 +2,11 @@ import { Request, Response } from 'express'
 
 import Cita from "../models/cita";
 import Horario from "../models/horario";
+import Pago from "../models/pago";
+import User from "../models/user";
+import { sendEmailPago } from '../libs/functions';
 
-import { response } from '../libs/functions';
+import { response, verificarCita, verificarHorario, isBetween } from '../libs/functions';
 
 /** CITAS ESTADOS */
 export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
@@ -53,7 +56,6 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
   }
 };
 
-/** REGISTRO DE CITAS */
 export const nuevo = async (
   req: Request,
   res: Response
@@ -66,11 +68,90 @@ export const nuevo = async (
   try {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
     const today = new Date(req.body.date);
-    const dayName = days[today.getDay()];
+    const dayName = days[today.getDay() + 1];
+    var existeHorario = false, horarioDisponible = true;
+
+    const horarios = await Horario.find({ doctor: req.body.doctor, dia: dayName });
+
+    if (horarios.length == 0) {
+      return res
+        .status(406)
+        .json(response(406, null, false, 'El doctor no tiene esta dia disponible.', null));
+    }
+
+    var i;
+    for (i = 0; i < horarios.length; i++) {
+      if (verificarHorario(horarios[i], req.body.inicio, req.body.fin)) {
+        existeHorario = true;
+        break;
+      }
+    }
+
+    console.log(existeHorario);
+
+    if (existeHorario) {
+      const citas = await Cita.find({ doctor: req.body.doctor, fecha: today });
+
+      for (i = 0; i < citas.length; i++) {
+        if (!verificarCita(citas[i], req.body.inicio, req.body.fin)) {
+          horarioDisponible = false;
+          break;
+        }
+      }
+
+      if (horarioDisponible) {
+        const nuevaCita = new Cita(req.body);
+        nuevaCita.dia = dayName;
+        nuevaCita.fecha = today;
+        nuevaCita.usuario = req.user['id'];
+
+        await nuevaCita.save();
+
+        return res.status(201).json(
+          response(201, 'Ejecutado con exito', true, null, null)
+        );
+      } else {
+        return res
+          .status(405)
+          .json(response(406, null, false, 'Este horario no esta disponible', null));
+      }
+
+
+    } else {
+      return res
+        .status(405)
+        .json(response(406, null, false, 'El doctor no esta disponible en este horario', null));
+    }
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+}
+
+/** REGISTRO DE CITAS */
+/*export const nuevo = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  if (!req.body) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Campos incompletos.', null));
+  }
+  try {
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+    const today = new Date(req.body.date);
+    const dayName = days[today.getDay() + 1];
     //const time = today.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
     //console.log(today.toLocaleTimeString().replace(/:\d+ /, ' '))
 
     const horarioFechaDia = await Horario.findOne({ doctor: req.body.doctor, dia: dayName, inicio: req.body.inicio });
+    console.log(dayName);
 
     if (!horarioFechaDia) {
       return res
@@ -89,7 +170,7 @@ export const nuevo = async (
 
           const nuevaCita = new Cita(req.body);
           nuevaCita.dia = dayName;
-          nuevaCita.fecha = new Date();
+          nuevaCita.fecha = today;
           nuevaCita.usuario = req.user['id'];
 
           await nuevaCita.save();
@@ -106,10 +187,11 @@ export const nuevo = async (
       } else {
         const nuevaCita = new Cita(req.body);
         nuevaCita.dia = dayName;
-        nuevaCita.fecha = new Date();
+        nuevaCita.fecha = today;
         nuevaCita.usuario = req.user['id'];
 
         await nuevaCita.save();
+
         return res.status(201).json(
           response(201, 'Ejecutado con exito', true, null, null)
         );
@@ -120,7 +202,7 @@ export const nuevo = async (
       response(404, null, false, 'Algo salio mal: ' + error, null)
     );
   }
-};
+};*/
 
 /** ACTUALIZACION DE CITAS :: RECIBE EL ID */
 export const actualizar = async (
@@ -144,6 +226,57 @@ export const actualizar = async (
     );
   }
 };
+
+export const concretar = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  if (!req.body || !req.params.id) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Campos incompletos o faltan parametros en la URL.', null));
+  }
+
+  try {
+    if (req.body.cancelado === "Cancelado") {
+      const updated = await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
+
+      if (updated) {
+        const user = await User.findByIdAndUpdate(req.user['id'], {
+          premium: {
+            recurrente: true,
+            fecha: new Date()
+          }
+        });
+
+        sendEmailPago(user.nombre_completo, user.email);
+
+        const nuevoPago = new Pago({
+          doctor: updated.doctor,
+          usuario: updated.usuario,
+          tarjeta: req.body.tarjeta,
+          servicio: req.body.servicio,
+          code: req.body.code,
+          estado: req.body.estado
+        });
+
+        await nuevoPago.save();
+      }
+    } else {
+      await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
+    }
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, null)
+    );
+
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+
+}
 
 /** ELIMINACION DE CITAS :: RECIBE EL ID */
 export const eliminar = async (

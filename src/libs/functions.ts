@@ -233,3 +233,62 @@ export const sendEmailCambioPassword = (nombre: string, email: string, code: str
     return false;
   }
 }
+
+/**Comprobar el tercer argumento se encuentra entre los dos primeros */
+
+export const isBetween = (first: number, second: number, compare: number) => {
+
+  if (first < compare && second > compare) {
+    return true;
+  }
+
+  return false;
+}
+
+export const verificarHorario = (horario: any, inicio: any, fin: any) => {
+  var inicioHorario = horario.inicio.split(":");
+  inicioHorario = (parseInt(inicioHorario[0]) * 60) + parseInt(inicioHorario[1]);
+
+  var finHorario = horario.fin.split(":");
+  finHorario = (parseInt(finHorario[0]) * 60) + parseInt(finHorario[1]);
+
+  var inicioNueva = inicio.split(":");
+  inicioNueva = (parseInt(inicioNueva[0]) * 60) + parseInt(inicioNueva[1]);
+
+  var finNueva = fin.split(":");
+  finNueva = (parseInt(finNueva[0]) * 60) + parseInt(finNueva[1]);
+
+  if (inicioHorario == inicioNueva || finHorario == finNueva) {
+    return true;
+  }
+
+  if (isBetween(inicioHorario, finHorario, inicioNueva) && isBetween(inicioHorario, finHorario, finNueva)) {
+    return true;
+  }
+
+  return false;
+}
+
+export const verificarCita = (cita: any, inicio: any, fin: any) => {
+  var inicioCita = cita.inicio.split(":");
+  inicioCita = (parseInt(inicioCita[0]) * 60) + parseInt(inicioCita[1]);
+
+  var finCita = cita.fin.split(":");
+  finCita = (parseInt(finCita[0]) * 60) + parseInt(finCita[1]);
+
+  var inicioNueva = inicio.split(":");
+  inicioNueva = (parseInt(inicioNueva[0]) * 60) + parseInt(inicioNueva[1]);
+
+  var finNueva = fin.split(":");
+  finNueva = (parseInt(finNueva[0]) * 60) + parseInt(finNueva[1]);
+
+  if (inicioCita == inicioNueva || finCita == finNueva) {
+    return false;
+  }
+
+  if (isBetween(inicioCita, finCita, inicioNueva) || isBetween(inicioCita, finCita, finNueva)) {
+    return false
+  }
+
+  return true
+}

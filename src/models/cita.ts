@@ -11,7 +11,7 @@ export interface ICita extends Document {
   fin: string;
   medio: IMedio;
   tarjeta: ITarjeta;
-  cancelado: boolean;
+  cancelado: string;
   comentario: string,
   estados: any;
   estado: boolean;
@@ -49,14 +49,9 @@ const citaSchema = new Schema({
     ref: "Medio",
     require: false,
   },
-  tarjeta: {
-    type: Schema.Types.ObjectId,
-    ref: "Tarjeta",
-    require: false,
-  },
   cancelado: {
     type: String,
-    enum: ["Pendiente", "Cancelado"],
+    enum: ["Pendiente", "Cancelado","Rechazado"],
     default: "Pendiente"
   },
   comentario: {
