@@ -82,12 +82,16 @@ export const nuevo = async (
     nuevoPago.doctor = req.user['id']
     await nuevoPago.save();
 
-    const user = await User.findByIdAndUpdate(req.user['id'], {
-      premium: {
-        recurrente: true,
-        fecha: new Date()
-      }
-    });
+    if(req.body.servicio === "Premium"){
+      const user = await User.findByIdAndUpdate(req.user['id'], {
+        premium: {
+          recurrente: true,
+          fecha: new Date()
+        }
+      });
+    }
+
+    const user = await User.findById(req.user['id']);
 
     sendEmailPago(user.nombre_completo, user.email);
 

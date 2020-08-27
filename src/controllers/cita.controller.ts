@@ -256,12 +256,16 @@ export const concretar = async (
       const updated = await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
 
       if (updated) {
-        const user = await User.findByIdAndUpdate(req.user['id'], {
-          premium: {
-            recurrente: true,
-            fecha: new Date()
-          }
-        });
+        if (req.body.servicio === "Premium") {
+          const user = await User.findByIdAndUpdate(req.user['id'], {
+            premium: {
+              recurrente: true,
+              fecha: new Date()
+            }
+          });
+        }
+
+        const user = await User.findById(req.user['id']);
 
         sendEmailPago(user.nombre_completo, user.email);
 
