@@ -111,10 +111,10 @@ export const nuevo = async (
         nuevaCita.fecha = today;
         nuevaCita.usuario = req.user['id'];
 
-        await nuevaCita.save();
+        const citaCreada = await nuevaCita.save();
 
         return res.status(201).json(
-          response(201, 'Ejecutado con exito', true, null, null)
+          response(201, 'Ejecutado con exito', true, null, citaCreada)
         );
       } else {
         return res
