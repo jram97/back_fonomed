@@ -68,7 +68,7 @@ export const nuevo = async (
   }
   try {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const today = new Date(req.body.date);
+    const today = new Date(req.body.date.split("T")[0]);
     const dayName = days[today.getDay() + 1];
     var existeHorario = false, horarioDisponible = true;
     var horarios;
@@ -97,7 +97,6 @@ export const nuevo = async (
 
     if (existeHorario) {
       const citas = await Cita.find({ doctor: req.body.doctor, fecha: today, $or: [{ cancelado: "Pendiente" }, { cancelado: "Cancelado" }] });
-      console.log(citas);
 
       for (i = 0; i < citas.length; i++) {
         if (!verificarCita(citas[i], req.body.inicio, req.body.fin)) {

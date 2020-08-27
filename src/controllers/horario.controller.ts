@@ -96,8 +96,6 @@ export const nuevo = async (
       .json(response(404, null, false, 'Campos incompletos.', null));
   }
   try {
-    var fecha = req.body.fecha.split("/");
-    req.body.fecha = `${fecha[2]}-${fecha[1]}-${fecha[0]}`
     const nuevoHorario = new Horario(req.body);
     nuevoHorario.doctor = req.user['id'];
 
