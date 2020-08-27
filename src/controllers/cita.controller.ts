@@ -42,7 +42,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
 /** CITAS DEL USUARIO */
 export const getAllByUser = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const citas = await Cita.find({ usuario: req.user["id"] })
+    const citas = await Cita.find({ usuario: req.user["id"] , cancelado: "Cancelado"})
       .populate("tarjeta", "numero")
       .populate("medio", "nombre precio")
       .populate("doctor", "nombre_completo email num_votes total_score rating");
