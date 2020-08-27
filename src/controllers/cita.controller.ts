@@ -5,6 +5,7 @@ import Horario from "../models/horario";
 import Pago from "../models/pago";
 import User from "../models/user";
 import { sendEmailPago } from '../libs/functions';
+import moment, { now } from 'moment';
 
 import { response, verificarCita, verificarHorario, isBetween } from '../libs/functions';
 
@@ -68,8 +69,20 @@ export const nuevo = async (
   }
   try {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    console.log(req.body.fin);
     const today = new Date(req.body.date.split("T")[0]);
-    const dayName = days[today.getDay() + 1];
+    //const compare = new Date(req.body.date.split("T")[0]);
+    //compare.setHours(req.body.fin.split(":")[0],req.body.fin.split(":")[1]);
+    //const now = new Date();
+
+    /*if (moment(now).isAfter(moment(compare))) {
+      return res
+        .status(407)
+        .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
+    }*/
+
+    const dayName = days[today.getDay()];
+    console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
 
@@ -84,7 +97,7 @@ export const nuevo = async (
     if (horarios.length == 0) {
       return res
         .status(406)
-        .json(response(406, null, false, 'El doctor no tiene esta dia disponible.', null));
+        .json(response(406, null, false, 'El doctor no tiene este día disponible.', null));
     }
 
     var i;
@@ -118,13 +131,13 @@ export const nuevo = async (
         );
       } else {
         return res
-          .status(405)
+          .status(406)
           .json(response(406, null, false, 'Este horario no esta disponible', null));
       }
 
     } else {
       return res
-        .status(405)
+        .status(406)
         .json(response(406, null, false, 'El doctor no esta disponible en este horario', null));
     }
   } catch (error) {
