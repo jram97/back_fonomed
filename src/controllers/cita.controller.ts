@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 
+import Especialidad from "../models/especialidad";
 import Cita from "../models/cita";
 import Horario from "../models/horario";
 import Pago from "../models/pago";
@@ -27,10 +28,24 @@ export const getAllEstados = async (req: Request, res: Response): Promise<Respon
 /** CITAS DEL DOCTOR */
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const citas = await Cita.find({ doctor: req.user["id"] });
+    const citas = await Cita.find({ doctor: req.user["id"] })
+      .populate("doctor", "nombre_completo email foto genero telefono especialidades")
+      .populate("medio", "nombre precio")
+      .populate("Usuario", "nombre_completo email foto genero telefono");
+    var i, j;
+
+    var nuevas = citas, especialidadPopulada, cita;
+    
+    for (i = 0; i < citas.length; i++) {
+      cita = citas[i];
+      for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+      }
+      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
+    }
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, citas)
+      response(200, 'Ejecutado con exito', true, null, nuevas)
     );
   } catch (error) {
     return res.status(404).json(
@@ -42,10 +57,16 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
 /** CITAS DEL USUARIO */
 export const getAllByUser = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const citas = await Cita.find({ usuario: req.user["id"] , cancelado: "Cancelado"})
+    var citas = await Cita.find({ usuario: req.user["id"], cancelado: "Cancelado" })
       .populate("tarjeta", "numero")
       .populate("medio", "nombre precio")
-      .populate("doctor", "nombre_completo email num_votes total_score rating");
+      .populate("doctor", "nombre_completo email num_votes total_score ratin foto especialidades");
+
+    /*const citasPopuladas = citas.map(function(cita){
+      const poblada = cita.doctor.especialidades
+
+      return poblada;
+    })*/
 
     return res.status(200).json(
       response(200, 'Ejecutado con exito', true, null, citas)
