@@ -52,7 +52,7 @@ export const sendTokenForCall = async (
     accessToken.signature = config.jwtSecret
 
     const grant = new VideoGrant({
-      room: 'fonomed',
+      room: req.query.nameRoom,
     });
 
     accessToken.addGrant(grant);
