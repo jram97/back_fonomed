@@ -35,7 +35,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
     var i, j;
 
     var nuevas = citas, especialidadPopulada, cita;
-    
+
     for (i = 0; i < citas.length; i++) {
       cita = citas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
@@ -90,19 +90,21 @@ export const nuevo = async (
   }
   try {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    console.log(req.body.fin);
     const today = new Date(req.body.date.split("T")[0]);
-    //const compare = new Date(req.body.date.split("T")[0]);
-    //compare.setHours(req.body.fin.split(":")[0],req.body.fin.split(":")[1]);
-    //const now = new Date();
+    const compare = new Date(req.body.date.split("T")[0]);
+    compare.setDate(compare.getDate() + 1);
+    compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
+    
+    var now = moment(new Date()).utcOffset(-360);
 
-    /*if (moment(now).isAfter(moment(compare))) {
+    if ((moment(now).utcOffset(-360)).isAfter(moment(compare))) {
       return res
         .status(407)
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
-    }*/
+    }
+    const prueba = new Date();
 
-    const dayName = days[today.getDay()];
+    const dayName = days[today.getDay() + 1];
     console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
