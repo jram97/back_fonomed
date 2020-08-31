@@ -35,7 +35,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
       .sort({ fecha: -1 });;
     var i, j;
 
-    var nuevas = citas, especialidadPopulada, cita;
+    var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
 
     for (i = 0; i < citas.length; i++) {
       cita = citas[i];
@@ -46,7 +46,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
     }
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, filtrarCitasCaducadas(nuevas))
+      response(200, 'Ejecutado con exito', true, null, nuevas)
     );
   } catch (error) {
     return res.status(404).json(
@@ -66,7 +66,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
 
     var i, j;
 
-    var nuevas = citas, especialidadPopulada, cita;
+    var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
 
     for (i = 0; i < citas.length; i++) {
       cita = citas[i];
@@ -76,10 +76,8 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
       nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
     }
 
-    filtrarCitasCaducadas(citas);
-
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, filtrarCitasCaducadas(citas))
+      response(200, 'Ejecutado con exito', true, null, citas)
     );
   } catch (error) {
     return res.status(404).json(

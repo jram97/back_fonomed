@@ -84,6 +84,7 @@ export const nuevo = async (
 
     if(req.body.servicio === "Premium"){
       const user = await User.findByIdAndUpdate(req.user['id'], {
+        tarjeta:req.body.tarjeta,
         premium: {
           recurrente: true,
           fecha: new Date()
