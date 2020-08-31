@@ -118,8 +118,6 @@ export const getSearch = async (
       var i;
 
       for (i = 0; i < x.especialidades.especialidad.length; i++) {
-        console.log("de x", x.especialidades.especialidad[0].nombre);
-        console.log("query", especialidad);
         if (x.especialidades.especialidad[0].nombre == especialidad) {
           data.push(x);
           break;
