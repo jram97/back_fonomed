@@ -127,16 +127,6 @@ export const getSearch = async (
       }
     });
 
-    /*
-    const users = await User.find({
-      genero: { $eq: genero},
-      tarifa_g: {
-        $gt: min,
-        $lt: max
-      }
-    }).populate({ path: 'especialidades.especialidad', match: { nombre: especialidad } })
-    */
-
     return res.status(200).json(
       response(200, 'Ejecutado con exito', true, null, data)
     );
