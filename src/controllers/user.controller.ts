@@ -429,9 +429,9 @@ export const verifyRecibirEmailCambioPassword = async (
         );
       }
 
-      return res.status(201).json(
+      /*return res.status(201).json(
         response(201, "Codigo valido", true, null, null)
-      );
+      );*/
     } else {
       return res.status(404).json(
         response(404, null, false, 'Codigo no valido.', null)

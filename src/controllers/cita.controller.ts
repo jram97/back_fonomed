@@ -31,7 +31,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
     const citas = await Cita.find({ doctor: req.user["id"] })
       .populate("doctor", "nombre_completo email foto genero telefono especialidades")
       .populate("medio", "nombre precio")
-      .populate("Usuario", "nombre_completo email foto genero telefono")
+      .populate("usuario", "nombre_completo email foto genero telefono")
       .sort({ fecha: -1 });;
     var i, j;
 
@@ -59,6 +59,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
 export const getAllByUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     var citas = await Cita.find({ usuario: req.user["id"], cancelado: "Cancelado" })
+      .populate("usuario", "nombre_completo foto email")
       .populate("tarjeta", "numero")
       .populate("medio", "nombre precio")
       .populate("doctor", "nombre_completo email num_votes total_score ratin foto especialidades")
