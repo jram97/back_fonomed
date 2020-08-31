@@ -94,13 +94,36 @@ export const getSearch = async (
 
   try {
 
-    const { especialidad, genero, min = 0, max, calificacion } = req.query;
-    const user = await User.find({ tipo: "DOC" }).populate("especialidades.especialidad").populate("pais").populate("tarjeta");
+    const { especialidad, genero, min, max, calificacion } = req.query;
+    let filtro = {};
+    let tarifa_g = {}
+
+    if (genero) {
+      filtro = { ...filtro, genero }
+    }
+
+    if (min) {
+      tarifa_g = { $gte: parseInt(min.toString()) };
+    }
+
+    if (max) {
+      tarifa_g = { ...tarifa_g, $lte: parseInt(max.toString()) };
+      filtro = { ...filtro, tarifa_g }
+    }
+
+    const user = await User.find({ tipo: "DOC", ...filtro }).populate("especialidades.especialidad").populate("pais").populate("tarjeta");
     let data = [];
 
-    user.filter( (x) => {
-      if ( x.genero == genero || x.tarifa_g == max || x.especialidades.especialidad[0].nombre === especialidad || x.rating.toFixed() === calificacion ) {
-        data.push( x )
+    user.filter((x) => {
+      var i;
+
+      for (i = 0; i < x.especialidades.especialidad.length; i++) {
+        console.log("de x", x.especialidades.especialidad[0].nombre);
+        console.log("query", especialidad);
+        if (x.especialidades.especialidad[0].nombre == especialidad) {
+          data.push(x);
+          break;
+        }
       }
     });
 
