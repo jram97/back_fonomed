@@ -112,18 +112,20 @@ export const getSearch = async (
     }
 
     const user = await User.find({ tipo: "DOC", ...filtro }).populate("especialidades.especialidad").populate("pais").populate("tarjeta");
-    let data = [];
+    let data = user;
 
-    user.filter((x) => {
-      var i;
+    if (especialidad) {
+      data = data.filter((x) => {
+        var i;
 
-      for (i = 0; i < x.especialidades.especialidad.length; i++) {
-        if (x.especialidades.especialidad[0].nombre == especialidad) {
-          data.push(x);
-          break;
+        for (i = 0; i < x.especialidades.especialidad.length; i++) {
+          if (x.especialidades.especialidad[0].nombre == especialidad) {
+            return x;
+            break;
+          }
         }
-      }
-    });
+      });
+    }
 
     return res.status(200).json(
       response(200, 'Ejecutado con exito', true, null, data)
