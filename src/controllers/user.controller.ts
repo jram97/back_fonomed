@@ -402,11 +402,32 @@ export const verifyRecibirEmailCambioPassword = async (
 ): Promise<Response> => {
 
   try {
-    const { code, email } = req.body;
+    const { code, email, password, r_password } = req.body;
 
     const verify = await Verify.findOne({ code: code, email: email });
     if (verify) {
       await Verify.findByIdAndDelete(verify._id);
+
+      if (password == r_password) {
+        const user = await User.findOne({ email: email });
+        if (user) {
+          await User.findByIdAndUpdate(user._id, {
+            password: await createNewPassword(password),
+          });
+
+          return res.status(201).json(
+            response(201, "Contrasena fue actualizada", true, null, null)
+          );
+        } else {
+          return res.status(404).json(
+            response(404, null, false, 'Algo salio mal', null)
+          );
+        }
+      } else {
+        return res.status(404).json(
+          response(404, null, false, 'No son iguales', null)
+        );
+      }
 
       return res.status(201).json(
         response(201, "Codigo valido", true, null, null)
