@@ -1,5 +1,6 @@
 import nodeMailer from "nodemailer";
 import CryptoJS from 'crypto-js';
+import moment, { now } from 'moment';
 
 import limit from "express-rate-limit";
 
@@ -291,4 +292,18 @@ export const verificarCita = (cita: any, inicio: any, fin: any) => {
   }
 
   return true
+}
+
+export const filtrarCitasCaducadas = (citas: any) => {
+  return citas.filter(cita => {
+    const fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
+    fechaCita.setDate(fechaCita.getDate() + 1);
+    fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
+
+    const now = new Date();
+    if (!(moment(now)).isAfter(moment(fechaCita))) {
+      return cita
+    }
+
+  });
 }

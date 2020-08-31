@@ -8,7 +8,7 @@ import User from "../models/user";
 import { sendEmailPago } from '../libs/functions';
 import moment, { now } from 'moment';
 
-import { response, verificarCita, verificarHorario, isBetween } from '../libs/functions';
+import { response, verificarCita, verificarHorario, filtrarCitasCaducadas } from '../libs/functions';
 
 /** CITAS ESTADOS */
 export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
@@ -45,7 +45,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
     }
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, nuevas)
+      response(200, 'Ejecutado con exito', true, null, filtrarCitasCaducadas(nuevas))
     );
   } catch (error) {
     return res.status(404).json(
@@ -62,14 +62,22 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
       .populate("medio", "nombre precio")
       .populate("doctor", "nombre_completo email num_votes total_score ratin foto especialidades");
 
-    /*const citasPopuladas = citas.map(function(cita){
-      const poblada = cita.doctor.especialidades
+    var i, j;
 
-      return poblada;
-    })*/
+    var nuevas = citas, especialidadPopulada, cita;
+
+    for (i = 0; i < citas.length; i++) {
+      cita = citas[i];
+      for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+      }
+      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
+    }
+
+    filtrarCitasCaducadas(citas);
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, citas)
+      response(200, 'Ejecutado con exito', true, null, filtrarCitasCaducadas(citas))
     );
   } catch (error) {
     return res.status(404).json(
@@ -91,18 +99,18 @@ export const nuevo = async (
   try {
     const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     const today = new Date(req.body.date.split("T")[0]);
+
     const compare = new Date(req.body.date.split("T")[0]);
     compare.setDate(compare.getDate() + 1);
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
-    
-    var now = moment(new Date()).utcOffset(-360);
 
-    if ((moment(now).utcOffset(-360)).isAfter(moment(compare))) {
+    var now = new Date();
+
+    if ((moment(now)).isAfter(moment(compare))) {
       return res
         .status(407)
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
     }
-    const prueba = new Date();
 
     const dayName = days[today.getDay() + 1];
     console.log(dayName, today);
