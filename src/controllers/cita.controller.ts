@@ -8,7 +8,7 @@ import User from "../models/user";
 import { sendEmailPago } from '../libs/functions';
 import moment, { now } from 'moment';
 
-import { response, verificarCita, verificarHorario, filtrarCitasCaducadas } from '../libs/functions';
+import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial } from '../libs/functions';
 
 /** CITAS ESTADOS */
 export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
@@ -55,6 +55,36 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
   }
 };
 
+/** CITAS DEL DOCTOR */
+export const getAllByDoctorHistory = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const citas = await Cita.find({ doctor: req.user["id"] })
+      .populate("doctor", "nombre_completo email foto genero telefono especialidades")
+      .populate("medio", "nombre precio")
+      .populate("usuario", "nombre_completo email foto genero telefono")
+      .sort({ fecha: -1 });;
+    var i, j;
+
+    var nuevas = filtrarCitasHistorial(citas), especialidadPopulada, cita;
+
+    for (i = 0; i < citas.length; i++) {
+      cita = citas[i];
+      for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+      }
+      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
+    }
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, nuevas)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 /** CITAS DEL USUARIO */
 export const getAllByUser = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -68,6 +98,38 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
     var i, j;
 
     var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
+
+    for (i = 0; i < citas.length; i++) {
+      cita = citas[i];
+      for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+      }
+      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
+    }
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, citas)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+/** CITAS DEL USUARIO HISTORIAL*/
+export const getAllByUserHistory = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    var citas = await Cita.find({ usuario: req.user["id"], cancelado: "Cancelado" })
+      .populate("usuario", "nombre_completo foto email")
+      .populate("tarjeta", "numero")
+      .populate("medio", "nombre precio")
+      .populate("doctor", "nombre_completo email num_votes total_score ratin foto especialidades")
+      .sort({ fecha: -1 });
+
+    var i, j;
+
+    var nuevas = filtrarCitasHistorial(citas), especialidadPopulada, cita;
 
     for (i = 0; i < citas.length; i++) {
       cita = citas[i];

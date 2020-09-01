@@ -307,3 +307,17 @@ export const filtrarCitasCaducadas = (citas: any) => {
 
   });
 }
+
+export const filtrarCitasHistorial = (citas: any) => {
+  return citas.filter(cita => {
+    const fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
+    fechaCita.setDate(fechaCita.getDate() + 1);
+    fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
+
+    const now = new Date();
+    if (!(moment(now)).isBefore(moment(fechaCita))) {
+      return cita
+    }
+
+  });
+}
