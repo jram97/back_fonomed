@@ -164,7 +164,8 @@ export const nuevo = async (
     const today = new Date(req.body.date.split("T")[0]);
 
     const compare = new Date(req.body.date.split("T")[0]);
-    compare.setDate(compare.getDate() + 1);
+    //QUITAR +1 AL HACER PUSH
+    compare.setDate(compare.getDate());
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
 
     var now = new Date();
