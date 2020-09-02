@@ -37,8 +37,8 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
 
     var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
 
-    for (i = 0; i < citas.length; i++) {
-      cita = citas[i];
+    for (i = 0; i < nuevas.length; i++) {
+      cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
         especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
       }
@@ -67,8 +67,8 @@ export const getAllByDoctorHistory = async (req: Request, res: Response): Promis
 
     var nuevas = filtrarCitasHistorial(citas), especialidadPopulada, cita;
 
-    for (i = 0; i < citas.length; i++) {
-      cita = citas[i];
+    for (i = 0; i < nuevas.length; i++) {
+      cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
         especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
       }
@@ -99,16 +99,18 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
 
     var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
 
-    for (i = 0; i < citas.length; i++) {
-      cita = citas[i];
+    for (i = 0; i < nuevas.length; i++) {
+      cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
         especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
       }
       nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
     }
 
+    const fechaServidor = new Date();
+
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, citas)
+      response(200, 'Ejecutado con exito', true, moment(fechaServidor), nuevas)
     );
   } catch (error) {
     return res.status(404).json(
@@ -119,6 +121,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
 
 /** CITAS DEL USUARIO HISTORIAL*/
 export const getAllByUserHistory = async (req: Request, res: Response): Promise<Response> => {
+  console.log("historial usuario");
   try {
     var citas = await Cita.find({ usuario: req.user["id"], cancelado: "Cancelado" })
       .populate("usuario", "nombre_completo foto email")
@@ -131,8 +134,8 @@ export const getAllByUserHistory = async (req: Request, res: Response): Promise<
 
     var nuevas = filtrarCitasHistorial(citas), especialidadPopulada, cita;
 
-    for (i = 0; i < citas.length; i++) {
-      cita = citas[i];
+    for (i = 0; i < nuevas.length; i++) {
+      cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
         especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
       }
@@ -140,7 +143,7 @@ export const getAllByUserHistory = async (req: Request, res: Response): Promise<
     }
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, citas)
+      response(200, 'Ejecutado con exito', true, null, nuevas)
     );
   } catch (error) {
     return res.status(404).json(

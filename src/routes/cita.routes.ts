@@ -3,16 +3,16 @@ import passport from "passport";
 
 const router = Router();
 
-import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados,concretar, getAllByUserHistory, getAllByDoctorHistory } from "../controllers/cita.controller";
+import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados,concretar, getAllByDoctorHistory, getAllByUserHistory  } from "../controllers/cita.controller";
 
 /** Todos los citas */
 router.get("/citas", passport.authenticate("jwt", { session: false }), getAllByDoctor);
 /** Todos los citas hostorial*/
 router.get("/citas/historial", passport.authenticate("jwt", { session: false }), getAllByDoctorHistory);
 /** Todos los citas */
-router.get("/citas/me", passport.authenticate("jwt", { session: false }), getAllByUserHistory);
+router.get("/citas/me", passport.authenticate("jwt", { session: false }), getAllByUser);
 /** Todos los citas historial*/
-router.get("/citas/me/historial", passport.authenticate("jwt", { session: false }), getAllByUser);
+router.get("/citas/me/historial", passport.authenticate("jwt", { session: false }), getAllByUserHistory);
 /** Registro de citas */
 router.post("/citas", passport.authenticate("jwt", { session: false }), nuevo);
 /** Buscar por estado */
