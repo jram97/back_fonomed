@@ -16,6 +16,7 @@ export interface ICita extends Document {
   estado: boolean;
   fecha: Date;
   factura: string;
+  receta: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,7 +52,7 @@ const citaSchema = new Schema({
   },
   cancelado: {
     type: String,
-    enum: ["Pendiente", "Cancelado","Rechazado"],
+    enum: ["Pendiente", "Cancelado", "Rechazado"],
     default: "Pendiente"
   },
   comentario: {
@@ -63,13 +64,16 @@ const citaSchema = new Schema({
     enum: ["Pendiente", "Recibido", "En Proceso", "Completado"],
     default: "Pendiente"
   },
-  factura:{
+  factura: {
+    type: String
+  },
+  receta: {
     type: String
   },
   estado: {
     type: Boolean,
     default: true
-  }
+  },
 },
   { timestamps: true }
 );

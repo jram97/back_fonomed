@@ -398,17 +398,39 @@ export const agregarFactura = async (
   res: Response
 ): Promise<Response> => {
   try {
-    console.log(req.user['id']);
-    console.log(req.file.path);
 
-    const cita = await Cita.findById(req.params.id);
+    const cita = await Cita.findOne({ _id: req.params.id, doctor: req.user['id'] });
 
     if (cita) {
       cita.factura = req.file.path;
       await cita.save()
 
       return res.status(200).json(
-        response(200, "Ejecutado con exito", true, null, null));
+        response(200, "Ejecutado con exito", true, null, { path: req.file.path }));
+    } else {
+      return res.status(200).json(
+        response(200, null, true, "No existe la cita", null));
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null));
+  }
+}
+
+export const agregarReceta = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+
+    const cita = await Cita.findOne({ _id: req.params.id, doctor: req.user['id'] });
+
+    if (cita) {
+      cita.receta = req.file.path;
+      await cita.save()
+
+      return res.status(200).json(
+        response(200, "Ejecutado con exito", true, null, { path: req.file.path }));
     } else {
       return res.status(200).json(
         response(200, null, true, "No existe la cita", null));
