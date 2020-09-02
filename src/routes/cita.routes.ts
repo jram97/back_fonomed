@@ -1,9 +1,10 @@
 import { Router } from "express";
 import passport from "passport";
+import {factura} from "../libs/multer";
 
 const router = Router();
 
-import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados,concretar, getAllByDoctorHistory, getAllByUserHistory  } from "../controllers/cita.controller";
+import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados,concretar, getAllByDoctorHistory, getAllByUserHistory, agregarFactura  } from "../controllers/cita.controller";
 
 /** Todos los citas */
 router.get("/citas", passport.authenticate("jwt", { session: false }), getAllByDoctor);
@@ -20,6 +21,8 @@ router.get("/citas", passport.authenticate("jwt", { session: false }), getAllEst
 
 /** Update de citas */
 router.put("/citas/:id", passport.authenticate("jwt", { session: false }), actualizar);
+/** Agregar factura a cita */
+router.route("/citas/factura/:id").put(factura.single('foto'),passport.authenticate("jwt", { session: false }),agregarFactura);
 /**Actualizar estado de pago de cita */
 router.put("/citas/concretar/:id",passport.authenticate("jwt", { session: false }),concretar);
 /** Eliminar citas */

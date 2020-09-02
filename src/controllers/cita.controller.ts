@@ -391,6 +391,32 @@ export const concretar = async (
       response(404, null, false, 'Algo salio mal: ' + error, null)
     );
   }
+}
+
+export const agregarFactura = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    console.log(req.user['id']);
+    console.log(req.file.path);
+
+    const cita = await Cita.findById(req.params.id);
+
+    if (cita) {
+      cita.factura = req.file.path;
+      await cita.save()
+
+      return res.status(200).json(
+        response(200, "Ejecutado con exito", true, null, null));
+    } else {
+      return res.status(200).json(
+        response(200, null, true, "No existe la cita", null));
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null));
+  }
 
 }
 
