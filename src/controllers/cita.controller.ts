@@ -402,11 +402,11 @@ export const agregarFactura = async (
     const cita = await Cita.findOne({ _id: req.params.id, doctor: req.user['id'] });
 
     if (cita) {
-      cita.factura = req.file.path;
+      cita.factura = req.file.filename;
       await cita.save()
 
       return res.status(200).json(
-        response(200, "Ejecutado con exito", true, null, { path: req.file.path }));
+        response(200, "Ejecutado con exito", true, null, req.file.filename));
     } else {
       return res.status(200).json(
         response(200, null, true, "No existe la cita", null));
@@ -426,11 +426,11 @@ export const agregarReceta = async (
     const cita = await Cita.findOne({ _id: req.params.id, doctor: req.user['id'] });
 
     if (cita) {
-      cita.receta = req.file.path;
+      cita.receta = req.file.filename;
       await cita.save()
 
       return res.status(200).json(
-        response(200, "Ejecutado con exito", true, null, { path: req.file.path }));
+        response(200, "Ejecutado con exito", true, null, req.file.filename));
     } else {
       return res.status(200).json(
         response(200, null, true, "No existe la cita", null));
