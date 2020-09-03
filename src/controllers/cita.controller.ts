@@ -40,9 +40,9 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
-        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[j]);
+        nuevas[i].doctor.especialidades.especialidad[j] = especialidadPopulada;
       }
-      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
     }
 
     return res.status(200).json(
@@ -70,9 +70,9 @@ export const getAllByDoctorHistory = async (req: Request, res: Response): Promis
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
-        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[j]);
+        nuevas[i].doctor.especialidades.especialidad[j] = especialidadPopulada;
       }
-      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
     }
 
     return res.status(200).json(
@@ -102,9 +102,9 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
-        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[j]);
+        nuevas[i].doctor.especialidades.especialidad[j] = especialidadPopulada;
       }
-      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
     }
 
     const fechaServidor = new Date();
@@ -137,9 +137,9 @@ export const getAllByUserHistory = async (req: Request, res: Response): Promise<
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
       for (j = 0; j < cita.doctor.especialidades.especialidad.length; j++) {
-        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[0]);
+        especialidadPopulada = await Especialidad.findById(cita.doctor.especialidades.especialidad[j]);
+        nuevas[i].doctor.especialidades.especialidad[j] = especialidadPopulada;
       }
-      nuevas[i].doctor.especialidades.especialidad[i] = especialidadPopulada;
     }
 
     return res.status(200).json(

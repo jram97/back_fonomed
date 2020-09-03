@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken } from '../controllers/doctores.controller'
+import {actualizarExpediente } from '../controllers/expediente.controller'
 import { sendTokenForCall } from '../controllers/user.controller';
 
 const router = Router();
@@ -22,6 +23,7 @@ router.get('/doctores/videocall', passport.authenticate("jwt", { session: false 
 /** USERS FUNCTIONS */
 router.delete('/user/delete/:id', passport.authenticate("jwt", { session: false }), eliminar);
 router.put('/user/me/update', passport.authenticate("jwt", { session: false }), cuentaPagadito);
+router.put('/user/expediente', passport.authenticate("jwt", { session: false }), actualizarExpediente);
 
 /** RATINGS */
 /** Agregar Rating */

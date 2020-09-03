@@ -144,11 +144,18 @@ const userSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  expediente: {
+    default: {
+      "Enfermedades Diagnosticadas": [],
+      "Alérgico a": [],
+      "Medicinas permanentes": []
+    }
+  }
 },
   { timestamps: true }
 );
 
-userSchema.pre<IUser>("save", async function(next) {
+userSchema.pre<IUser>("save", async function (next) {
   const user = this;
 
   if (!user.isModified("password")) return next();
@@ -160,7 +167,7 @@ userSchema.pre<IUser>("save", async function(next) {
   next();
 });
 
-userSchema.methods.comparePassword = async function(
+userSchema.methods.comparePassword = async function (
   password: string
 ): Promise<Boolean> {
   return await bcrypt.compare(password, this.password);
