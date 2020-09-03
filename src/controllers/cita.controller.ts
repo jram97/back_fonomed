@@ -110,7 +110,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
     const fechaServidor = new Date();
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, {horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).hour()}, nuevas)
+      response(200, 'Ejecutado con exito', true, { horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).hour() }, nuevas)
     );
   } catch (error) {
     return res.status(404).json(
@@ -167,7 +167,7 @@ export const nuevo = async (
     const today = new Date(req.body.date.split("T")[0]);
 
     const compare = new Date(req.body.date.split("T")[0]);
-    compare.setDate(compare.getDate()+1);
+    compare.setDate(compare.getDate() + 1);
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
 
     var now = new Date();
