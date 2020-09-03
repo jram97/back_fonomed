@@ -31,7 +31,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
     const citas = await Cita.find({ doctor: req.user["id"] })
       .populate("doctor", "nombre_completo email foto genero telefono especialidades")
       .populate("medio", "nombre precio")
-      .populate("usuario", "nombre_completo email foto genero telefono")
+      .populate("usuario", "nombre_completo email foto genero telefono fecha_nacimiento")
       .sort({ fecha: -1 });;
     var i, j;
 
@@ -61,7 +61,7 @@ export const getAllByDoctorHistory = async (req: Request, res: Response): Promis
     const citas = await Cita.find({ doctor: req.user["id"] })
       .populate("doctor", "nombre_completo email foto genero telefono especialidades")
       .populate("medio", "nombre precio")
-      .populate("usuario", "nombre_completo email foto genero telefono")
+      .populate("usuario", "nombre_completo email foto genero telefono fecha_nacimiento")
       .sort({ fecha: -1 });;
     var i, j;
 
@@ -167,7 +167,7 @@ export const nuevo = async (
     const today = new Date(req.body.date.split("T")[0]);
 
     const compare = new Date(req.body.date.split("T")[0]);
-    compare.setDate(compare.getDate() + 1);
+    compare.setDate(compare.getDate());
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
 
     var now = new Date();
