@@ -459,7 +459,7 @@ export const verifySendEmailCambioPassword = async (
       if (!verify) {
         let code = generateCode();
         const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
-        sendEmailCambioPassword(userExists.nombre_completo, newVerify.email, code);
+        sendEmailCambioPassword(userExists.nombre_completo, email, code);
         await newVerify.save();
 
         return res.status(201).json(
