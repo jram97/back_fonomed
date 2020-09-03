@@ -167,8 +167,7 @@ export const nuevo = async (
     const today = new Date(req.body.date.split("T")[0]);
 
     const compare = new Date(req.body.date.split("T")[0]);
-    //QUITAR +1 AL HACER PUSH
-    compare.setDate(compare.getDate());
+    compare.setDate(compare.getDate()+1);
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
 
     var now = new Date();
@@ -178,7 +177,7 @@ export const nuevo = async (
         .status(407)
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
     }
-
+    //QUITAR +1 AL HACER PUSH
     const dayName = days[today.getDay()];
     console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
