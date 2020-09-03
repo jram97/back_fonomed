@@ -25,6 +25,7 @@ export interface IUser extends Document {
   codigo_postal: any;
   ciudad: any;
   direccion: any;
+  expediente: any;
   comparePassword: (password: string) => Promise<Boolean>;
 }
 
@@ -145,11 +146,9 @@ const userSchema = new Schema({
     default: true,
   },
   expediente: {
-    default: {
-      "Enfermedades Diagnosticadas": [],
-      "Alérgico a": [],
-      "Medicinas permanentes": []
-    }
+    "Enfermedades Diagnosticadas": [],
+    "Alérgico a": [],
+    "Medicinas permanentes": []
   }
 },
   { timestamps: true }
