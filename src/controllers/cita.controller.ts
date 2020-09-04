@@ -170,15 +170,16 @@ export const nuevo = async (
     compare.setDate(compare.getDate());
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
 
-    var now = new Date();
+    const now = new Date();
+    console.log(`Hora: ${now.getHours()}:${now.getMinutes()}, y de moment: ${moment(now)}, horas: ${moment(now).hour()}`);
 
-    if ((moment(now)).isAfter(moment(compare))) {
+    /*if ((moment(now)).isAfter(moment(compare))) {
       return res
         .status(407)
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
-    }
+    }*/
     //QUITAR +1 AL HACER PUSH
-    const dayName = days[today.getDay()];
+    const dayName = days[today.getDay() ];
     console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
