@@ -155,3 +155,18 @@ export const eliminar = async (
     );
   }
 };
+
+/** Eliminar por dia */
+
+export const eliminarPorDia = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
