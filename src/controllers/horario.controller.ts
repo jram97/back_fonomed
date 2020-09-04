@@ -163,7 +163,13 @@ export const eliminarPorDia = async (
   res: Response
 ): Promise<Response> => {
   try {
-    
+    const { dia } = req.body
+    console.log("dia");
+    await Horario.deleteMany({ dia: dia, doctor: req.user['id'] });
+
+    return res.status(200).json(
+      response(200, "Ejecutado con exito", true, null, null)
+    );
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)
