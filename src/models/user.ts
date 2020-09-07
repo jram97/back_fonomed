@@ -148,7 +148,8 @@ const userSchema = new Schema({
   expediente: {
     "Enfermedades Diagnosticadas": [],
     "Alérgico a": [],
-    "Medicinas permanentes": []
+    "Medicinas permanentes": [],
+    "Medicinas recetadas": []
   }
 },
   { timestamps: true }

@@ -159,7 +159,7 @@ export const nuevoRating = async (
       const votes = parseInt(userDoctor.num_votes + 1);
       const tScore = parseInt(userDoctor.total_score + score);
       const nRating =
-        parseInt(userDoctor.total_score) / parseInt(userDoctor.num_votes);
+        tScore / votes;
 
       await User.findByIdAndUpdate(userDoctor._id, {
         num_votes: votes,
@@ -170,13 +170,13 @@ export const nuevoRating = async (
       return res.status(200).json(
         response(200, 'Ejecutado con exito', true, null, null)
       );
-    }else{
+    } else {
       return res.status(200).json(
         response(201, null, true, "No existe ese doctor", null)
       );
     }
 
-   
+
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

@@ -24,6 +24,10 @@ export const actualizarExpediente = async (
             if (req.body["Medicinas permanentes"]) {
                 user.expediente["Medicinas permanentes"] = user.expediente["Medicinas permanentes"].concat(req.body["Medicinas permanentes"]);
             }
+
+            if (req.body["Medicinas recetadas"]) {
+                user.expediente["Medicinas recetadas"] = user.expediente["Medicinas recetadas"].concat(req.body["Medicinas recetadas"]);
+            }
             
             await user.save();
             return res.status(200).json(
