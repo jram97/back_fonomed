@@ -163,7 +163,7 @@ export const eliminarPorDia = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { dia } = req.body
+    const { dia } = req.params
     console.log("dia");
     await Horario.deleteMany({ dia: dia, doctor: req.user['id'] });
 

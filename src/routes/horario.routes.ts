@@ -18,7 +18,7 @@ router.post("/horario", passport.authenticate("jwt", { session: false }), nuevo)
 /** Update de horarios */
 router.put("/horario/:id", passport.authenticate("jwt", { session: false }), actualizar);
 /** Eliminar horarios */
-router.delete("/horario/dia", passport.authenticate("jwt", { session: false }), eliminarPorDia);
+router.delete("/horario/dia/:dia", passport.authenticate("jwt", { session: false }), eliminarPorDia);
 router.delete("/horario/:id", passport.authenticate("jwt", { session: false }), eliminar);
 
 export default router;
