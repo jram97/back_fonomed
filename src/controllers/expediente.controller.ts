@@ -28,13 +28,49 @@ export const actualizarExpediente = async (
             if (req.body["Medicinas recetadas"]) {
                 user.expediente["Medicinas recetadas"] = user.expediente["Medicinas recetadas"].concat(req.body["Medicinas recetadas"]);
             }
-            
+
             await user.save();
             return res.status(200).json(
                 response(200, "Ejecutado con exito", true, null, null));
         } else {
             return res.status(200).json(
                 response(200, null, true, "No existe el usuario", null));
+        }
+
+    } catch (error) {
+        return res.status(404).json(
+            response(404, null, false, 'Algo salio mal: ' + error, null));
+    }
+}
+
+export const expedientePaciente = async (
+    req: Request,
+    res: Response
+): Promise<Response> => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            return res.status(200).json(
+                response(200, "Ejecutado con exito", true, null, user.expediente));
+        }
+
+    } catch (error) {
+        return res.status(404).json(
+            response(404, null, false, 'Algo salio mal: ' + error, null));
+    }
+}
+
+export const expediente = async (
+    req: Request,
+    res: Response
+): Promise<Response> => {
+    try {
+        const user = await User.findById(req.user["id"]);
+
+        if (user) {
+            return res.status(200).json(
+                response(200, "Ejecutado con exito", true, null, user.expediente));
         }
 
     } catch (error) {
