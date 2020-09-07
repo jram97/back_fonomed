@@ -301,7 +301,7 @@ export const filtrarCitasCaducadas = (citas: any) => {
     fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
 
     const now = new Date();
-    if (!(moment(now)).isAfter(moment(fechaCita))) {
+    if (!(moment(now)).utcOffset(-360).isAfter(moment(fechaCita))) {
       return cita
     }
 
@@ -315,7 +315,7 @@ export const filtrarCitasHistorial = (citas: any) => {
     fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
 
     const now = new Date();
-    if (!(moment(now)).isBefore(moment(fechaCita))) {
+    if (!(moment(now)).utcOffset(-360).isBefore(moment(fechaCita))) {
       return cita
     }
 
