@@ -12,6 +12,7 @@ export interface ICita extends Document {
   medio: IMedio;
   cancelado: string;
   comentario: string,
+  shareExp: boolean,
   estados: any;
   estado: boolean;
   fecha: Date;
@@ -58,6 +59,10 @@ const citaSchema = new Schema({
   comentario: {
     type: String,
     default: ""
+  },
+  shareExp:{
+    type: Boolean,
+    default:false
   },
   estados: {
     type: String,

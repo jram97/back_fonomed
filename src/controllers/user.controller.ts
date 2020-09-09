@@ -456,20 +456,18 @@ export const verifySendEmailCambioPassword = async (
     const verify = await Verify.findOne({ email: email });
 
     if (userExists) {
-      if (!verify) {
-        let code = generateCode();
-        const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
-        sendEmailCambioPassword(userExists.nombre_completo, email, code);
-        await newVerify.save();
-
-        return res.status(201).json(
-          response(201, "Se a enviado el codigo al correo.", true, null, null)
-        );
-      } else {
-        return res.status(201).json(
-          response(201, "Codigo ya a sido enviado anteriormente.", true, null, null)
-        );
+      if (verify) {
+        await Verify.findByIdAndRemove(verify._id);
       }
+
+      let code = generateCode();
+      const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
+      sendEmailCambioPassword(userExists.nombre_completo, email, code);
+      await newVerify.save();
+
+      return res.status(201).json(
+        response(201, "El codigo ha sido enviado", true, null, null)
+      );
     } else {
       return res.status(404).json(
         response(404, null, false, 'Usuario no existe.', null)

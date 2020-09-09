@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { limitAPI } from '../libs/functions';
 import {
   signIn,
   enviarSMS,
@@ -48,7 +49,7 @@ router.post("/recibirmail", verifyRecibirEmail);
 /** Cambio de contraseña */
 router.put("/cambio-contrasenia", passport.authenticate("jwt", { session: false }), cambiarContrasenia);
 /** Enviar email cambio de contraseña */
-router.post("/enviarmail/cambiopass", verifySendEmailCambioPassword);
+router.post("/enviarmail/cambiopass", limitAPI, verifySendEmailCambioPassword);
 /** Recibir email cambio de contraseña */
 router.post("/recibirmail/cambiopass", verifyRecibirEmailCambioPassword);
 

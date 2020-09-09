@@ -33,9 +33,10 @@ export const decrypt = (data: string) => {
 
 /** Bloquear peticiones por ip */
 export const limitAPI = limit({
-  windowMs: 45 * 60 * 1000,
+  //windowMs: 720 * 60 * 1000,
+  windowMs: 360 * 60 * 1000,
   max: 1,
-  message: "Por favor espera 45 minutos"
+  message: "Intenta de nuevo en 6 horas"
 })
 
 /** Eliminar archivos fisicos del proyectos */
