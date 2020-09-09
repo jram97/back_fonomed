@@ -299,10 +299,16 @@ export const filtrarCitasCaducadas = (citas: any) => {
   return citas.filter(cita => {
     const fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
-    fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
+    //fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
+
 
     const now = new Date();
-    if (!(moment()).utcOffset(-360).isAfter(moment(fechaCita))) {
+    const momentOffset = moment()//.utcOffset(-360)
+    //console.log(moment(fechaCita));
+    //console.log("xd", moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]));
+    if (!momentOffset.isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+      //console.log(cita);
+      //console.log(momentOffset.diff(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]), "minutes"));
       return cita
     }
 
@@ -311,12 +317,17 @@ export const filtrarCitasCaducadas = (citas: any) => {
 
 export const filtrarCitasHistorial = (citas: any) => {
   return citas.filter(cita => {
-    const fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
+    var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
-    fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
+    //fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
 
-    const now = new Date();
-    if (!(moment()).utcOffset(-360).isBefore(moment(fechaCita))) {
+    var now = new Date();
+    const momentnormal = moment();
+    const momentoffset = momentnormal.utcOffset(-360);
+    console.log(`normal: ${momentnormal}, con offset: ${momentoffset}`);
+    if (!(moment()).isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+      //console.log(moment().diff(moment(fechaCita), "minutes"));
+      //console.log("xd", momentOffset.diff(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]), "minutes"));
       return cita
     }
 
