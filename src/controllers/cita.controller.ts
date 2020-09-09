@@ -110,7 +110,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
     const fechaServidor = new Date();
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, { horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).hour() }, nuevas)
+      response(200, 'Ejecutado con exito', true, { horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).utcOffset(-360).hour() }, nuevas)
     );
   } catch (error) {
     return res.status(404).json(
@@ -179,7 +179,7 @@ export const nuevo = async (
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
     }*/
     //QUITAR +1 AL HACER PUSH
-    const dayName = days[today.getDay() ];
+    const dayName = days[today.getDay()];
     console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
