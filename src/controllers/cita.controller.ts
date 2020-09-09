@@ -28,7 +28,7 @@ export const getAllEstados = async (req: Request, res: Response): Promise<Respon
 /** CITAS DEL DOCTOR */
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const citas = await Cita.find({ doctor: req.user["id"] })
+    const citas = await Cita.find({ doctor: req.user["id"], cancelado: "Cancelado" })
       .populate("doctor", "nombre_completo email foto genero telefono especialidades")
       .populate("medio", "nombre precio")
       .populate("usuario", "nombre_completo email foto genero telefono fecha_nacimiento")
@@ -58,7 +58,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
 /** CITAS DEL DOCTOR */
 export const getAllByDoctorHistory = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const citas = await Cita.find({ doctor: req.user["id"] })
+    const citas = await Cita.find({ doctor: req.user["id"], cancelado: "Cancelado" })
       .populate("doctor", "nombre_completo email foto genero telefono especialidades")
       .populate("medio", "nombre precio")
       .populate("usuario", "nombre_completo email foto genero telefono fecha_nacimiento")
@@ -106,11 +106,19 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
         nuevas[i].doctor.especialidades.especialidad[j] = especialidadPopulada;
       }
     }
-
+    var diff = 0;
     const fechaServidor = new Date();
+    var compare = new Date();
+    if (nuevas.length > 0) {
+      compare = new Date(nuevas[0].fecha);
+      compare.setDate(compare.getDate() + 1);
+      compare.setHours(nuevas[0].fin.split(":")[0], nuevas[0].fin.split(":")[1]);
+      console.log(nuevas[0].fin.split(":")[0]);
+      diff = moment(compare).diff(fechaServidor, "minutes")
+    }
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, { horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).utcOffset(-360).hour() }, nuevas)
+      response(200, 'Ejecutado con exito', true, { horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).utcOffset(-360).hour(), diferencia: diff }, nuevas)
     );
   } catch (error) {
     return res.status(404).json(
