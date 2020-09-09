@@ -322,10 +322,10 @@ export const filtrarCitasHistorial = (citas: any) => {
     //fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
 
     var now = new Date();
-    const momentnormal = moment();
+    const momentnormal = moment.utc();
     const momentoffset = momentnormal.utcOffset(-360);
-    console.log(`normal: ${momentnormal}, con offset: ${momentoffset}`);
-    if (!(moment()).isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+    console.log(`normal: ${momentnormal}, con offset: ${momentoffset}, fecha cita: ${moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1])}`);
+    if (!moment.utc().isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
       //console.log(moment().diff(moment(fechaCita), "minutes"));
       //console.log("xd", momentOffset.diff(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]), "minutes"));
       return cita
