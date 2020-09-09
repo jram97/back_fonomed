@@ -303,7 +303,7 @@ export const filtrarCitasCaducadas = (citas: any) => {
 
 
     const now = new Date();
-    const momentOffset = moment()//.utcOffset(-360)
+    const momentOffset = moment().utc().utcOffset(-360)
     //console.log(moment(fechaCita));
     //console.log("xd", moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]));
     if (!momentOffset.isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
