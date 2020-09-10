@@ -298,7 +298,7 @@ export const verificarCita = (cita: any, inicio: any, fin: any) => {
 export const filtrarCitasCaducadas = (citas: any) => {
   return citas.filter(cita => {
     const fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
-    fechaCita.setDate(fechaCita.getDate() + 1);
+    fechaCita.setDate(fechaCita.getDate());
     //fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
 
 
@@ -318,7 +318,7 @@ export const filtrarCitasCaducadas = (citas: any) => {
 export const filtrarCitasHistorial = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
-    fechaCita.setDate(fechaCita.getDate() + 1);
+    fechaCita.setDate(fechaCita.getDate());
     //fechaCita.setHours(cita.fin.split(":")[0], cita.fin.split(":")[1]);
 
     var now = new Date();

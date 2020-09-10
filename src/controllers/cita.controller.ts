@@ -111,7 +111,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
     var compare = new Date();
     if (nuevas.length > 0) {
       compare = new Date(nuevas[0].fecha);
-      compare.setDate(compare.getDate() + 1);
+      compare.setDate(compare.getDate()+1);
       compare.setHours(nuevas[0].fin.split(":")[0], nuevas[0].fin.split(":")[1]);
       console.log(nuevas[0].fin.split(":")[0]);
       diff = moment(compare).diff(fechaServidor, "minutes")
