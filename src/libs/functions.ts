@@ -300,7 +300,8 @@ export const filtrarCitasCaducadas = (citas: any) => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate()+1);
     
-    if (!moment.utc().isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+    if (!moment.utc().utcOffset(-360).isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+      //console.log(moment.utc().utcOffset(-360).hour());
       return cita
     }
 
@@ -311,8 +312,8 @@ export const filtrarCitasHistorial = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate()+1);
-    
-    if (!moment.utc().isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+    if (!moment.utc().utcOffset(-360).isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+      //console.log(moment.utc().utcOffset(-360).hour());
       return cita
     }
 
