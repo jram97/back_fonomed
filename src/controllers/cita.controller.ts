@@ -106,21 +106,21 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
         nuevas[i].doctor.especialidades.especialidad[j] = especialidadPopulada;
       }
     }
-    var diff = 0;
+    /*var diff = 0;
     const fechaServidor = new Date();
     var compare = new Date();
     if (nuevas.length > 0) {
       compare = new Date(nuevas[0].fecha);
       compare.setDate(compare.getDate() + 1);
       //compare.setHours(nuevas[0].fin.split(":")[0], nuevas[0].fin.split(":")[1]);
-      console.log(nuevas[0].fin.split(":")[0]);
-      console.log(compare)
+      //console.log(nuevas[0].fin.split(":")[0]);
+      //console.log(compare)
       //var momentNew
       diff = moment.utc().diff(moment(compare).hour(nuevas[0].fin.split(":")[0]).minute(nuevas[0].fin.split(":")[1]), "minutes")
-    }
+    }*/
 
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, { horaCompleta: moment(fechaServidor), numeroHoras: moment(fechaServidor).utcOffset(-360).hour(), diferencia: diff }, nuevas)
+      response(200, 'Ejecutado con exito', true, null, nuevas)
     );
   } catch (error) {
     return res.status(404).json(

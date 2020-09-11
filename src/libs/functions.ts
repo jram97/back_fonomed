@@ -298,11 +298,19 @@ export const verificarCita = (cita: any, inicio: any, fin: any) => {
 export const filtrarCitasCaducadas = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
-    fechaCita.setDate(fechaCita.getDate()+1);
-    
-    if (!moment.utc().utcOffset(-360).isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
-      //console.log(moment.utc().utcOffset(-360).hour());
+    fechaCita.setDate(fechaCita.getDate() + 1);
+
+    /*if (!moment.utc().utcOffset(-360).isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+      console.log(moment.utc().utcOffset(-360).hour());
       return cita
+    }*/
+
+    const now = moment();
+    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]);
+
+    console.log(mFechaCita.diff(now, "minutes"));
+    if (mFechaCita.diff(now, "minutes") >= 0) {
+      return cita;
     }
 
   });
@@ -311,10 +319,17 @@ export const filtrarCitasCaducadas = (citas: any) => {
 export const filtrarCitasHistorial = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
-    fechaCita.setDate(fechaCita.getDate()+1);
-    if (!moment.utc().utcOffset(-360).isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
-      //console.log(moment.utc().utcOffset(-360).hour());
+    fechaCita.setDate(fechaCita.getDate() + 1);
+    const now = moment();
+    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]);
+
+    /*if (!nowUtc.isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
+      //console.log(cita.fecha);
       return cita
+    }*/
+    console.log(now.diff(mFechaCita, "minutes"));
+    if (now.diff(mFechaCita, "minutes") > 0) {
+      return cita;
     }
 
   });
