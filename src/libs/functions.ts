@@ -307,10 +307,10 @@ export const filtrarCitasCaducadas = (citas: any) => {
 
     const now = moment();
     const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]);
-    console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
+    //console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
 
-    console.log(mFechaCita.diff(now, "minutes"));
-    if (mFechaCita.diff(now, "minutes") >= 0) {
+    //console.log(now.diff(mFechaCita, "minutes"));
+    if (mFechaCita.diff(now, "minutes") > 360) {
       return cita;
     }
 
@@ -328,9 +328,9 @@ export const filtrarCitasHistorial = (citas: any) => {
       //console.log(cita.fecha);
       return cita
     }*/
-    console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
-    console.log(now.diff(mFechaCita, "minutes"));
-    if (now.diff(mFechaCita, "minutes") > 0) {
+    //console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
+    //console.log(now.diff(mFechaCita, "minutes"));
+    if (now.diff(mFechaCita, "minutes") > 360) {
       return cita;
     }
 
