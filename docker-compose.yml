@@ -2,14 +2,16 @@ version: '3'
 services:
   app:
     container_name: docker-node-fonomed
+    environment:
+     - "TZ=America/El_Salvador"
     restart: always
     build: .
     ports:
       - '3000:3000'
     #links:
-      #- mongo
+     # - mongo
   #mongo:
-    #container_name: mongo
-    #image: mongo
-    #ports:
-    #  - '27017:27017'
+      #container_name: mongo
+      #image: mongo
+      #ports:
+       #- '27017:27017'
