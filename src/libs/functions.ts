@@ -310,7 +310,7 @@ export const filtrarCitasCaducadas = (citas: any) => {
     //console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
 
     console.log("Pendientes",now.diff(mFechaCita, "minutes"));
-    if (now.diff(mFechaCita, "minutes") <= 360) {
+    if (now.diff(mFechaCita, "minutes") <= 0) {
       return cita;
     }
 
@@ -330,7 +330,7 @@ export const filtrarCitasHistorial = (citas: any) => {
     }*/
     //console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
     console.log("Historial",now.diff(mFechaCita, "minutes"));
-    if (now.diff(mFechaCita, "minutes") > 360) {
+    if (now.diff(mFechaCita, "minutes") > 0) {
       return cita;
     }
 
