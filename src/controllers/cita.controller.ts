@@ -29,7 +29,7 @@ export const getAllEstados = async (req: Request, res: Response): Promise<Respon
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
   try {
     const citas = await Cita.find({ doctor: req.user["id"], cancelado: "Cancelado" })
-      .populate("doctor", "nombre_completo email foto genero telefono especialidades")
+      .populate("doctor", "nombre_completo email rating foto genero telefono especialidades")
       .populate("medio", "nombre precio")
       .populate("usuario", "nombre_completo email foto genero telefono fecha_nacimiento")
       .sort({ fecha: -1 });;
@@ -59,7 +59,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
 export const getAllByDoctorHistory = async (req: Request, res: Response): Promise<Response> => {
   try {
     const citas = await Cita.find({ doctor: req.user["id"], cancelado: "Cancelado" })
-      .populate("doctor", "nombre_completo email foto genero telefono especialidades")
+      .populate("doctor", "nombre_completo email rating foto genero telefono especialidades")
       .populate("medio", "nombre precio")
       .populate("usuario", "nombre_completo email foto genero telefono fecha_nacimiento")
       .sort({ fecha: -1 });;
@@ -92,7 +92,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
       .populate("usuario", "nombre_completo foto email")
       .populate("tarjeta", "numero")
       .populate("medio", "nombre precio")
-      .populate("doctor", "nombre_completo email num_votes total_score ratin foto especialidades")
+      .populate("doctor", "nombre_completo email num_votes total_score rating foto especialidades")
       .sort({ fecha: -1 });
 
     var i, j;
@@ -137,7 +137,7 @@ export const getAllByUserHistory = async (req: Request, res: Response): Promise<
       .populate("usuario", "nombre_completo foto email")
       .populate("tarjeta", "numero")
       .populate("medio", "nombre precio")
-      .populate("doctor", "nombre_completo email num_votes total_score ratin foto especialidades")
+      .populate("doctor", "nombre_completo email num_votes total_score rating foto especialidades")
       .sort({ fecha: -1 });
 
     var i, j;
@@ -189,7 +189,7 @@ export const nuevo = async (
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
     }*/
     //QUITAR +1 AL HACER PUSH
-    const dayName = days[today.getDay()];
+    const dayName = days[today.getDay() + 1];
     console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
