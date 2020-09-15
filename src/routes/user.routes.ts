@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import passport from "passport";
-import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken } from '../controllers/doctores.controller'
+import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente } from '../controllers/expediente.controller'
 import { sendTokenForCall } from '../controllers/user.controller';
+import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 const router = Router();
 
@@ -23,6 +24,11 @@ router.get('/doctores/videocall', passport.authenticate("jwt", { session: false 
 router.delete('/user/delete/:id', passport.authenticate("jwt", { session: false }), eliminar);
 router.put('/user/me/update', passport.authenticate("jwt", { session: false }), cuentaPagadito);
 router.put('/user/expediente', passport.authenticate("jwt", { session: false }), actualizarExpediente);
+
+/**Membresia */
+router.post('/user/membresia', passport.authenticate("jwt", { session: false }), nuevaMembresia);
+router.post('/user/membresia/verificar', passport.authenticate("jwt", { session: false }), verificarMembresia);
+router.put('/user/membresia/cancelar', passport.authenticate("jwt", { session: false }), cancelarMembresia);
 
 /** Expediente */
 router.get('/user/expediente/me', passport.authenticate("jwt", { session: false }), expediente);
