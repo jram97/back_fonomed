@@ -119,7 +119,7 @@ export const getSearch = async (
         var i;
 
         for (i = 0; i < x.especialidades.especialidad.length; i++) {
-          if (x.especialidades.especialidad[0].nombre == especialidad) {
+          if (x.especialidades.especialidad[i].nombre == especialidad) {
             return x;
             break;
           }
