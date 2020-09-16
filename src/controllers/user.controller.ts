@@ -394,6 +394,45 @@ export const signIn = async (
   }
 };
 
+export const doctorDisponible = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const doctores = await User.find({ tipo: "DOC", estado: true }).populate("especialidades.especialidad");
+    let data = doctores;
+
+    data = data.filter((x, index) => {
+      var i;
+      console.log("Doctor", index);
+      for (i = 0; i < x.especialidades.especialidad.length; i++) {
+        if (x.especialidades.especialidad[i].nombre == "Medico General") {
+          return x;
+        }
+      }
+    });
+    var retornar = false, numeroDoctor;
+
+    while (!retornar) {
+      numeroDoctor = Math.floor(Math.random() * data.length);
+
+      if (!req.body.doctores.includes(data[numeroDoctor]._id)) {
+        retornar = true
+      }
+    }
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, data[numeroDoctor])
+    );
+
+
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 
 /** RECIBIR EMAIL :: EMAIL, CODE */
 export const verifyRecibirEmailCambioPassword = async (

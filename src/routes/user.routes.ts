@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente } from '../controllers/expediente.controller'
-import { sendTokenForCall } from '../controllers/user.controller';
+import { sendTokenForCall, doctorDisponible } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 const router = Router();
@@ -16,6 +16,8 @@ router.get('/doctores/id/:id', getById);
 router.get('/doctores/me', passport.authenticate("jwt", { session: false }), getByToken);
 /** Usuario buscar */
 router.get('/doctores/search', getSearch);
+/**Obtener primer doctor disponible */
+router.put('/doctores/getDoctor', doctorDisponible);
 
 /** Send token call and videocall */
 router.get('/doctores/videocall', passport.authenticate("jwt", { session: false }), sendTokenForCall);
