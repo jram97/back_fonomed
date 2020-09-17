@@ -17,7 +17,7 @@ router.get('/doctores/me', passport.authenticate("jwt", { session: false }), get
 /** Usuario buscar */
 router.get('/doctores/search', getSearch);
 /**Obtener primer doctor disponible */
-router.put('/doctores/getDoctor', doctorDisponible);
+router.post('/doctores/getDoctor', doctorDisponible);
 
 /** Send token call and videocall */
 router.get('/doctores/videocall', passport.authenticate("jwt", { session: false }), sendTokenForCall);
