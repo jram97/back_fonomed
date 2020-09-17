@@ -44,6 +44,11 @@ const pagoSchema = new Schema({
     type: String,
     required: true,
     default: ""
+  },
+  recurrente: {
+    type: String,
+    required: true,
+    default: "null"
   }
 
 }, { timestamps: true });

@@ -12,9 +12,9 @@ export const nuevaMembresia = async (
     try {
         const user = await User.findById(req.user['id']);
         const doctor = await User.findById(req.body.doctor);
-        const membresia = await Membresia.findOne({usuario: req.user['id'], doctor: req.body.doctor});
+        const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor });
 
-        if(!membresia){
+        if (!membresia) {
             if (user && doctor) {
                 return res.status(200).json(
                     response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'] }).save()));
@@ -22,7 +22,7 @@ export const nuevaMembresia = async (
                 return res.status(201).json(
                     response(201, null, false, "No existe el doctor o el usuario", null));
             }
-        }else{
+        } else {
             return res.status(201).json(
                 response(201, null, false, "Ya posees membresia con este doctor", null));
         }
@@ -41,7 +41,14 @@ export const cancelarMembresia = async (
         const doctor = await User.findById(req.body.doctor);
 
         if (user && doctor) {
-            await Membresia.findOneAndDelete({doctor: req.body.doctor, usuario: req.user['id']});
+            await Membresia.findOneAndDelete({ doctor: req.body.doctor, usuario: req.user['id'] });
+            await User.findByIdAndUpdate(req.user['id'], {
+                tarjeta: req.body.tarjeta,
+                premium: {
+                    recurrente: "false",
+                    fecha: new Date()
+                }
+            });
             return res.status(200).json(
                 response(200, "ejecutado con exito", false, null, null));
         } else {
@@ -63,13 +70,13 @@ export const verificarMembresia = async (
         const doctor = await User.findById(req.body.doctor);
 
         if (user && doctor) {
-            const membresia = await Membresia.findOne({usuario: req.user['id'], doctor: req.body.doctor});
-            if(membresia){
+            const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor });
+            if (membresia) {
                 return res.status(200).json(
-                    response(200, "ejecutado con exito", false, null, {status: true}));
-            }else{
+                    response(200, "ejecutado con exito", false, null, { status: true }));
+            } else {
                 return res.status(200).json(
-                    response(200, "ejecutado con exito", false, null, {status: false}));
+                    response(200, "ejecutado con exito", false, null, { status: false }));
             }
         } else {
             return res.status(201).json(

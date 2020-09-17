@@ -46,8 +46,8 @@ const userSchema = new Schema({
   },
   premium: {
     recurrente: {
-      type: Boolean,
-      default: false
+      type: String,
+      default: "false"
     },
     fecha: {
       type: Date,
