@@ -45,7 +45,7 @@ export const cancelarMembresia = async (
             await User.findByIdAndUpdate(req.user['id'], {
                 tarjeta: req.body.tarjeta,
                 premium: {
-                    recurrente: "false",
+                    recurrente: "null",
                     fecha: new Date()
                 }
             });

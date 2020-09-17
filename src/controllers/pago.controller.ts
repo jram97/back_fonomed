@@ -86,7 +86,7 @@ export const nuevo = async (
       const user = await User.findByIdAndUpdate(req.user['id'], {
         tarjeta:req.body.tarjeta,
         premium: {
-          recurrente: "true",
+          recurrente: req.body.recurrente,
           fecha: new Date()
         }
       });
