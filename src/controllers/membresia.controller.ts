@@ -72,10 +72,10 @@ export const verificarMembresia = async (
             const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor });
             if (membresia) {
                 return res.status(200).json(
-                    response(200, "ejecutado con exito", false, null, { status: true }));
+                    response(200, "ejecutado con exito", false, null, { status: true, premium: user.premium }));
             } else {
                 return res.status(200).json(
-                    response(200, "ejecutado con exito", false, null, { status: false }));
+                    response(200, "ejecutado con exito", false, null, { status: false, premium: user.premium }));
             }
         } else {
             return res.status(201).json(

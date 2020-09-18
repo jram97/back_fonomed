@@ -23,6 +23,7 @@ router.post('/doctores/getDoctor', doctorDisponible);
 router.get('/doctores/videocall', passport.authenticate("jwt", { session: false }), sendTokenForCall);
 
 /** USERS FUNCTIONS */
+//router.get("user/me", passport.authenticate("jwt", { session: false }), getByTokenUser);
 router.delete('/user/delete/:id', passport.authenticate("jwt", { session: false }), eliminar);
 router.put('/user/me/update', passport.authenticate("jwt", { session: false }), cuentaPagadito);
 router.put('/user/expediente', passport.authenticate("jwt", { session: false }), actualizarExpediente);
