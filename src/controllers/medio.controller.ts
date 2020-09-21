@@ -48,7 +48,7 @@ export const nuevo = async (
   }
 
   try {
-    const existeMedio = await Medio.findOne({ nombre: req.body.nombre });
+    const existeMedio = await Medio.findOne({ nombre: req.body.nombre, doctor: req.user['id'] });
 
     if (!existeMedio) {
       const nuevoMedio = new Medio({
