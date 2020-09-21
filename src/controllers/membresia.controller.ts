@@ -42,12 +42,14 @@ export const cancelarMembresia = async (
 
         if (user && doctor) {
             await Membresia.findOneAndDelete({ doctor: req.body.doctor, usuario: req.user['id'] });
-            await User.findByIdAndUpdate(req.user['id'], {
+            /*await User.findByIdAndUpdate(req.user['id'], {
                 tarjeta: req.body.tarjeta,
                 premium: {
                     recurrente: "null",
                 }
-            });
+            });*/
+            user.premium.recurrente = "null";
+            user.save();
             return res.status(200).json(
                 response(200, "ejecutado con exito", false, null, null));
         } else {
