@@ -10,17 +10,28 @@ export const nuevaMembresia = async (
     res: Response
 ): Promise<Response> => {
     try {
+        //console.log(req.user);
         const user = await User.findById(req.user['id']);
         const doctor = await User.findById(req.body.doctor);
-        const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor });
+        const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor, tipo: req.body.tipo });
 
         if (!membresia) {
-            if (user && doctor) {
-                return res.status(200).json(
-                    response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta: req.body.tarjeta }).save()));
+            if (user) {
+                if (req.user["tipo"] === "CLI") {
+                    if (doctor) {
+                        return res.status(200).json(
+                            response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.user['tipo'] }).save()));
+                    } else {
+                        return res.status(201).json(
+                            response(201, null, false, "No existe el doctor", null));
+                    }
+                } else if (req.user["tipo"] === "DOC") {
+                    return res.status(200).json(
+                        response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.user['tipo'] }).save()));
+                }
             } else {
                 return res.status(201).json(
-                    response(201, null, false, "No existe el doctor o el usuario", null));
+                    response(201, null, false, "No existe el usuario", null));
             }
         } else {
             return res.status(201).json(
@@ -38,23 +49,27 @@ export const cancelarMembresia = async (
 ): Promise<Response> => {
     try {
         const user = await User.findById(req.user['id']);
-        const doctor = await User.findById(req.body.doctor);
-
-        if (user && doctor) {
-            await Membresia.findOneAndDelete({ doctor: req.body.doctor, usuario: req.user['id'] });
-            /*await User.findByIdAndUpdate(req.user['id'], {
-                tarjeta: req.body.tarjeta,
-                premium: {
-                    recurrente: "null",
+        if (user) {
+            if (req.user["tipo"] === "CLI") {
+                const doctor = await User.findById(req.body.doctor);
+                if (doctor) {
+                    await Membresia.findOneAndDelete({ usuario: req.user['id'], doctor: req.body.doctor });
+                } else {
+                    return res.status(201).json(
+                        response(201, null, false, "No existe el doctor", null));
                 }
-            });*/
+            } else if (req.user["tipo"] === "DOC") {
+                console.log('doctor');
+                await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.user["tipo"]});
+            }
             user.premium.recurrente = "null";
             user.save();
+
             return res.status(200).json(
                 response(200, "ejecutado con exito", false, null, null));
         } else {
             return res.status(201).json(
-                response(201, null, false, "No existe el doctor o el usuario", null));
+                response(201, null, false, "el usuario", null));
         }
     } catch (error) {
         return res.status(404).json(

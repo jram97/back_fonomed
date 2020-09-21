@@ -18,6 +18,9 @@ const membresiaSchema = new Schema({
     tarjeta: {
         type: Schema.Types.ObjectId,
         ref: "Tarjeta"
+    },
+    tipo: {
+        type: String,
     }
 },
     { timestamps: true }
