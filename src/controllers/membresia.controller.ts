@@ -79,7 +79,7 @@ export const verificarMembresia = async (
             }
         } else {
             return res.status(201).json(
-                response(201, null, false, "No existe el doctor o el usuario", null));
+                response(404, null, false, "No existe el doctor o el usuario", null));
         }
     } catch (error) {
         return res.status(404).json(
