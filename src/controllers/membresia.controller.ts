@@ -84,9 +84,17 @@ export const verificarMembresia = async (
     try {
         const user = await User.findById(req.user['id']);
         const doctor = await User.findById(req.body.doctor);
+        var membresia;
+        if (user) {
+            if (req.body.tipo === "CLI") {
+                console.log("cliente");
+                membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor }).populate("tarjeta");
 
-        if (user && doctor) {
-            const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor }).populate("tarjeta");
+            } else if (req.body.tipo === "DOC") {
+                console.log("doctor");
+                membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo }).populate("tarjeta");
+            }
+
             if (membresia) {
                 return res.status(200).json(
                     response(200, "ejecutado con exito", false, null, { status: true, premium: user.premium, membresia }));
@@ -94,6 +102,7 @@ export const verificarMembresia = async (
                 return res.status(200).json(
                     response(200, "ejecutado con exito", false, null, { status: false, premium: user.premium }));
             }
+
         } else {
             return res.status(201).json(
                 response(404, null, false, "No existe el doctor o el usuario", null));
