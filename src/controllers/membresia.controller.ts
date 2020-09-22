@@ -12,22 +12,22 @@ export const nuevaMembresia = async (
     try {
         //console.log(req.user);
         const user = await User.findById(req.user['id']);
-        const doctor = await User.findById(req.body.doctor);
         const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor, tipo: req.body.tipo });
 
         if (!membresia) {
             if (user) {
-                if (req.user["tipo"] === "CLI") {
+                if (req.body.tipo === "CLI") {
+                    const doctor = await User.findById(req.body.doctor);
                     if (doctor) {
                         return res.status(200).json(
-                            response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.user['tipo'] }).save()));
+                            response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
                     } else {
                         return res.status(201).json(
                             response(201, null, false, "No existe el doctor", null));
                     }
-                } else if (req.user["tipo"] === "DOC") {
+                } else if (req.body.tipo === "DOC") {
                     return res.status(200).json(
-                        response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.user['tipo'] }).save()));
+                        response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
                 }
             } else {
                 return res.status(201).json(
@@ -50,7 +50,7 @@ export const cancelarMembresia = async (
     try {
         const user = await User.findById(req.user['id']);
         if (user) {
-            if (req.user["tipo"] === "CLI") {
+            if (req.body.tipo === "CLI") {
                 const doctor = await User.findById(req.body.doctor);
                 if (doctor) {
                     await Membresia.findOneAndDelete({ usuario: req.user['id'], doctor: req.body.doctor });
@@ -58,9 +58,9 @@ export const cancelarMembresia = async (
                     return res.status(201).json(
                         response(201, null, false, "No existe el doctor", null));
                 }
-            } else if (req.user["tipo"] === "DOC") {
+            } else if (req.body.tipo === "DOC") {
                 console.log('doctor');
-                await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.user["tipo"]});
+                await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.body.tipo });
             }
             user.premium.recurrente = "null";
             user.save();
