@@ -9,6 +9,7 @@ import { sendEmailPago } from '../libs/functions';
 import moment, { now } from 'moment';
 
 import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial } from '../libs/functions';
+import cita from '../models/cita';
 
 /** CITAS ESTADOS */
 export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
@@ -232,10 +233,12 @@ export const nuevo = async (
         nuevaCita.fecha = today;
         nuevaCita.usuario = req.user['id'];
 
-        const citaCreada = await nuevaCita.save();
+        var citaCreada = await nuevaCita.save();
+
+        //citaCreada.populate("doctor");
 
         return res.status(201).json(
-          response(201, 'Ejecutado con exito', true, null, citaCreada)
+          response(201, 'Ejecutado con exito', true, null, await Cita.populate(citaCreada, { path: "doctor", select: "nombre rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
         );
       } else {
         return res

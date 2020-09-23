@@ -111,6 +111,10 @@ export const getSearch = async (
       filtro = { ...filtro, tarifa_g }
     }
 
+    if (calificacion) {
+      filtro = { ...filtro, rating: { $lte: 5, $gte: parseInt(calificacion.toString()) } }
+    }
+
     const user = await User.find({ tipo: "DOC", ...filtro }).populate("especialidades.especialidad").populate("pais").populate("tarjeta");
     let data = user;
 
