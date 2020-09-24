@@ -238,7 +238,7 @@ export const nuevo = async (
         //citaCreada.populate("doctor");
 
         return res.status(201).json(
-          response(201, 'Ejecutado con exito', true, null, await Cita.populate(citaCreada, { path: "doctor", select: "nombre rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
+          response(201, 'Ejecutado con exito', true, null, await Cita.populate(citaCreada, { path: "doctor", select: "nombre_completo rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
         );
       } else {
         return res

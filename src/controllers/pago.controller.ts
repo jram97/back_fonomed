@@ -79,17 +79,30 @@ export const nuevo = async (
   }
   try {
     const nuevoPago = new Pago(req.body);
-    nuevoPago.doctor = req.user['id']
+    nuevoPago.doctor = req.user['id'];
     await nuevoPago.save();
 
-    if(req.body.servicio === "Premium"){
-      const user = await User.findByIdAndUpdate(req.user['id'], {
-        tarjeta:req.body.tarjeta,
-        premium: {
+    if (req.body.servicio === "Premium") {
+      if (req.body.tipo == "CLI") {
+        const premium = { ...req.user["premium"] };
+        premium[`${req.body.doctor}`] = {
           recurrente: req.body.recurrente,
           fecha: new Date()
         }
-      });
+        console.log("premium", premium)
+        await User.findByIdAndUpdate(req.user['id'], {
+          tarjeta: req.body.tarjeta,
+          premium: premium
+        });
+      } else if (req.body.tipo == "DOC") {
+        await User.findByIdAndUpdate(req.user['id'], {
+          tarjeta: req.body.tarjeta,
+          premium: {
+            recurrente: req.body.recurrente,
+            fecha: new Date()
+          }
+        });
+      }
     }
 
     const user = await User.findById(req.user['id']);

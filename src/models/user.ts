@@ -45,13 +45,13 @@ const userSchema = new Schema({
     default: ""
   },
   premium: {
-    recurrente: {
+    /*recurrente: {
       type: String,
       default: "false"
     },
     fecha: {
       type: Date,
-    }
+    }*/
   },
   genero: {
     type: String,
