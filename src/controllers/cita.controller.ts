@@ -195,7 +195,7 @@ export const nuevo = async (
     var existeHorario = false, horarioDisponible = true;
     var horarios;
 
-    const especiales = await Horario.find({ dia: "Especial", fecha: today });
+    const especiales = await Horario.find({ dia: "Especial", fecha: today , doctor: req.body.doctor});
 
     if (especiales.length > 0) {
       horarios = especiales
