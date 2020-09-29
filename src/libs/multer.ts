@@ -19,9 +19,9 @@ const s3 = new AWS.S3({
 const storage = multer({
 storage: multerS3({
   s3: s3,
-  bucket: Bucket,
+  bucket: Bucket + '/images/',
   limits: 500000,
-  //acl: "public-read",
+  acl: 'public-read',
   metadata: (req, file, cb) => {
     cb(null, {fieldName: file.fieldname})
   },
