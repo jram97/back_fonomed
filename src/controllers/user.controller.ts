@@ -232,11 +232,11 @@ export const signUp = async (
       if (req.files["documentos"]) {
         let element = [];
         for (let index = 0; index < req.files["documentos"].length; index++) {
-          element.push(req.files["documentos"][index]["filename"]);
+          element.push(req.files["documentos"][index]["location"]);
         }
         const newUser = new User(req.body);
-        newUser.documento_ui = req.files["dui"][0]["filename"]
-        newUser.foto = req.files["foto"][0]["filename"]
+        newUser.documento_ui = req.files["dui"][0]["location"]
+        newUser.foto = req.files["foto"][0]["location"]
         newUser.especialidades = { especialidad: req.body.especialidad, imagen: element };
 
         const userNew = await newUser.save();
@@ -245,8 +245,8 @@ export const signUp = async (
         );
       } else {
         const newUser = new User(req.body);
-        newUser.documento_ui = req.files["dui"][0]["filename"]
-        newUser.foto = req.files["foto"][0]["filename"]
+        newUser.documento_ui = req.files["dui"][0]["location"]
+        newUser.foto = req.files["foto"][0]["location"]
 
         const userNew = await newUser.save();
         return res.status(201).json(
@@ -257,7 +257,7 @@ export const signUp = async (
       if (req.files["documentos"]) {
         let element = [];
         for (let index = 0; index < req.files["documentos"].length; index++) {
-          element.push(req.files["documentos"][index]["filename"]);
+          element.push(req.files["documentos"][index]["location"]);
         }
         const newUser = new User(req.body);
         newUser.especialidades = { especialidad: req.body.especialidad, imagen: element };

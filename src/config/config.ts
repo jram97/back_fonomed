@@ -1,6 +1,12 @@
 export default {
   /** JWT KEY */
   jwtSecret: process.env.JWT_SECRET,
+  /** AWS */
+  AWS: {
+    ID: process.env.AWS_ID,
+    BUCKET: process.env.AWS_BUCKET,
+    PASS: process.env.AWS_PASSWORD
+  },
   /** DB CONFIG */
   DB: {
     //URI: process.env.MONGODB_URI_LOCAL,

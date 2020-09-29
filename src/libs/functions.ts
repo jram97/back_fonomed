@@ -86,7 +86,8 @@ export const generateCodeTransaccionRevision = () => {
 export const sendEmail = (nombre: string, email: string, code: string) => {
   try {
     let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
+      host: process.env.EMAIL_HOST,
+      port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -94,7 +95,7 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
     });
 
     let mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_REPLY_TO,
       replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
@@ -125,7 +126,8 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
 export const sendEmailPago = (nombre: string, email: string) => {
   try {
     let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
+      host: process.env.EMAIL_HOST,
+      port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -133,7 +135,7 @@ export const sendEmailPago = (nombre: string, email: string) => {
     });
 
     let mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_REPLY_TO,
       replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
@@ -163,7 +165,8 @@ export const sendEmailPago = (nombre: string, email: string) => {
 export const sendEmailPagoCancelar = (nombre: string, email: string) => {
   try {
     let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
+      host: process.env.EMAIL_HOST,
+      port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -171,7 +174,7 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
     });
 
     let mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_REPLY_TO,
       replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
@@ -201,7 +204,8 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
 export const sendEmailCambioPassword = (nombre: string, email: string, code: string) => {
   try {
     let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
+      host: process.env.EMAIL_HOST,
+      port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -209,7 +213,7 @@ export const sendEmailCambioPassword = (nombre: string, email: string, code: str
     });
 
     let mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_REPLY_TO,
       replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
