@@ -519,3 +519,70 @@ export const verifySendEmailCambioPassword = async (
     );
   }
 };
+
+
+/** Agregar token firebase */
+export const agregarTokenFirebase = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const user = await User.findById(req.user['id']);
+
+    if (user) {
+      if (req.body.firebaseToken) {
+        user.firebaseTokens.push(req.body.firebaseToken);
+        await user.save();
+        return res.status(201).json(
+          response(201, "Token agregado con exito", true, null, null)
+        );
+      } else {
+        return res.status(404).json(
+          response(404, null, false, 'El token viene vacio', null)
+        );
+      }
+    } else {
+      return res.status(404).json(
+        response(404, null, false, 'Usuario no existe.', null)
+      );
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+export const eliminarTokenFirebase = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const user = await User.findById(req.user['id']);
+
+    if (user) {
+      if (req.body.firebaseToken) {
+        const index = user.firebaseTokens.indexOf(req.body.firebaseToken);
+        if (index > -1) {
+          user.firebaseTokens.splice(index, 1);
+        }
+        await user.save();
+        return res.status(201).json(
+          response(201, "Token eliminado con exito", true, null, null)
+        );
+      } else {
+        return res.status(404).json(
+          response(404, null, false, 'El token viene vacio', null)
+        );
+      }
+    } else {
+      return res.status(404).json(
+        response(404, null, false, 'Usuario no existe.', null)
+      );
+    }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};

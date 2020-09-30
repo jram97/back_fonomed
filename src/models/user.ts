@@ -25,6 +25,7 @@ export interface IUser extends Document {
   codigo_postal: any;
   ciudad: any;
   direccion: any;
+  firebaseTokens: any;
   expediente: any;
   comparePassword: (password: string) => Promise<Boolean>;
 }
