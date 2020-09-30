@@ -141,6 +141,7 @@ const userSchema = new Schema({
   direccion: {
     type: String
   },
+  firebaseTokens: [],
   estado: {
     type: Boolean,
     default: true,

@@ -28,6 +28,9 @@ export const nuevaMembresia = async (
                 } else if (req.body.tipo === "DOC") {
                     return res.status(200).json(
                         response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
+                } else {
+                    return res.status(201).json(
+                        response(404, null, false, "El tipo de usuario es invalido o viene vacio", null));
                 }
             } else {
                 return res.status(201).json(
@@ -66,6 +69,9 @@ export const cancelarMembresia = async (
                 console.log('doctor');
                 await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.body.tipo });
                 user.premium.recurrente = "null";
+            } else {
+                return res.status(201).json(
+                    response(404, null, false, "El tipo de usuario es invalido o viene vacio", null));
             }
 
             await user.save();
@@ -113,6 +119,9 @@ export const verificarMembresia = async (
                     return res.status(200).json(
                         response(200, "ejecutado con exito", false, null, { status: false, premium: user.premium }));
                 }
+            } else {
+                return res.status(404).json(
+                    response(404, null, false, "El tipo de usuario es invalido o viene vacio", null));
             }
 
         } else {
