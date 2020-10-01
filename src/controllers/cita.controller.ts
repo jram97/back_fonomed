@@ -195,7 +195,7 @@ export const nuevo = async (
     var existeHorario = false, horarioDisponible = true;
     var horarios;
 
-    const especiales = await Horario.find({ dia: "Especial", fecha: today , doctor: req.body.doctor});
+    const especiales = await Horario.find({ dia: "Especial", fecha: today, doctor: req.body.doctor });
 
     if (especiales.length > 0) {
       horarios = especiales
@@ -363,6 +363,10 @@ export const concretar = async (
   }
 
   try {
+    if (req.body.reprogramar) {
+      await Cita.findByIdAndDelete(req.body.reprogramar);
+    }
+
     if (req.body.cancelado === "Cancelado") {
       const updated = await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
 
