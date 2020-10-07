@@ -4,8 +4,8 @@
   "description": "RestAPI para la app de fonomed",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "start": "node --max-old-space-size=4096 dist/index.js",
+    "dev": "tsc-watch --onSuccess \"node --max-old-space-size=4096 dist/index.js\"",
     "build": "tsc -b"
   },
   "keywords": [],
