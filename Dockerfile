@@ -6,7 +6,7 @@ RUN dpkg-reconfigure --frontend noninteractive tzdata
 
 WORKDIR /usr/src/app 
 
-RUN NODE_OPTIONS=--max_old_space_size=32768
+RUN NODE_OPTIONS=--max_old_space_size=4096
 
 COPY package*.json ./ 
 
