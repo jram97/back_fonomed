@@ -7,6 +7,8 @@ import Pago from "../models/pago";
 import User from "../models/user";
 import { sendEmailPago } from '../libs/functions';
 import moment, { now } from 'moment';
+import cron from 'node-cron';
+import { sendNotification } from '../libs/functions'
 
 import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial } from '../libs/functions';
 import cita from '../models/cita';
@@ -235,8 +237,6 @@ export const nuevo = async (
 
         var citaCreada = await nuevaCita.save();
 
-        //citaCreada.populate("doctor");
-
         return res.status(201).json(
           response(201, 'Ejecutado con exito', true, null, await Cita.populate(citaCreada, { path: "doctor", select: "nombre_completo rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
         );
@@ -257,77 +257,6 @@ export const nuevo = async (
     );
   }
 }
-
-/** REGISTRO DE CITAS */
-/*export const nuevo = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  if (!req.body) {
-    return res
-      .status(404)
-      .json(response(404, null, false, 'Campos incompletos.', null));
-  }
-  try {
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-    const today = new Date(req.body.date);
-    const dayName = days[today.getDay() + 1];
-    //const time = today.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    //console.log(today.toLocaleTimeString().replace(/:\d+ /, ' '))
-
-    const horarioFechaDia = await Horario.findOne({ doctor: req.body.doctor, dia: dayName, inicio: req.body.inicio });
-    console.log(dayName);
-
-    if (!horarioFechaDia) {
-      return res
-        .status(406)
-        .json(response(406, null, false, 'Doctor no tiene esta dia disponible.', null));
-    } else {
-      const existeCita = await Cita.findOne({ usuario: req.user['id'], doctor: req.body.doctor, dia: dayName, hora: req.body.inicio });
-      if (existeCita) {
-        if (existeCita.createdAt.getDate() != today.getDate()
-          && (existeCita.dia == dayName || existeCita.dia != dayName)
-          && (existeCita.inicio == req.body.inicio || existeCita.inicio != req.body.inicio)
-          && (existeCita.fin == req.body.fin || existeCita.fin != req.body.fin)
-          && (existeCita.doctor == req.body.doctor || existeCita.doctor != req.body.doctor)
-          && (existeCita.usuario == req.user['id'] || existeCita.usuario != req.user['id'])
-        ) {
-
-          const nuevaCita = new Cita(req.body);
-          nuevaCita.dia = dayName;
-          nuevaCita.fecha = today;
-          nuevaCita.usuario = req.user['id'];
-
-          await nuevaCita.save();
-
-          return res.status(201).json(
-            response(201, 'Ejecutado con exito', true, null, null)
-          );
-
-        } else {
-          return res.status(406).json(
-            response(406, null, false, 'Cita con este horario ya existe', null)
-          );
-        }
-      } else {
-        const nuevaCita = new Cita(req.body);
-        nuevaCita.dia = dayName;
-        nuevaCita.fecha = today;
-        nuevaCita.usuario = req.user['id'];
-
-        await nuevaCita.save();
-
-        return res.status(201).json(
-          response(201, 'Ejecutado con exito', true, null, null)
-        );
-      }
-    }
-  } catch (error) {
-    return res.status(404).json(
-      response(404, null, false, 'Algo salio mal: ' + error, null)
-    );
-  }
-};*/
 
 /** ACTUALIZACION DE CITAS :: RECIBE EL ID */
 export const actualizar = async (
@@ -371,6 +300,30 @@ export const concretar = async (
       const updated = await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
 
       if (updated) {
+        const horaFin = updated.fin.split(":");
+        var date = updated.fecha;
+        date.setDate(date.getDate() + 1);
+        const dateOfMonth = date.getDate()
+        const month = date.getMonth() + 1;
+
+        const task = cron.schedule(`59 ${horaFin[1]} ${horaFin[0]} ${dateOfMonth} ${month} *`, async () => {
+          const citaValidar = await Cita.findById(updated._id).populate("doctor");
+          if (!citaValidar.citaRealizada) {
+            const payload = {
+              notification: {
+                title: "Reprogramacion cita",
+                body: `El doctor ${citaValidar.doctor.nombre_completo} no se pudo presentar a la cita. No te preocupes, puedes reprogramarla`
+              }
+            }
+            sendNotification(citaValidar.doctor.firebaseTokens, payload);
+            task.stop();
+          }
+        },
+          {
+            scheduled: true,
+            timezone: "America/Mexico_City"
+          });
+
         if (req.body.servicio === "Premium") {
           const user = await User.findByIdAndUpdate(req.user['id'], {
             premium: {
@@ -452,6 +405,27 @@ export const agregarReceta = async (
       return res.status(200).json(
         response(200, null, true, "No existe la cita", null));
     }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null));
+  }
+
+}
+
+export const prueba = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const task = cron.schedule(`* * * * * *`, () => {
+      var i = 0;
+      i++;
+      console.log(i);
+      //task.stop();
+    });
+
+    return res.status(200).json(
+      response(200, "Ejecutado con exito", true, null, null));
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null));

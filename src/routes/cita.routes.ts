@@ -1,10 +1,10 @@
 import { Router } from "express";
 import passport from "passport";
-import {factura,receta} from "../libs/multer";
+import { factura, receta } from "../libs/multer";
 
 const router = Router();
 
-import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados,concretar, getAllByDoctorHistory, getAllByUserHistory, agregarFactura , agregarReceta } from "../controllers/cita.controller";
+import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados, concretar, getAllByDoctorHistory, getAllByUserHistory, agregarFactura, agregarReceta, prueba } from "../controllers/cita.controller";
 
 /** Todos los citas */
 router.get("/citas", passport.authenticate("jwt", { session: false }), getAllByDoctor);
@@ -22,13 +22,15 @@ router.get("/citas", passport.authenticate("jwt", { session: false }), getAllEst
 /** Update de citas */
 router.put("/citas/:id", passport.authenticate("jwt", { session: false }), actualizar);
 /** Agregar factura a cita */
-router.route("/citas/factura/:id").put(factura.single('foto'),passport.authenticate("jwt", { session: false }),agregarFactura);
+router.route("/citas/factura/:id").put(factura.single('foto'), passport.authenticate("jwt", { session: false }), agregarFactura);
 /** Agregar receta a cita */
-router.route("/citas/receta/:id").put(receta.single('foto'),passport.authenticate("jwt", { session: false }),agregarReceta);
+router.route("/citas/receta/:id").put(receta.single('foto'), passport.authenticate("jwt", { session: false }), agregarReceta);
 /**Actualizar estado de pago de cita */
-router.put("/citas/concretar/:id",passport.authenticate("jwt", { session: false }),concretar);
+router.put("/citas/concretar/:id", passport.authenticate("jwt", { session: false }), concretar);
 
 /** Eliminar citas */
 router.delete("/citas/:id", passport.authenticate("jwt", { session: false }), eliminar);
+
+router.post("/citas/prueba", prueba);
 
 export default router;

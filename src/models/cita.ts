@@ -11,7 +11,7 @@ export interface ICita extends Document {
   fin: string;
   medio: IMedio;
   cancelado: string;
-  citaRealizada:boolean;
+  citaRealizada: boolean;
   comentario: string,
   shareExp: boolean,
   estados: any;
@@ -57,16 +57,17 @@ const citaSchema = new Schema({
     enum: ["Pendiente", "Cancelado", "Rechazado"],
     default: "Pendiente"
   },
-  citaRealizada:{
-    type: Boolean
+  citaRealizada: {
+    type: Boolean,
+    default: false
   },
   comentario: {
     type: String,
     default: ""
   },
-  shareExp:{
+  shareExp: {
     type: Boolean,
-    default:false
+    default: false
   },
   estados: {
     type: String,
