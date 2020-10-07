@@ -7,6 +7,7 @@ import { response, sendEmail, generateCode, sendEmailCambioPassword } from "../l
 
 import User, { IUser } from "../models/user";
 import Verify from "../models/verify";
+import { sendNotification } from '../libs/functions'
 
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
@@ -580,6 +581,47 @@ export const eliminarTokenFirebase = async (
         response(404, null, false, 'Usuario no existe.', null)
       );
     }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+export const notificar = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { userId, payload } = req.body
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json(
+        response(404, null, false, 'Usuario no existe.', null)
+      );
+    }
+
+    if (user.firebaseTokens.length == 0) {
+      return res.status(401).json(
+        response(401, null, false, 'El usuario no tiene dispositivos registrados', null)
+      );
+    }
+
+
+    /*const payload = {
+      notification: {
+        title: "Prueba",
+        body: "Esta notificacion viene desde el server"
+      }
+    }*/
+    const responseNotification = await sendNotification(user.firebaseTokens, payload);
+
+    return res.status(201).json(
+      response(201, "Notificacion enviada con exito", true, null, responseNotification.results)
+    );
+
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

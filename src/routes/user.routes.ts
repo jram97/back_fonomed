@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente } from '../controllers/expediente.controller'
-import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase } from '../controllers/user.controller';
+import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 const router = Router();
@@ -40,6 +40,9 @@ router.put('/user/membresia/cancelar', passport.authenticate("jwt", { session: f
 /** Expediente */
 router.get('/user/expediente/me', passport.authenticate("jwt", { session: false }), expediente);
 router.get('/user/expediente/:id', passport.authenticate("jwt", { session: false }), expedientePaciente);
+
+/**Notificar reprogramacion */
+router.post('/user/notificar', passport.authenticate("jwt", { session: false }), notificar);
 
 /** RATINGS */
 /** Agregar Rating */
