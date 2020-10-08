@@ -293,7 +293,14 @@ export const concretar = async (
 
   try {
     if (req.body.reprogramar) {
-      await Cita.findByIdAndDelete(req.body.reprogramar);
+      const deleted = await Cita.findByIdAndDelete(req.body.reprogramar).populate("usuario").populate("doctor");
+      const payload = {
+        notification: {
+          title: "Reprogramacion cita",
+          body: `La cita con el paciente ${deleted.usuario.nombre_completo} ha sido reprogramada`
+        }
+      }
+      sendNotification(deleted.doctor.firebaseTokens, payload);
     }
 
     if (req.body.cancelado === "Cancelado") {
@@ -307,7 +314,7 @@ export const concretar = async (
         const month = date.getMonth() + 1;
 
         const task = cron.schedule(`59 ${horaFin[1]} ${horaFin[0]} ${dateOfMonth} ${month} *`, async () => {
-          const citaValidar = await Cita.findById(updated._id).populate("doctor");
+          const citaValidar = await Cita.findById(updated._id).populate("doctor").populate("usuario");
           if (!citaValidar.citaRealizada) {
             const payload = {
               notification: {
@@ -315,7 +322,7 @@ export const concretar = async (
                 body: `El doctor ${citaValidar.doctor.nombre_completo} no se pudo presentar a la cita. No te preocupes, puedes reprogramarla`
               }
             }
-            sendNotification(citaValidar.doctor.firebaseTokens, payload);
+            sendNotification(citaValidar.usuario.firebaseTokens, payload);
             task.stop();
           }
         },
