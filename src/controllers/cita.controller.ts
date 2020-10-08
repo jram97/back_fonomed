@@ -331,29 +331,31 @@ export const concretar = async (
             timezone: "America/Mexico_City"
           });
 
-        if (req.body.servicio === "Premium") {
-          const user = await User.findByIdAndUpdate(req.user['id'], {
-            premium: {
-              recurrente: true,
-              fecha: new Date()
-            }
+        if (!req.body.reprogramar) {
+          if (req.body.servicio === "Premium") {
+            const user = await User.findByIdAndUpdate(req.user['id'], {
+              premium: {
+                recurrente: true,
+                fecha: new Date()
+              }
+            });
+          }
+
+          const user = await User.findById(req.user['id']);
+
+          sendEmailPago(user.nombre_completo, user.email);
+
+          const nuevoPago = new Pago({
+            doctor: updated.doctor,
+            usuario: updated.usuario,
+            tarjeta: req.body.tarjeta,
+            servicio: req.body.servicio,
+            code: req.body.code,
+            estado: req.body.estado
           });
+
+          await nuevoPago.save();
         }
-
-        const user = await User.findById(req.user['id']);
-
-        sendEmailPago(user.nombre_completo, user.email);
-
-        const nuevoPago = new Pago({
-          doctor: updated.doctor,
-          usuario: updated.usuario,
-          tarjeta: req.body.tarjeta,
-          servicio: req.body.servicio,
-          code: req.body.code,
-          estado: req.body.estado
-        });
-
-        await nuevoPago.save();
       }
     } else {
       await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
