@@ -15,6 +15,7 @@ export interface IUser extends Document {
   tarifa_g?: any;
   tarifa_m?: any;
   aprobado: Boolean;
+  estado: Boolean;
   premium: any;
   pais: any;
   tarjeta: any;

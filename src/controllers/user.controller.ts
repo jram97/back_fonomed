@@ -349,7 +349,7 @@ export const signIn = async (
   }
   try {
     /** Existencia de usuario */
-    const user = await User.findOne({ email: req.body.email, estado: true }).populate("especialidades.especialidad", "nombre").populate("pais").populate("tarjeta");
+    const user = await User.findOne({ email: req.body.email, aprobado: true }).populate("especialidades.especialidad", "nombre").populate("pais").populate("tarjeta");
     if (!user) {
       return res.status(404).json(
         response(404, null, false, 'Correo no esta asociado a ninguna cuenta.', null)
@@ -358,6 +358,8 @@ export const signIn = async (
     /** Match de contrasena, validacion de Bcrypt */
     const isMatch = await user.comparePassword(req.body.password);
     if (isMatch) {
+      user.estado = true;
+      await user.save();
       return res.status(201).json(
         response(201, "Ejecutado con exito", true, null, {
           id: user._id,
@@ -374,6 +376,7 @@ export const signIn = async (
           nVotos: user.num_votes,
           telefono: user.telefono,
           premium: user.premium,
+          estado: user.estado,
           informacion_pago: {
             direccion: user.direccion || null,
             codigo_postal: user.codigo_postal || null,
@@ -566,8 +569,18 @@ export const eliminarTokenFirebase = async (
         const index = user.firebaseTokens.indexOf(req.body.firebaseToken);
         if (index > -1) {
           user.firebaseTokens.splice(index, 1);
+          //user.estado = false;
         }
-        await user.save();
+
+        if (user.firebaseTokens.length == 0) {
+          user.estado = false;
+        }
+        const updated = await user.save();
+        if (!updated) {
+          return res.status(201).json(
+            response(406, "No se ha podido eliminar", false, null, null)
+          );
+        }
         return res.status(201).json(
           response(201, "Token eliminado con exito", true, null, null)
         );
