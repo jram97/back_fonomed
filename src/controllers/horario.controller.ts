@@ -96,7 +96,8 @@ export const nuevo = async (
       .json(response(404, null, false, 'Campos incompletos.', null));
   }
   try {
-    const nuevoHorario = new Horario(req.body);
+    var nuevoHorario = new Horario(req.body);
+    nuevoHorario.fecha = new Date(req.body.fecha.split("T")[0]);
     nuevoHorario.doctor = req.user['id'];
 
     await nuevoHorario.save();
