@@ -524,6 +524,23 @@ export const verifySendEmailCambioPassword = async (
   }
 };
 
+/** Update user por su ID */
+export const updateUserById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    await User.findByIdAndUpdate(req.body.id, { ...req.body })
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
 
 /** Agregar token firebase */
 export const agregarTokenFirebase = async (

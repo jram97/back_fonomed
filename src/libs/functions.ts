@@ -35,7 +35,7 @@ export const decrypt = (data: string) => {
 /** Bloquear peticiones por ip */
 export const limitAPI = limit({
   //windowMs: 720 * 60 * 1000,
-  windowMs: 360 * 60 * 1000,
+  windowMs: 15 * 60 * 1000,
   max: 1,
   message: "Intenta de nuevo en 6 horas"
 })

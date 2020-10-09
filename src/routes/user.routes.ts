@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente } from '../controllers/expediente.controller'
-import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar } from '../controllers/user.controller';
+import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 const router = Router();
@@ -26,6 +26,7 @@ router.get('/doctores/videocall', passport.authenticate("jwt", { session: false 
 //router.get("user/me", passport.authenticate("jwt", { session: false }), getByTokenUser);
 router.delete('/user/delete/:id', passport.authenticate("jwt", { session: false }), eliminar);
 router.put('/user/me/update', passport.authenticate("jwt", { session: false }), cuentaPagadito);
+router.put('/user/update', passport.authenticate("jwt", { session: false }), updateUserById);
 router.put('/user/expediente', passport.authenticate("jwt", { session: false }), actualizarExpediente);
 
 /** Firebase */
