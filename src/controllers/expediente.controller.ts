@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 
-import Cita from "../models/cita";
 import User from "../models/user";
 
 import { response } from '../libs/functions';
