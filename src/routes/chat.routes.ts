@@ -7,6 +7,6 @@ const router = Router();
 
 import { sendImagenChat } from "../controllers/chat.controller";
 
-router.post("/chats", storageChat.single("imagen"), sendImagenChat);
+router.post("/chats", passport.authenticate("jwt", { session: false }), storageChat.single("imagen"), sendImagenChat);
 
 export default router;
