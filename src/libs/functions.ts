@@ -88,7 +88,7 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
   try {
     let transporter = nodeMailer.createTransport({
       host: process.env.EMAIL_HOST,
-      port: 2525,
+      //port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -128,7 +128,7 @@ export const sendEmailPago = (nombre: string, email: string) => {
   try {
     let transporter = nodeMailer.createTransport({
       host: process.env.EMAIL_HOST,
-      port: 2525,
+      //port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -167,7 +167,7 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
   try {
     let transporter = nodeMailer.createTransport({
       host: process.env.EMAIL_HOST,
-      port: 2525,
+      //port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -206,7 +206,7 @@ export const sendEmailCambioPassword = (nombre: string, email: string, code: str
   try {
     let transporter = nodeMailer.createTransport({
       host: process.env.EMAIL_HOST,
-      port: 2525,
+      //port: 2525,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
