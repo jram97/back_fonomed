@@ -315,15 +315,11 @@ export const filtrarCitasCaducadas = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
-
-    /*if (!moment.utc().utcOffset(-360).isAfter(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
-      console.log(moment.utc().utcOffset(-360).hour());
-      return cita
-    }*/
+    console.log("Fecha normal",fechaCita);
 
     const now = moment();
-    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]);
-    //console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
+    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate() + 1);
+    console.log("Fecha al pasarla a moment y ponerle hora",mFechaCita);
 
     console.log("Pendientes", now.diff(mFechaCita, "minutes"));
     if (now.diff(mFechaCita, "minutes") <= 0) {
@@ -338,13 +334,9 @@ export const filtrarCitasHistorial = (citas: any) => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
     const now = moment();
-    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]);
+    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate() + 1);
+    console.log(fechaCita);
 
-    /*if (!nowUtc.isBefore(moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]))) {
-      //console.log(cita.fecha);
-      return cita
-    }*/
-    //console.log(`Hora actual desde el servidor: ${now.hours()}:${now.minutes()}`);
     console.log("Historial", now.diff(mFechaCita, "minutes"));
     if (now.diff(mFechaCita, "minutes") > 0) {
       return cita;
