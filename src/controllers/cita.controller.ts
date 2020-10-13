@@ -385,7 +385,7 @@ export const agregarFactura = async (
       await cita.save()
 
       return res.status(200).json(
-        response(200, "Ejecutado con exito", true, null, req.file.filename));
+        response(200, "Ejecutado con exito", true, null, req.file["location"]));
     } else {
       return res.status(200).json(
         response(200, null, true, "No existe la cita", null));
@@ -409,32 +409,11 @@ export const agregarReceta = async (
       await cita.save()
 
       return res.status(200).json(
-        response(200, "Ejecutado con exito", true, null, req.file.filename));
+        response(200, "Ejecutado con exito", true, null, req.file["location"]));
     } else {
       return res.status(200).json(
         response(200, null, true, "No existe la cita", null));
     }
-  } catch (error) {
-    return res.status(404).json(
-      response(404, null, false, 'Algo salio mal: ' + error, null));
-  }
-
-}
-
-export const prueba = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  try {
-    const task = cron.schedule(`* * * * * *`, () => {
-      var i = 0;
-      i++;
-      console.log(i);
-      //task.stop();
-    });
-
-    return res.status(200).json(
-      response(200, "Ejecutado con exito", true, null, null));
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null));

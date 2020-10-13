@@ -7,6 +7,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './swagger.json';
+
 import authRoutes from './routes/auth.routes';
 import especialidadRoutes from './routes/especialidad.routes';
 import userRoutes from './routes/user.routes';
@@ -17,7 +18,10 @@ import mediosRoutes from './routes/medio.routes';
 import tarjetasRoutes from './routes/tarjeta.routes';
 import citasRoutes from './routes/cita.routes';
 import pagosRoutes from './routes/pago.routes';
+import chatRoutes from './routes/chat.routes';
 import extraRoutes from './routes/extra.routes';
+
+
 
 const app = express();
 
@@ -47,6 +51,7 @@ app.use(tarjetasRoutes);
 app.use(mediosRoutes);
 app.use(citasRoutes);
 app.use(pagosRoutes);
+app.use(chatRoutes);
 app.use(extraRoutes);
 
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

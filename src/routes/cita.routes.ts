@@ -4,7 +4,7 @@ import { factura, receta } from "../libs/multer";
 
 const router = Router();
 
-import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados, concretar, getAllByDoctorHistory, getAllByUserHistory, agregarFactura, agregarReceta, prueba } from "../controllers/cita.controller";
+import { getAllByDoctor, getAllByUser, nuevo, eliminar, actualizar, getAllEstados, concretar, getAllByDoctorHistory, getAllByUserHistory, agregarFactura, agregarReceta } from "../controllers/cita.controller";
 
 /** Todos los citas */
 router.get("/citas", passport.authenticate("jwt", { session: false }), getAllByDoctor);
@@ -30,7 +30,5 @@ router.put("/citas/concretar/:id", passport.authenticate("jwt", { session: false
 
 /** Eliminar citas */
 router.delete("/citas/:id", passport.authenticate("jwt", { session: false }), eliminar);
-
-router.post("/citas/prueba", prueba);
 
 export default router;
