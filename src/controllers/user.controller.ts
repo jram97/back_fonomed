@@ -3,9 +3,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import config from "../config/config";
 import twilio from "../config/twilio";
-import { response, sendEmail, generateCode, sendEmailCambioPassword } from "../libs/functions";
+import { response, sendEmail, generateCode, sendEmailCambioPassword, verificarCita, minutesToHours, hoursToMinutes } from "../libs/functions";
 
 import User, { IUser } from "../models/user";
+import Cita from '../models/cita';
+import Horario from '../models/horario';
 import Verify from "../models/verify";
 import { sendNotification } from '../libs/functions'
 
@@ -403,25 +405,45 @@ export const doctorDisponible = async (
   res: Response
 ): Promise<Response> => {
   try {
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     const doctores = await User.find({ tipo: "DOC", estado: true }).populate("especialidades.especialidad");
+    const rechazaron = req.body.doctores
     let data = doctores;
 
     data = data.filter((x, index) => {
       var i;
-      console.log("Doctor", index);
+      //console.log("Doctor", index);
       for (i = 0; i < x.especialidades.especialidad.length; i++) {
         if (x.especialidades.especialidad[i].nombre == "Medico General") {
           return x;
         }
       }
     });
-    var retornar = false, numeroDoctor;
+    var retornar = false, horarioDisponible = true, numeroDoctor, citasDoctor, date = new Date(), dayName, i;
+    date = new Date(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+
+    dayName = days[date.getDate() + 1]
 
     while (!retornar) {
+      horarioDisponible = true
       numeroDoctor = Math.floor(Math.random() * data.length);
 
-      if (!req.body.doctores.includes(data[numeroDoctor]._id)) {
-        retornar = true
+      if (!rechazaron.includes(String(data[numeroDoctor]._id))) {
+
+        citasDoctor = await Cita.find({ doctor: data[numeroDoctor]._id, fecha: date, $or: [{ cancelado: "Pendiente" }, { cancelado: "Cancelado" }] });
+        const inicio = `${(new Date()).getHours()}:${(new Date).getMinutes()}`;
+        const fin = minutesToHours(hoursToMinutes(inicio) + 15);
+
+        for (i = 0; i < citasDoctor.length; i++) {
+          if (!verificarCita(citasDoctor[i], inicio, fin)) {
+            horarioDisponible = false;
+            break;
+          }
+        }
+
+        if (horarioDisponible) {
+          retornar = true;
+        }
       }
     }
 

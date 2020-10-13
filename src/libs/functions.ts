@@ -300,6 +300,17 @@ export const verificarCita = (cita: any, inicio: any, fin: any) => {
   return true
 }
 
+export const minutesToHours = (time: any) => {
+  const horas = Math.floor(time / 60);
+  const minutos = time - (horas * 60);
+  return `${horas}:${minutos}`
+}
+
+export const hoursToMinutes = (time: any) => {
+  time = time.split(":");
+  return (parseInt(time[0]) * 60) + parseInt(time[1]);
+}
+
 export const filtrarCitasCaducadas = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
