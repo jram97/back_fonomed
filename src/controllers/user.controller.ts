@@ -227,8 +227,8 @@ export const signUp = async (
     const user = await User.findOne({ email: req.body.email });
     if (user)
       return res
-        .status(404)
-        .json(response(404, null, false, 'Cuenta ya existe.', null));
+        .status(400)
+        .json(response(400, null, false, 'Cuenta ya existe.', null));
 
     /** Validacion (foto) y persistir */
     if (req.files["foto"] && req.files["dui"]) {
