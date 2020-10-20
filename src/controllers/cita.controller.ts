@@ -10,8 +10,9 @@ import moment, { now } from 'moment';
 import cron from 'node-cron';
 import { sendNotification } from '../libs/functions'
 
-import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial } from '../libs/functions';
+import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial, minutesToHours, hoursToMinutes } from '../libs/functions';
 import cita from '../models/cita';
+import { update } from './user.controller';
 
 /** CITAS ESTADOS */
 export const getAllEstados = async (req: Request, res: Response): Promise<Response> => {
@@ -304,7 +305,7 @@ export const concretar = async (
     }
 
     if (req.body.cancelado === "Cancelado") {
-      const updated = await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true });
+      const updated = await Cita.findByIdAndUpdate(req.params.id, { cancelado: req.body.cancelado }, { new: true }).populate("doctor").populate("usuario");
 
       if (updated) {
         const horaFin = updated.fin.split(":");
@@ -325,6 +326,34 @@ export const concretar = async (
             sendNotification(citaValidar.usuario.firebaseTokens, payload);
             task.stop();
           }
+        },
+          {
+            scheduled: true,
+            timezone: "America/Mexico_City"
+          });
+
+        console.log("Hora inicio original", updated.inicio);
+
+        var horaNotificacion = minutesToHours(hoursToMinutes(updated.inicio) - 5).split(":");
+        console.log("Hora inicio nueva", horaNotificacion);
+        const notificarClienteDoctor = cron.schedule(`0 ${horaNotificacion[1]} ${horaNotificacion[0]} ${dateOfMonth} ${month} *`, async () => {
+          const cliPayload = {
+            notification: {
+              title: "Cita",
+              body: `En 5 minutos tiene una cita con el doctor ${updated.doctor.nombre_completo}`
+            }
+          }
+          sendNotification(updated.usuario.firebaseTokens, cliPayload);
+
+          const docPayload = {
+            notification: {
+              title: "Cita",
+              body: `En 5 minutos tiene una cita con el paciente ${updated.usuario.nombre_completo}`
+            }
+          }
+          sendNotification(updated.doctor.firebaseTokens, docPayload);
+
+          notificarClienteDoctor.stop();
         },
           {
             scheduled: true,
