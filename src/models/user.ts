@@ -47,6 +47,8 @@ const userSchema = new Schema({
     default: ""
   },
   premium: {
+    type: Object,
+    default: {}
     /*recurrente: {
       type: String,
       default: "false"
@@ -155,7 +157,7 @@ const userSchema = new Schema({
     "Medicinas recetadas": []
   }
 },
-  { timestamps: true }
+  { timestamps: true, minimize: false }
 );
 
 userSchema.pre<IUser>("save", async function (next) {
