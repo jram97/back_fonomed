@@ -236,10 +236,12 @@ export const nuevo = async (
         nuevaCita.fecha = today;
         nuevaCita.usuario = req.user['id'];
 
-        var citaCreada = await nuevaCita.save();
+        var citaCreada = await (await nuevaCita.save()).populate("usuario");
+
+        var populadaUsuario = await Cita.populate(citaCreada, { path: "usuario", select: "nombre_completo foto" });
 
         return res.status(201).json(
-          response(201, 'Ejecutado con exito', true, null, await Cita.populate(citaCreada, { path: "doctor", select: "nombre_completo rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
+          response(201, 'Ejecutado con exito', true, null, await Cita.populate(populadaUsuario, { path: "doctor", select: "nombre_completo rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
         );
       } else {
         return res
@@ -410,7 +412,7 @@ export const agregarFactura = async (
     const cita = await Cita.findOne({ _id: req.params.id, doctor: req.user['id'] });
 
     if (cita) {
-      cita.factura = req.file.filename;
+      cita.factura = req.file["location"];
       await cita.save()
 
       return res.status(200).json(
@@ -434,7 +436,7 @@ export const agregarReceta = async (
     const cita = await Cita.findOne({ _id: req.params.id, doctor: req.user['id'] });
 
     if (cita) {
-      cita.receta = req.file.filename;
+      cita.receta = req.file["location"];
       await cita.save()
 
       return res.status(200).json(
