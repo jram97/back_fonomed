@@ -140,7 +140,45 @@ export const sendEmailPago = (nombre: string, email: string) => {
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
-                    Se ha enviado este correo debido a que tu pago mensual se efectuo con exito</p><br>
+                    Se ha enviado este correo debido a que tu pago mensual se efectuó con exito</p><br>
+
+                    <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
+    };
+    transporter.sendMail(mailOptions, (error: any, info: any) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log(
+        "Message %s sent: %s",
+        info.messageId,
+        info.response
+      );
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/** Enviar correo : pago exitoso */
+export const sendEmailPagoCita = (nombre: string, email: string) => {
+  try {
+    let transporter = nodeMailer.createTransport({
+      service: process.env.EMAIL_HOST,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER,
+      replyTo: process.env.EMAIL_REPLY_TO,
+      to: email,
+      subject: "FONOMED✔!",
+      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+                    <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
+                    Se ha enviado este correo debido a que el pago de tu cita se efectuó con exito</p><br>
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };
@@ -178,7 +216,7 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
-                    Se ha enviado este correo debido a que se ha desactivado tus pagos mensuales de servicio premium</p><br>
+                    Se ha enviado este correo debido a que se han desactivado tus pagos mensuales de servicio premium</p><br>
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };

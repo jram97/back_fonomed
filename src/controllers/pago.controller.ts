@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { sendEmailPago, sendEmailPagoCancelar } from '../libs/functions';
+import { sendEmailPago, sendEmailPagoCita,sendEmailPagoCancelar } from '../libs/functions';
 
 import Pago from "../models/pago";
 import User from "../models/user";
@@ -107,7 +107,13 @@ export const nuevo = async (
 
     const user = await User.findById(req.user['id']);
 
-    sendEmailPago(user.nombre_completo, user.email);
+    if(req.body.cita){
+      console.log("cita");
+      sendEmailPagoCita(user.nombre_completo, user.email);
+    }else{
+      console.log("no cita");
+      sendEmailPago(user.nombre_completo, user.email);
+    }
 
     return res.status(201).json(
       response(201, "Ejecutado con exito", true, null, null)
