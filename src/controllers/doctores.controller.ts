@@ -7,7 +7,7 @@ import { response } from '../libs/functions';
 import { deleteArchive } from "../libs/functions";
 
 /** TODOS LOS DOCTORES :: ASC | DESC */
-export const getAll = async (
+export const getAllActive = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -17,6 +17,31 @@ export const getAll = async (
     const role = req.query.role || "DOC";
 
     const user = await User.find({ aprobado: true, tipo: role })
+      .populate("especialidades.especialidad", "nombre")
+      .populate("pais")
+      .populate("tarjeta")
+      .sort({ create_at: filtro });
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, user)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+export const getAll = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+
+  try {
+    const filtro = req.query.filtro || 1;
+    const role = req.query.role || "DOC";
+
+    const user = await User.find({ tipo: role })
       .populate("especialidades.especialidad", "nombre")
       .populate("pais")
       .populate("tarjeta")

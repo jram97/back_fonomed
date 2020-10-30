@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import passport from "passport";
-import { getSearch, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
+import { getSearch, getAllActive, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente } from '../controllers/expediente.controller'
 import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
@@ -9,7 +9,9 @@ const router = Router();
 
 /** DOCTORES FILTRADO */
 /** Usuarios :: ASC | DESC :: Default DESC */
-router.get('/doctores', getAll);
+router.get('/doctores', getAllActive);
+
+router.get('/doctoresAll', getAll);
 /** Usuario por ID */
 router.get('/doctores/id/:id', getById);
 /** Usuario por TOKEN */
