@@ -5,7 +5,7 @@ import Cita from "../models/cita";
 import Horario from "../models/horario";
 import Pago from "../models/pago";
 import User from "../models/user";
-import { sendEmailPago } from '../libs/functions';
+import { sendEmailPagoCita } from '../libs/functions';
 import moment, { now } from 'moment';
 import cron from 'node-cron';
 import { sendNotification } from '../libs/functions'
@@ -374,7 +374,7 @@ export const concretar = async (
 
           const user = await User.findById(req.user['id']);
 
-          sendEmailPago(user.nombre_completo, user.email);
+          sendEmailPagoCita(user.nombre_completo, user.email);
 
           const nuevoPago = new Pago({
             doctor: updated.doctor,
