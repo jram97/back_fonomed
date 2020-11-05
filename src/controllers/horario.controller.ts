@@ -165,8 +165,15 @@ export const eliminarPorDia = async (
 ): Promise<Response> => {
   try {
     const { dia } = req.params
-    console.log("dia");
-    await Horario.deleteMany({ dia: dia, doctor: req.user['id'] });
+    console.log(req.query.fecha);
+    if (req.query.fecha) {
+      const fecha = new Date(String(req.query.fecha).split("T")[0]);
+      await Horario.deleteMany({ dia: dia, doctor: req.user['id'], fecha: fecha });
+    } else {
+      await Horario.deleteMany({ dia: dia, doctor: req.user['id'] });
+    }
+
+
 
     return res.status(200).json(
       response(200, "Ejecutado con exito", true, null, null)
