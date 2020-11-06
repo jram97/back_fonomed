@@ -84,7 +84,8 @@ export const notificacionSolicitud = async (
     res: Response
 ): Promise<Response> => {
     try {
-        const cita = await Cita.findById(req.params.id).populate("usuario").populate("doctor");
+        const { id } = req.params;
+        const cita = await Cita.findById(id).populate("usuario").populate("doctor");
 
         if (cita) {
             if (cita.cont_shareExp > 0) {
@@ -105,8 +106,14 @@ export const notificacionSolicitud = async (
                 if (notificationResponse.successCount >= 1) {
                     return res.status(200).json(
                         response(200, "Solicitud realizada con exito", true, null, null));
+                } else {
+                    return res.status(400).json(
+                        response(400, "No se logro mandar la notificacion", false, null, null));
                 }
 
+            } else {
+                return res.status(400).json(
+                    response(400, "Ya no quedan mas intentos", false, null, null));
             }
         } else {
             return res.status(400).json(
