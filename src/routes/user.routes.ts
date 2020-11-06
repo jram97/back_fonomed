@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAllActive, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
-import { actualizarExpediente, expedientePaciente, expediente } from '../controllers/expediente.controller'
+import { actualizarExpediente, expedientePaciente, expediente, notificacionSolicitud } from '../controllers/expediente.controller'
 import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
@@ -43,6 +43,8 @@ router.put('/user/membresia/cancelar', passport.authenticate("jwt", { session: f
 /** Expediente */
 router.get('/user/expediente/me', passport.authenticate("jwt", { session: false }), expediente);
 router.get('/user/expediente/:id', passport.authenticate("jwt", { session: false }), expedientePaciente);
+router.get('/user/expediente/solicitar/:id', passport.authenticate("jwt", { session: false }), notificacionSolicitud);
+
 
 /**Notificar reprogramacion */
 router.post('/user/notificar', passport.authenticate("jwt", { session: false }), notificar);
