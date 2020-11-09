@@ -574,11 +574,17 @@ export const agregarTokenFirebase = async (
 
     if (user) {
       if (req.body.firebaseToken) {
-        user.firebaseTokens.push(req.body.firebaseToken);
-        await user.save();
-        return res.status(201).json(
-          response(201, "Token agregado con exito", true, null, null)
-        );
+        if (!user.firebaseTokens.includes(req.body.firebaseToken)) {
+          user.firebaseTokens.push(req.body.firebaseToken);
+          await user.save();
+          return res.status(201).json(
+            response(201, "Token agregado con exito", true, null, null)
+          );
+        } else {
+          return res.status(201).json(
+            response(201, "Token ya existente", true, null, null)
+          );
+        }
       } else {
         return res.status(404).json(
           response(404, null, false, 'El token viene vacio', null)
