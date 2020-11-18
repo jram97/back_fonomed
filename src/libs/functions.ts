@@ -254,11 +254,11 @@ export const correoContacto = (campos: any) => {
       replyTo: process.env.EMAIL_REPLY_TO,
       to: "s.ramirez@pagadito.com",
       subject: "Contacto Fonomed",
-      html: `<p Nombre: ${campos.nombre}</p>
-            </p>Telefono: ${campos.telefono}</p>
-            </p>Email: ${campos.email}</p>
-            </p>Pais: ${campos.pais}</p>
-            </p>Mensaje: ${campos.mensaje}</p>`
+      html: `<p> Nombre: ${campos.nombre}</p><br>
+            </p>Telefono: ${campos.telefono}</p><br>
+            </p>Email: ${campos.email}</p><br>
+            </p>Pais: ${campos.pais}</p><br>
+            </p>Mensaje: ${campos.mensaje}</p><br>`
     };
     transporter.sendMail(mailOptions, (error: any, info: any) => {
       if (error) {
