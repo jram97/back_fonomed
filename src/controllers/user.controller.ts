@@ -9,7 +9,7 @@ import User, { IUser } from "../models/user";
 import Cita from '../models/cita';
 import Horario from '../models/horario';
 import Verify from "../models/verify";
-import { sendNotification } from '../libs/functions'
+import { sendNotification, correoContacto } from '../libs/functions'
 
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
@@ -680,6 +680,27 @@ export const notificar = async (
       response(201, "Notificacion enviada con exito", true, null, responseNotification.results)
     );
 
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+export const contacto = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { nombre, telefono, email, pais, mensaje } = req.body;
+
+    const camposCorreo = { nombre, telefono, email, pais, mensaje };
+
+    correoContacto(camposCorreo);
+
+    return res.status(201).json(
+      response(201, "Correo enviado con exito", true, null, null)
+    );
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

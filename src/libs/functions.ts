@@ -196,6 +196,8 @@ export const sendEmailPagoCita = (nombre: string, email: string) => {
   } catch (err) {
     return false;
   }
+
+
 }
 
 /** Enviar correo : cancelacion exitosa */
@@ -219,6 +221,44 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
                     Se ha enviado este correo debido a que se han desactivado tus pagos mensuales de servicio premium</p><br>
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
+    };
+    transporter.sendMail(mailOptions, (error: any, info: any) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log(
+        "Message %s sent: %s",
+        info.messageId,
+        info.response
+      );
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+export const correoContacto = (campos: any) => {
+  try {
+
+    let transporter = nodeMailer.createTransport({
+      service: process.env.EMAIL_HOST,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER,
+      replyTo: process.env.EMAIL_REPLY_TO,
+      to: "raul.granados12@gmail.com",
+      subject: "Contacto Fonomed",
+      html: `<p Nombre: ${campos.nombre}</p>
+            </p>Telefono: ${campos.telefono}</p>
+            </p>Email: ${campos.email}</p>
+            </p>Pais: ${campos.pais}</p>
+            </p>Mensaje: ${campos.mensaje}</p>`
     };
     transporter.sendMail(mailOptions, (error: any, info: any) => {
       if (error) {
@@ -349,11 +389,11 @@ export const filtrarCitasCaducadas = (citas: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
-    console.log("Fecha normal",fechaCita);
+    console.log("Fecha normal", fechaCita);
 
     const now = moment();
     const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate() + 1);
-    console.log("Fecha al pasarla a moment y ponerle hora",mFechaCita);
+    console.log("Fecha al pasarla a moment y ponerle hora", mFechaCita);
 
     console.log("Pendientes", now.diff(mFechaCita, "minutes"));
     if (now.diff(mFechaCita, "minutes") <= 0) {
