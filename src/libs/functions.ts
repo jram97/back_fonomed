@@ -252,7 +252,7 @@ export const correoContacto = (campos: any) => {
     let mailOptions = {
       from: process.env.EMAIL_USER,
       replyTo: process.env.EMAIL_REPLY_TO,
-      to: "raul.granados12@gmail.com",
+      to: "s.ramirez@pagadito.com",
       subject: "Contacto Fonomed",
       html: `<p Nombre: ${campos.nombre}</p>
             </p>Telefono: ${campos.telefono}</p>
