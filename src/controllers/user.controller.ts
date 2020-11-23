@@ -19,7 +19,7 @@ const client = require('twilio')(twilio.accountSID, twilio.authToken);
 /** GENERACION DE TOKEN CON JWT */
 function createToken(user: IUser) {
   return jwt.sign({ id: user.id, email: user.email }, config.jwtSecret, {
-    expiresIn: "3h",
+    expiresIn: "365d",
   });
 }
 

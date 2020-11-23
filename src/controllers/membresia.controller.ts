@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import User from "../models/user";
 import Membresia from "../models/membresia";
+import cron from 'node-cron';
 
 import { response } from '../libs/functions';
 
@@ -19,6 +20,31 @@ export const nuevaMembresia = async (
                 if (req.body.tipo === "CLI") {
                     const doctor = await User.findById(req.body.doctor);
                     if (doctor) {
+                        const fecha = new Date();
+                        console.log(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`);
+                        const task = cron.schedule(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`, async () => {
+                            const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor, tipo: req.body.tipo });
+
+                            if (membresia) {
+                                const user = await User.findById(membresia.usuario);
+                                //if(user){
+                                const premium = { ...user.premium }
+
+                                premium[`${membresia.doctor}`].fecha = new Date();
+                                console.log(await User.findByIdAndUpdate(user._id, { premium: premium }))
+                                //console.log(newxd.premium);
+                                //}
+                            } else {
+                                console.log("xd");
+                                task.stop();
+                            }
+
+                        },
+                            {
+                                scheduled: true,
+                                timezone: "America/Mexico_City"
+                            });
+
                         return res.status(200).json(
                             response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
                     } else {
@@ -26,6 +52,29 @@ export const nuevaMembresia = async (
                             response(201, null, false, "No existe el doctor", null));
                     }
                 } else if (req.body.tipo === "DOC") {
+                    const fecha = new Date();
+                    console.log(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`);
+                    const task = cron.schedule(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`, async () => {
+                        const membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo });
+
+                        if (membresia) {
+                            const user = await User.findById(membresia.usuario);
+                            const premium = { ...user.premium }
+
+                            premium.fecha = new Date();
+                            console.log(await User.findByIdAndUpdate(user._id, { premium: premium }))
+                            //console.log(user.premium);
+                            //}
+                        } else {
+                            task.stop();
+                        }
+
+                    },
+                        {
+                            scheduled: true,
+                            timezone: "America/Mexico_City"
+                        });
+
                     return res.status(200).json(
                         response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
                 } else {
