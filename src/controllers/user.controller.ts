@@ -152,6 +152,7 @@ export const verifySendEmail = async (
     } else {
       let code = generateCode();
       sendEmail(nombre, email, code);
+      console.log(`Correo enviado a ${email}`);
       const newVerify = new Verify({ nombre, email, code });
       await newVerify.save();
       return res.status(201).json(
@@ -530,6 +531,7 @@ export const verifySendEmailCambioPassword = async (
       let code = generateCode();
       const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
       sendEmailCambioPassword(userExists.nombre_completo, email, code);
+      console.log(`Correo enviado a ${email}`);
       await newVerify.save();
 
       return res.status(201).json(
