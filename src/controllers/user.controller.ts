@@ -171,6 +171,7 @@ export const enviarSMS = async (req: Request, res: Response): Promise<Response> 
     .services(twilio.serviceSID)
     .verifications.create({ to: `+${req.query.to}`, channel: 'sms' })
     .then((data: any) => {
+      console.log(`Mensaje enviado a ${req.query.to}`);
       return res.status(201).json(
         response(201, "Se a enviado el codigo al telefono: " + req.query.to, true, null, data)
       );
@@ -192,6 +193,7 @@ export const recibirSMS = async (req: Request, res: Response) => {
     })
     .then((data: any) => {
       if (data.status === "approved") {
+        console.log(`Codigo valido, telefono: ${req.query.phonenumber}`);
         return res.status(201).json(
           response(201, "Codigo valido", true, null, data)
         );
