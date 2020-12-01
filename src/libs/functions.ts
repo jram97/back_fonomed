@@ -3,6 +3,10 @@ import CryptoJS from 'crypto-js';
 import moment, { now } from 'moment';
 import admin from 'firebase-admin';
 
+const mailgun = require("mailgun-js");
+const DOMAIN = process.env.MAILGUN_DOMAIN;
+const mg = mailgun({ apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN });
+
 import limit from "express-rate-limit";
 
 import fs from "fs";
@@ -86,13 +90,6 @@ export const generateCodeTransaccionRevision = () => {
 /** Enviar correo */
 export const sendEmail = (nombre: string, email: string, code: string) => {
   try {
-    let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
 
     let mailOptions = {
       from: process.env.EMAIL_USER,
@@ -106,15 +103,9 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };
-    transporter.sendMail(mailOptions, (error: any, info: any) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log(
-        "Message %s sent: %s",
-        info.messageId,
-        info.response
-      );
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
     });
     return true;
   } catch (err) {
@@ -125,17 +116,9 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
 /** Enviar correo : pago exitoso */
 export const sendEmailPago = (nombre: string, email: string) => {
   try {
-    let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
 
     let mailOptions = {
       from: process.env.EMAIL_USER,
-      replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
@@ -144,15 +127,9 @@ export const sendEmailPago = (nombre: string, email: string) => {
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };
-    transporter.sendMail(mailOptions, (error: any, info: any) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log(
-        "Message %s sent: %s",
-        info.messageId,
-        info.response
-      );
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
     });
     return true;
   } catch (err) {
@@ -163,17 +140,9 @@ export const sendEmailPago = (nombre: string, email: string) => {
 /** Enviar correo : pago exitoso */
 export const sendEmailPagoCita = (nombre: string, email: string) => {
   try {
-    let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
 
     let mailOptions = {
       from: process.env.EMAIL_USER,
-      replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
@@ -182,15 +151,9 @@ export const sendEmailPagoCita = (nombre: string, email: string) => {
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };
-    transporter.sendMail(mailOptions, (error: any, info: any) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log(
-        "Message %s sent: %s",
-        info.messageId,
-        info.response
-      );
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
     });
     return true;
   } catch (err) {
@@ -203,17 +166,9 @@ export const sendEmailPagoCita = (nombre: string, email: string) => {
 /** Enviar correo : cancelacion exitosa */
 export const sendEmailPagoCancelar = (nombre: string, email: string) => {
   try {
-    let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
 
     let mailOptions = {
       from: process.env.EMAIL_USER,
-      replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
@@ -222,16 +177,11 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };
-    transporter.sendMail(mailOptions, (error: any, info: any) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log(
-        "Message %s sent: %s",
-        info.messageId,
-        info.response
-      );
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
     });
+
     return true;
   } catch (err) {
     return false;
@@ -241,17 +191,8 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
 export const correoContacto = (campos: any) => {
   try {
 
-    let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
     let mailOptions = {
       from: process.env.EMAIL_USER,
-      replyTo: process.env.EMAIL_REPLY_TO,
       to: "s.ramirez@pagadito.com",
       subject: "Contacto Fonomed",
       html: `<p> Nombre: ${campos.nombre}</p><br>
@@ -260,15 +201,9 @@ export const correoContacto = (campos: any) => {
             </p>Pais: ${campos.pais}</p><br>
             </p>Mensaje: ${campos.mensaje}</p><br>`
     };
-    transporter.sendMail(mailOptions, (error: any, info: any) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log(
-        "Message %s sent: %s",
-        info.messageId,
-        info.response
-      );
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
     });
     return true;
   } catch (err) {
@@ -279,17 +214,9 @@ export const correoContacto = (campos: any) => {
 /** Enviar correo Cambio Password */
 export const sendEmailCambioPassword = (nombre: string, email: string, code: string) => {
   try {
-    let transporter = nodeMailer.createTransport({
-      service: process.env.EMAIL_HOST,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
 
     let mailOptions = {
       from: process.env.EMAIL_USER,
-      replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
@@ -299,15 +226,9 @@ export const sendEmailCambioPassword = (nombre: string, email: string, code: str
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
     };
-    transporter.sendMail(mailOptions, (error: any, info: any) => {
-      if (error) {
-        return console.log(error);
-      }
-      console.log(
-        "Message %s sent: %s",
-        info.messageId,
-        info.response
-      );
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
     });
     return true;
   } catch (err) {
