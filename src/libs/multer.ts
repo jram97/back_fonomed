@@ -74,4 +74,19 @@ export const receta = multer({
   })
 });
 
+export const bugs = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: Bucket + '/bugs',
+    limits: 500000,
+    acl: 'public-read',
+    metadata: (req, file, cb) => {
+      cb(null, { fieldName: file.fieldname })
+    },
+    key: (req, file, cb) => {
+      cb(null, Date.now().toString() + '-' + file.originalname)
+    }
+  })
+});
+
 export default storage;
