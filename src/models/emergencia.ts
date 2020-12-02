@@ -17,11 +17,11 @@ const emergenciaSchema = new Schema({
     type: String,
     required: true
   },
-  foto: {
+  fotos: [{
     type: String,
     default: "",
     required: false
-  }
+  }]
 }, { timestamps: true });
 
 

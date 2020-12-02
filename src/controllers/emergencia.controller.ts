@@ -29,9 +29,14 @@ export const nuevo = async (
         .status(400)
         .json(response(404, null, false, 'Campos incompletos.', null));
     }
-    if (req.file) {
+
+    if (req.files) {
+      const paths = req.files['fotos'].map(function (fotos) {
+        return fotos.location;
+      });
+      
       const { descripcion } = req.body;
-      const emergenciaNew = new Emergencia({ descripcion, foto: req.file.path, usuario: req.user["id"] })
+      const emergenciaNew = new Emergencia({ descripcion, fotos: paths, usuario: req.user["id"] })
       await emergenciaNew.save();
     } else {
       const { descripcion } = req.body;
