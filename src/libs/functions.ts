@@ -317,6 +317,7 @@ export const filtrarCitasCaducadas = (citas: any, estado:any) => {
     console.log("Fecha al pasarla a moment y ponerle hora", mFechaCita);
 
     console.log("Pendientes", now.diff(mFechaCita, "minutes"));
+    console.log(cita[estado]);
     if (((now.diff(mFechaCita, "minutes") <= 0)) && cita[estado] == "Pendiente") {
       return cita;
     }
