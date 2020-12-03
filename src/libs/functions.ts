@@ -306,7 +306,7 @@ export const hoursToMinutes = (time: any) => {
   return (parseInt(time[0]) * 60) + parseInt(time[1]);
 }
 
-export const filtrarCitasCaducadas = (citas: any) => {
+export const filtrarCitasCaducadas = (citas: any, estado:any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
@@ -317,14 +317,14 @@ export const filtrarCitasCaducadas = (citas: any) => {
     console.log("Fecha al pasarla a moment y ponerle hora", mFechaCita);
 
     console.log("Pendientes", now.diff(mFechaCita, "minutes"));
-    if (now.diff(mFechaCita, "minutes") <= 0) {
+    if (((now.diff(mFechaCita, "minutes") <= 0)) && citas[estado] == "Pendiente") {
       return cita;
     }
 
   });
 }
 
-export const filtrarCitasHistorial = (citas: any) => {
+export const filtrarCitasHistorial = (citas: any, estado:any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
@@ -333,7 +333,7 @@ export const filtrarCitasHistorial = (citas: any) => {
     console.log(fechaCita);
 
     console.log("Historial", now.diff(mFechaCita, "minutes"));
-    if (now.diff(mFechaCita, "minutes") > 0) {
+    if ((now.diff(mFechaCita, "minutes") > 0) || cita[estado] == "Completado") {
       return cita;
     }
 

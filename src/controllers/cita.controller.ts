@@ -39,7 +39,7 @@ export const getAllByDoctor = async (req: Request, res: Response): Promise<Respo
       .sort({ fecha: -1 });;
     var i, j;
 
-    var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
+    var nuevas = filtrarCitasCaducadas(citas, "estadosDoc"), especialidadPopulada, cita;
 
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
@@ -69,7 +69,7 @@ export const getAllByDoctorHistory = async (req: Request, res: Response): Promis
       .sort({ fecha: -1 });;
     var i, j;
 
-    var nuevas = filtrarCitasHistorial(citas), especialidadPopulada, cita;
+    var nuevas = filtrarCitasHistorial(citas, "estadosDoc"), especialidadPopulada, cita;
 
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
@@ -101,7 +101,7 @@ export const getAllByUser = async (req: Request, res: Response): Promise<Respons
 
     var i, j;
 
-    var nuevas = filtrarCitasCaducadas(citas), especialidadPopulada, cita;
+    var nuevas = filtrarCitasCaducadas(citas, "estadosCli"), especialidadPopulada, cita;
 
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
@@ -146,7 +146,7 @@ export const getAllByUserHistory = async (req: Request, res: Response): Promise<
 
     var i, j;
 
-    var nuevas = filtrarCitasHistorial(citas), especialidadPopulada, cita;
+    var nuevas = filtrarCitasHistorial(citas,"estadosCli"), especialidadPopulada, cita;
 
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];

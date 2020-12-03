@@ -70,13 +70,18 @@ const citaSchema = new Schema({
     type: Boolean,
     default: false
   },
-  cont_shareExp:{
+  cont_shareExp: {
     type: Number,
     default: 3
   },
-  estados: {
+  estadosDoc: {
     type: String,
-    enum: ["Pendiente", "Recibido", "En Proceso", "Completado"],
+    enum: ["Pendiente", "En Proceso", "Completado", "Fallo de conexion"],
+    default: "Pendiente"
+  },
+  estadosCli: {
+    type: String,
+    enum: ["Pendiente", "En Proceso", "Completado", "Fallo de conexion"],
     default: "Pendiente"
   },
   factura: {
