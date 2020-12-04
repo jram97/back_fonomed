@@ -306,33 +306,33 @@ export const hoursToMinutes = (time: any) => {
   return (parseInt(time[0]) * 60) + parseInt(time[1]);
 }
 
-export const filtrarCitasCaducadas = (citas: any, estado:any) => {
+export const filtrarCitasCaducadas = (citas: any, estado: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
     console.log("Fecha normal", fechaCita);
 
     const now = moment();
-    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate() + 1);
+    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate()); //<- Antes tenia +1 el get date
     console.log("Fecha al pasarla a moment y ponerle hora", mFechaCita);
 
-    console.log("Pendientes", now.diff(mFechaCita, "minutes"));
-    if (((now.diff(mFechaCita, "minutes") <= 0)) && cita[estado] == "Pendiente") {
+    console.log(now.diff(mFechaCita, "minutes"));
+    if ((now.diff(mFechaCita, "minutes") <= 0) && (cita[estado] != "Completado")) {
       return cita;
     }
 
   });
 }
 
-export const filtrarCitasHistorial = (citas: any, estado:any) => {
+export const filtrarCitasHistorial = (citas: any, estado: any) => {
   return citas.filter(cita => {
     var fechaCita = new Date(`${cita.fecha.getFullYear()}-${cita.fecha.getMonth() + 1}-${cita.fecha.getDate()}`);
     fechaCita.setDate(fechaCita.getDate() + 1);
     const now = moment();
-    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate() + 1);
+    const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate());//<- Antes tenia +1 el get date
     console.log(fechaCita);
 
-    console.log("Historial", now.diff(mFechaCita, "minutes"));
+    console.log(citas);
     if ((now.diff(mFechaCita, "minutes") > 0) || cita[estado] == "Completado") {
       return cita;
     }
