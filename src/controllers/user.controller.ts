@@ -691,6 +691,29 @@ export const notificar = async (
   }
 };
 
+export const removeAllFirebaseTokens = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+
+    const users = await User.find({});
+
+    users.forEach(async function(user){
+      user.firebaseTokens = [];
+      await user.save();
+    });
+
+    return res.status(201).json(
+      response(201, "Tokens eliminados", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 export const contacto = async (
   req: Request,
   res: Response

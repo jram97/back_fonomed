@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAllActive, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente, notificacionSolicitud } from '../controllers/expediente.controller'
-import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById, contacto } from '../controllers/user.controller';
+import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById, contacto, removeAllFirebaseTokens } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 const router = Router();
@@ -34,6 +34,7 @@ router.put('/user/expediente', passport.authenticate("jwt", { session: false }),
 /** Firebase */
 router.put('/user/agregarTokenFirebase', passport.authenticate("jwt", { session: false }), agregarTokenFirebase);
 router.put('/user/eliminarTokenFirebase', passport.authenticate("jwt", { session: false }), eliminarTokenFirebase);
+router.put('/user/eliminarTokensFirebase', passport.authenticate("jwt", { session: false }), removeAllFirebaseTokens);
 
 /**Membresia */
 router.post('/user/membresia', passport.authenticate("jwt", { session: false }), nuevaMembresia);
