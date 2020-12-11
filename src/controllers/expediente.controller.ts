@@ -107,6 +107,7 @@ export const notificacionSolicitud = async (
                     return res.status(200).json(
                         response(200, "Solicitud realizada con exito", true, null, null));
                 } else {
+                    console.log(notificationResponse.results);
                     return res.status(400).json(
                         response(400, "No se logro mandar la notificacion", false, null, null));
                 }
