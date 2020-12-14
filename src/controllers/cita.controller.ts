@@ -146,7 +146,7 @@ export const getAllByUserHistory = async (req: Request, res: Response): Promise<
 
     var i, j;
 
-    var nuevas = filtrarCitasHistorial(citas,"estadosCli"), especialidadPopulada, cita;
+    var nuevas = filtrarCitasHistorial(citas, "estadosCli"), especialidadPopulada, cita;
 
     for (i = 0; i < nuevas.length; i++) {
       cita = nuevas[i];
@@ -221,7 +221,16 @@ export const nuevo = async (
     }
 
     if (existeHorario) {
-      const citas = await Cita.find({ doctor: req.body.doctor, fecha: today, $or: [{ cancelado: "Pendiente" }, { cancelado: "Cancelado" }] });
+      const citas = await Cita.find({
+        doctor: req.body.doctor, fecha: today, $and: [
+          {
+            $or: [{ cancelado: "Pendiente" }, { cancelado: "Cancelado" }],
+          },
+          {
+            $or: [{ estadosDoc: "Pendiente" }, { estadosDoc: "Fallo de conexion" }, { estadosDoc: "En Proceso" }]
+          }
+        ]
+      });
 
       for (i = 0; i < citas.length; i++) {
         if (!verificarCita(citas[i], req.body.inicio, req.body.fin)) {

@@ -48,7 +48,9 @@ const userSchema = new Schema({
   },
   premium: {
     type: Object,
-    default: {}
+    default: {
+      recurrente: false
+    }
     /*recurrente: {
       type: String,
       default: "false"
