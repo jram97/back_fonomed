@@ -699,7 +699,7 @@ export const removeAllFirebaseTokens = async (
 
     const users = await User.find({});
 
-    users.forEach(async function(user){
+    users.forEach(async function (user) {
       user.firebaseTokens = [];
       await user.save();
     });
@@ -727,6 +727,30 @@ export const contacto = async (
 
     return res.status(201).json(
       response(201, "Correo enviado con exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+export const quitarRecurrentes = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const users = await User.find({ tipo: "DOC" });
+    var i;
+
+    users.forEach(async u => {
+      var nuevo = u.premium;
+      nuevo.recurrente = false;
+      await User.findByIdAndUpdate(u._id, {premium:nuevo});
+    });
+
+    return res.status(201).json(
+      response(201, "Exito", true, null, null)
     );
   } catch (error) {
     return res.status(404).json(

@@ -103,21 +103,24 @@ export const cancelarMembresia = async (
         var user = await User.findById(req.user['id']);
         //console.log(user);
         if (user) {
-            if (req.body.tipo === "CLI") {
+            if (req.body.tipo == "CLI") {
                 const doctor = await User.findById(req.body.doctor);
                 if (doctor) {
                     await Membresia.findOneAndDelete({ usuario: req.user['id'], doctor: req.body.doctor });
                     var premium = { ...user.premium }
                     premium[`${req.body.doctor}`].recurrente = false;
-                    user.premium = premium;
+                    await User.findOneAndUpdate(req.user['id'], { premium: premium });
+                    //await user.save();
                 } else {
                     return res.status(201).json(
                         response(201, null, false, "No existe el doctor", null));
                 }
-            } else if (req.body.tipo === "DOC") {
+            } else if (req.body.tipo == "DOC") {
                 console.log('doctor');
                 await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.body.tipo });
                 user.premium.recurrente = false;
+                await User.findOneAndUpdate(req.user['id'], { premium: { recurrente: false } });
+                //await user.save();
             } else {
                 return res.status(201).json(
                     response(404, null, false, "El tipo de usuario es invalido o viene vacio", null));
