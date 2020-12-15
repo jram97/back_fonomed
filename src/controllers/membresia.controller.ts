@@ -108,7 +108,7 @@ export const cancelarMembresia = async (
                 if (doctor) {
                     await Membresia.findOneAndDelete({ usuario: req.user['id'], doctor: req.body.doctor });
                     var premium = { ...user.premium }
-                    premium[`${req.body.doctor}`].recurrente = "null"
+                    premium[`${req.body.doctor}`].recurrente = false;
                     user.premium = premium;
                 } else {
                     return res.status(201).json(
