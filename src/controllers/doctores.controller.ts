@@ -24,8 +24,22 @@ export const getAllActive = async (
       .populate("tarjeta")
       .sort({ create_at: filtro });
 
+    var filterUsers = user.filter(u => {
+      if (u.premium.recurrente) {
+        return u;
+      } else {
+        if (u.premium.fecha) {
+          const exp = moment(u.premium.fecha).add(1, 'M');
+          console.log(moment().diff(exp, "minutes"));
+          if (moment().diff(exp, "minutes") < 0) {
+            return u;
+          }
+        }
+      }
+    });
+
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, user)
+      response(200, 'Ejecutado con exito', true, null, filterUsers)
     );
   } catch (error) {
     return res.status(404).json(
