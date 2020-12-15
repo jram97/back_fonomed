@@ -117,7 +117,7 @@ export const cancelarMembresia = async (
             } else if (req.body.tipo === "DOC") {
                 console.log('doctor');
                 await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.body.tipo });
-                user.premium.recurrente = "null";
+                user.premium.recurrente = false;
             } else {
                 return res.status(201).json(
                     response(404, null, false, "El tipo de usuario es invalido o viene vacio", null));
