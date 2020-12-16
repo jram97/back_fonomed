@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAllActive, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente, notificacionSolicitud } from '../controllers/expediente.controller'
-import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById, contacto, removeAllFirebaseTokens, quitarRecurrentes } from '../controllers/user.controller';
+import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById, contacto, removeAllFirebaseTokens, quitarRecurrentes, cambiarEstadoDoctores } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 const router = Router();
@@ -41,6 +41,7 @@ router.post('/user/membresia', passport.authenticate("jwt", { session: false }),
 router.post('/user/membresia/verificar', passport.authenticate("jwt", { session: false }), verificarMembresia);
 router.put('/user/membresia/cancelar', passport.authenticate("jwt", { session: false }), cancelarMembresia);
 router.put('/user/quitarRecurrentes', passport.authenticate("jwt", { session: false }), quitarRecurrentes);
+router.put('/user/cambiarEstadoDoctores', passport.authenticate("jwt", { session: false }), cambiarEstadoDoctores);
 
 /** Expediente */
 router.get('/user/expediente/me', passport.authenticate("jwt", { session: false }), expediente);

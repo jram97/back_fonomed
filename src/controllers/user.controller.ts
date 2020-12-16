@@ -10,6 +10,7 @@ import Cita from '../models/cita';
 import Horario from '../models/horario';
 import Verify from "../models/verify";
 import { sendNotification, correoContacto } from '../libs/functions'
+import moment, { now } from 'moment';
 
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
@@ -422,6 +423,29 @@ export const doctorDisponible = async (
         }
       }
     });
+
+    data = data.filter(u => {
+      if (u.estado) {
+        if (u.premium.recurrente) {
+          return u;
+        } else {
+          if (u.premium.fecha) {
+            const exp = moment(u.premium.fecha).add(1, 'M');
+            console.log(moment().diff(exp, "minutes"));
+            if (moment().diff(exp, "minutes") < 0) {
+              return u;
+            }
+          }
+        }
+      }
+    });
+
+    if (data.length < 1) {
+      return res.status(400).json(
+        response(400, "No se encontro doctor disponible", true, null, null)
+      );
+    }
+
     var retornar = false, horarioDisponible = true, numeroDoctor, citasDoctor, date = new Date(), dayName, i;
     date = new Date(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
 
@@ -746,7 +770,29 @@ export const quitarRecurrentes = async (
     users.forEach(async u => {
       var nuevo = u.premium;
       nuevo.recurrente = false;
-      await User.findByIdAndUpdate(u._id, {premium:nuevo});
+      await User.findByIdAndUpdate(u._id, { premium: nuevo });
+    });
+
+    return res.status(201).json(
+      response(201, "Exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+export const cambiarEstadoDoctores = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const users = await User.find({ tipo: "DOC" });
+    var i;
+
+    users.forEach(async u => {
+      await User.findByIdAndUpdate(u._id, { estado: true });
     });
 
     return res.status(201).json(
