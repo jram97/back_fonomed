@@ -1,1 +1,1 @@
-web: npm run dev
+web: node --max-old-space-size=4096 dist/index.js
