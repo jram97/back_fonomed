@@ -232,6 +232,8 @@ export const nuevo = async (
         ]
       });
 
+      console.log('cita');
+
       for (i = 0; i < citas.length; i++) {
         if (!verificarCita(citas[i], req.body.inicio, req.body.fin)) {
           horarioDisponible = false;
