@@ -163,6 +163,31 @@ export const sendEmailPagoCita = (nombre: string, email: string) => {
 
 }
 
+export const sendEmailCitaGratis = (nombre: string, email: string) => {
+  try {
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "FONOMED✔!",
+      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+                    <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
+                    Este correo es un comprobante de compra de tu cita, el monto realizado fue de $0.00.</p><br>
+
+                    <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
+    };
+
+    mg.messages().send(mailOptions, function (error, body) {
+      console.log(body);
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+
+
+}
+
 /** Enviar correo : cancelacion exitosa */
 export const sendEmailPagoCancelar = (nombre: string, email: string) => {
   try {

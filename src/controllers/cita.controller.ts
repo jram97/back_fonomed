@@ -10,7 +10,7 @@ import moment, { now } from 'moment';
 import cron from 'node-cron';
 import { sendNotification } from '../libs/functions'
 
-import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial, minutesToHours, hoursToMinutes } from '../libs/functions';
+import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial, minutesToHours, hoursToMinutes, sendEmailCitaGratis } from '../libs/functions';
 import cita from '../models/cita';
 import { update } from './user.controller';
 
@@ -322,6 +322,7 @@ export const concretar = async (
 
       if (updated) {
         const horaFin = updated.fin.split(":");
+        const horaInicio = updated.inicio.split(":");
         var date = updated.fecha;
         date.setDate(date.getDate() + 1);
         const dateOfMonth = date.getDate()
@@ -345,7 +346,17 @@ export const concretar = async (
             timezone: "America/Mexico_City"
           });
 
-        console.log("Hora inicio original", updated.inicio);
+        if(!req.body.urgente){
+          const payload = {
+            notification: {
+              title: "Se le ha programado una cita",
+              body: `El paciente ${updated.usuario.nombre_completo} ha programado una cita para el día ${updated.dia} ${dateOfMonth}-${month}-${date.getFullYear()}.`
+            }
+          }
+          sendNotification(updated.doctor.firebaseTokens, payload);
+        }
+
+        console.log("Hora", `${date}`);
 
         var horaNotificacion = minutesToHours(hoursToMinutes(updated.inicio) - 5).split(":");
         console.log("Hora inicio nueva", horaNotificacion);
@@ -385,7 +396,11 @@ export const concretar = async (
 
           const user = await User.findById(req.user['id']);
 
-          sendEmailPagoCita(user.nombre_completo, user.email);
+          if (req.body.gratis) {
+            sendEmailCitaGratis(user.nombre_completo, user.email);
+          } else {
+            sendEmailPagoCita(user.nombre_completo, user.email);
+          }
 
           const nuevoPago = new Pago({
             doctor: updated.doctor,
