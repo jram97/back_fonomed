@@ -96,7 +96,7 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
       replyTo: process.env.EMAIL_REPLY_TO,
       to: email,
       subject: "FONOMED✔!",
-      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
                     Para verificar tu cuenta por favor ingresa el siguiente codigo</p><br>
                     <center><h3>${code}</h3></center><br><br>
@@ -121,7 +121,7 @@ export const sendEmailPago = (nombre: string, email: string) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "FONOMED✔!",
-      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
                     Se ha enviado este correo debido a que tu pago mensual se efectuó con exito</p><br>
 
@@ -145,7 +145,7 @@ export const sendEmailPagoCita = (nombre: string, email: string) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "FONOMED✔!",
-      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
                     Se ha enviado este correo debido a que el pago de tu cita se efectuó con exito</p><br>
 
@@ -170,7 +170,7 @@ export const sendEmailCitaGratis = (nombre: string, email: string) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "FONOMED✔!",
-      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
                     Este correo es un comprobante de compra de tu cita, el monto realizado fue de $0.00.</p><br>
 
@@ -196,7 +196,7 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "FONOMED✔!",
-      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
                     Se ha enviado este correo debido a que se han desactivado tus pagos mensuales de servicio premium</p><br>
 
@@ -244,7 +244,7 @@ export const sendEmailCambioPassword = (nombre: string, email: string, code: str
       from: process.env.EMAIL_USER,
       to: email,
       subject: "FONOMED✔!",
-      html: `<p style="font-size: 16px;color: #808080"">¡Querido ${nombre}!<p>
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te hemos enviado este correo porque has solicitado
                     un cambio de contraseña</p><br>
                     <center><h3>${code}</h3></center><br><br>
