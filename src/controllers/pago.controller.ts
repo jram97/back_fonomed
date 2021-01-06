@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { sendEmailPago, sendEmailPagoCita,sendEmailPagoCancelar } from '../libs/functions';
+import { sendEmailPago, sendEmailPagoCita, sendEmailPagoCancelar } from '../libs/functions';
 
 import Pago from "../models/pago";
 import User from "../models/user";
@@ -67,6 +67,20 @@ export const getAllByDoctorID = async (req: Request, res: Response): Promise<Res
   }
 };
 
+export const getAll = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const pagos = await Pago.find({}).sort({ fecha: -1 });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, pagos)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 /** REGISTRO DE PAGOS */
 export const nuevo = async (
   req: Request,
@@ -107,10 +121,10 @@ export const nuevo = async (
 
     const user = await User.findById(req.user['id']);
 
-    if(req.body.cita){
+    if (req.body.cita) {
       console.log("cita");
       sendEmailPagoCita(user.nombre_completo, user.email);
-    }else{
+    } else {
       console.log("no cita");
       sendEmailPago(user.nombre_completo, user.email);
     }

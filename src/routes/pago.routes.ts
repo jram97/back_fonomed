@@ -2,7 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 const router = Router();
 
-import { getAllByDoctor, nuevo, eliminar, actualizar, getAllByDoctorID, cancelar, getAllEstados, getAllByUsuario } from "../controllers/pago.controller";
+import { getAllByDoctor, nuevo, eliminar, actualizar, getAllByDoctorID, cancelar, getAllEstados, getAllByUsuario, getAll } from "../controllers/pago.controller";
 
 /** Todos los pagos doctor */
 router.get("/pago", passport.authenticate("jwt", { session: false }), getAllByDoctor);
@@ -11,6 +11,8 @@ router.get("/pago/usuario", passport.authenticate("jwt", { session: false }), ge
 /** Todos los pagos por estados */
 router.get("/pagos", passport.authenticate("jwt", { session: false }), getAllEstados);
 /** Todos los pagos */
+router.get("/pagos/All", passport.authenticate("jwt", { session: false }), getAll);
+/** Todos los pagos por ID de doctor */
 router.get("/pago/doctor/:id", passport.authenticate("jwt", { session: false }), getAllByDoctorID);
 /** Registro de pagos */
 router.post("/pago", passport.authenticate("jwt", { session: false }), nuevo);
