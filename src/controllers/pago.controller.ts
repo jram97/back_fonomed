@@ -67,6 +67,28 @@ export const getAllByDoctorID = async (req: Request, res: Response): Promise<Res
   }
 };
 
+/** PAGOS CLIENTE :: ID */
+export const getAllByClienteID = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const usuario = await User.findOne({ _id: req.params.id })
+
+    if (!usuario) {
+      return res.status(201).json(
+        response(201, "No existe el usuario", false, null, null)
+      );
+    }
+    const pagos = await Pago.find({ usuario: usuario._id });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, pagos)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 export const getAll = async (req: Request, res: Response): Promise<Response> => {
   try {
     const pagos = await Pago.find({}).sort({ fecha: -1 });
