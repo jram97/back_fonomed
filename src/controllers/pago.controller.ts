@@ -114,12 +114,15 @@ export const nuevo = async (
       .json(response(404, null, false, 'Campos incompletos.', null));
   }
   try {
+
     const nuevoPago = new Pago(req.body);
-    nuevoPago.doctor = req.user['id'];
+    console.log(nuevoPago);
+    nuevoPago.usuario = req.user['id'];
     await nuevoPago.save();
 
     if (req.body.servicio === "Premium") {
       if (req.body.tipo == "CLI") {
+
         const premium = { ...req.user["premium"] };
         premium[`${req.body.doctor}`] = {
           recurrente: req.body.recurrente,
