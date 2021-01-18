@@ -26,7 +26,13 @@ export const getAllActive = async (
 
     var filterUsers = user.filter(u => {
       if (u.premium.recurrente) {
-        return u;
+        if (u.premium.fecha) {
+          const exp = moment(u.premium.fecha).add(1, 'M');
+          console.log(moment().diff(exp, "minutes"));
+          if (moment().diff(exp, "minutes") < 0) {
+            return u;
+          }
+        }
       } else {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
