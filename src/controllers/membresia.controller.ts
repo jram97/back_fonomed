@@ -31,7 +31,7 @@ export const nuevaMembresia = async (
                                 const premium = { ...user.premium }
 
                                 premium[`${membresia.doctor}`].fecha = new Date();
-                                console.log(await User.findByIdAndUpdate(user._id, { premium: premium }))
+                                console.log(await User.findByIdAndUpdate({ _id: user._id }, { premium: premium }))
                                 //console.log(newxd.premium);
                                 //}
                             } else {
@@ -62,7 +62,7 @@ export const nuevaMembresia = async (
                             const premium = { ...user.premium }
 
                             premium.fecha = new Date();
-                            console.log(await User.findByIdAndUpdate(user._id, { premium: premium }))
+                            console.log(await User.findByIdAndUpdate({ _id: user._id }, { premium: premium }))
                             //console.log(user.premium);
                             //}
                         } else {
@@ -109,7 +109,7 @@ export const cancelarMembresia = async (
                     await Membresia.findOneAndDelete({ usuario: req.user['id'], doctor: req.body.doctor });
                     var premium = { ...user.premium }
                     premium[`${req.body.doctor}`].recurrente = false;
-                    await User.findOneAndUpdate(req.user['id'], { premium: premium });
+                    await User.findOneAndUpdate({ _id: req.user['id'] }, { premium: premium });
                     //await user.save();
                 } else {
                     return res.status(201).json(
@@ -118,8 +118,9 @@ export const cancelarMembresia = async (
             } else if (req.body.tipo == "DOC") {
                 console.log('doctor');
                 await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.body.tipo });
-                user.premium.recurrente = false;
-                await User.findOneAndUpdate(req.user['id'], { premium: { recurrente: false } });
+                var premium = { ...user.premium };
+                premium.recurrente = false;
+                await User.findOneAndUpdate({ _id: req.user['id'] }, { premium });
                 //await user.save();
             } else {
                 return res.status(201).json(
