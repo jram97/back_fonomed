@@ -77,6 +77,33 @@ export const actualizar = async (
   }
 };
 
+/** ACTUALIZACION DE TARJETA PREDETERMINADA :: RECIBE EL ID */
+export const actualizarPredeterminada = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  if (!req.body || !req.params.id) {
+    return res
+      .status(404)
+      .json(response(404, null, false, 'Campos incompletos o faltan parametros en la URL.', null));
+  }
+  try {
+
+    await Tarjeta.updateMany({ usuario: req.user["id"] }, { $set: { predeterminada: false } });
+
+    await Tarjeta.findByIdAndUpdate(req.params.id, { ...req.body });
+
+    return res.status(201).json(
+      response(201, "Ejecutado con exito", true, null, null)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+
 /** ELIMINACION DE TARJETA :: RECIBE EL ID */
 export const eliminar = async (
   req: Request,

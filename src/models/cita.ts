@@ -4,8 +4,8 @@ import { IMedio } from "./medios";
 import { ITarjeta } from "./tarjeta";
 
 export interface ICita extends Document {
-  doctor: IUser;
-  usuario: IUser;
+  doctor: any;
+  usuario: any;
   dia: string;
   inicio: string;
   fin: string;

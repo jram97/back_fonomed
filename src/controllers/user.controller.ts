@@ -108,6 +108,32 @@ export const cambiarContrasenia = async (
   }
 };
 
+/** VERIFICAR CORREO */
+export const verificarCorreo = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { correo } = req.body;
+
+    const user = await User.findOne({ email: correo });
+
+      if (user) {
+        return res.status(200).json(
+          response(200, "Correo ya en uso", true, null, null)
+        );
+      } else {
+        return res.status(200).json(
+          response(200, "Correo disponible", true, null, null)
+        );
+      }
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
 /** RECIBIR EMAIL :: EMAIL, CODE */
 export const verifyRecibirEmail = async (
   req: Request,
@@ -285,6 +311,32 @@ export const signUp = async (
       }
     }
 
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};
+
+/** CAMBIO DE IMAGEN EN USUARIOS */
+export const cambiarImagen = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+
+  console.log(req.files)
+  try {
+    if (req.files["foto"]) {
+      let url = req.files["foto"][0]["location"];
+        await User.findByIdAndUpdate(req.user['id'], { foto: url });
+        return res.status(201).json(
+          response(201, "Se cambio la imagen", true, null, url)
+        );
+      } else {
+        return res.status(201).json(
+          response(201, "No existe ninguna imagen", true, null, null)
+        );
+      }
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

@@ -370,3 +370,17 @@ export const sendNotification = async (tokens, payload) => {
   console.log(response);
   return response;
 }
+
+export const getTimeForDate = () => {
+  const start = moment(new Date()).startOf('day');
+
+  const times = 24 * 4; // 24 hours * 15 mins in an hour
+
+  let time = []
+
+  for (let i = 0; i < times; i++) {
+    let toPrint = moment(start).add(15 * i, 'minutes').format('HH:mm');
+    time.push(toPrint);
+  }
+  return time;
+}

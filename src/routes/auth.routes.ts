@@ -11,7 +11,8 @@ import {
   verifyRecibirEmail,
   cambiarContrasenia,
   verifySendEmailCambioPassword,
-  verifyRecibirEmailCambioPassword
+  verifyRecibirEmailCambioPassword,
+  verificarCorreo
 } from "../controllers/user.controller";
 
 import upload from "../libs/multer";
@@ -44,6 +45,8 @@ router.put("/perfil/update/status/:id", updateStatus);
 router.post("/enviarmail", verifySendEmail);
 /** Recibir email */
 router.post("/recibirmail", verifyRecibirEmail);
+/** Verificar existencia de correo */
+router.post("/verificar", verificarCorreo);
 
 
 /** Cambio de contraseña */

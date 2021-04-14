@@ -2,8 +2,10 @@ import { Request, Response } from 'express'
 
 import Horario from "../models/horario";
 import User from "../models/user";
+import Cita from "../models/cita";
 
-import { response } from '../libs/functions';
+
+import { response, getTimeForDate } from '../libs/functions';
 
 /** HORARIO DOCTOR :: TOKEN */
 export const getAllByDoctor = async (req: Request, res: Response): Promise<Response> => {
@@ -172,9 +174,6 @@ export const eliminarPorDia = async (
     } else {
       await Horario.deleteMany({ dia: dia, doctor: req.user['id'] });
     }
-
-
-
     return res.status(200).json(
       response(200, "Ejecutado con exito", true, null, null)
     );
@@ -183,4 +182,35 @@ export const eliminarPorDia = async (
       response(404, null, false, 'Algo salio mal: ' + error, null)
     );
   }
+};
+
+/** HORARIO TIME DOCTOR */
+export const getTime = async (req: Request, res: Response): Promise<Response> => {
+
+  try {
+    const { id } = req.params;
+    const citas = await Cita.find({ doctor: id });
+
+    let dates = getTimeForDate();
+    let disponibles = [];
+
+    citas.map(hour => {
+      dates.filter(cita => {
+        if (hour["inicio"] == cita) {
+          disponibles.push({ hora: cita, disponible: true })
+        } else {
+          disponibles.push({ hora: cita, disponible: false })
+        }
+      })
+    })
+
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, disponibles)
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+  //return res.status(200).json(getTimeForDate());
 };

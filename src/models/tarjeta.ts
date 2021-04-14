@@ -7,6 +7,7 @@ export interface ITarjeta extends Document {
   ultima_usada: boolean;
   pagadito: string;
   usuario: IUser;
+  predeterminada: boolean;
 }
 
 const tarjetaSchema = new Schema({
@@ -34,6 +35,10 @@ const tarjetaSchema = new Schema({
     ref: "User",
     require: false,
   },
+  predeterminada: {
+    type: Boolean,
+    default: false
+  }
 },
   { timestamps: true }
 );
