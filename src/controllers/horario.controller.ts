@@ -188,21 +188,28 @@ export const eliminarPorDia = async (
 export const getTime = async (req: Request, res: Response): Promise<Response> => {
 
   try {
-    const { id } = req.params;
-    const citas = await Cita.find({ doctor: id });
+    const { id, fecha } = req.params;
+    const citas = await Cita.find({ doctor: id, fecha: new Date(fecha) });
 
     let dates = getTimeForDate();
     let disponibles = [];
 
-    citas.map(hour => {
-      dates.filter(cita => {
-        if (hour["inicio"] == cita) {
-          disponibles.push({ hora: cita, disponible: true })
-        } else {
-          disponibles.push({ hora: cita, disponible: false })
-        }
+    if(citas.length){
+      citas.map(hour => {
+        dates.filter(cita => {
+          if (hour["inicio"] == cita) {
+            disponibles.push({ hora: cita, disponible: false })
+          } else {
+            disponibles.push({ hora: cita, disponible: true })
+          }
+        })
       })
-    })
+    }else {
+      dates.map(date => {
+        disponibles.push({ hora: date, disponible: true })
+      })      
+    }
+
 
     return res.status(200).json(
       response(200, 'Ejecutado con exito', true, null, disponibles)
