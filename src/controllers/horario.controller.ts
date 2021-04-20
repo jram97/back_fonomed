@@ -206,9 +206,9 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
     citasDisponibles.map(hour => {
       disponibles.filter(cita => {
         if (hour["inicio"] == cita) {
-          citasDisponiblesArray.push({ hora: cita, disponible: false })
+          citasDisponiblesArray.push({ hora: cita, fin: hour["fin"], disponible: false })
         } else {
-          citasDisponiblesArray.push({ hora: cita, disponible: true })
+          citasDisponiblesArray.push({ hora: cita, fin: null, disponible: true })
         }
       })
     })
