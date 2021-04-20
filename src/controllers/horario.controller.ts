@@ -196,25 +196,37 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
     let disponibles = [];
     let citasDisponiblesArray = [];
 
-    if(citas){
-      dates.filter(cita => {
-        if (parseFloat(cita.replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
-          parseFloat(cita.replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
-          disponibles.push({ hora: cita, fin: null, disponible: true })
-        }
-      })
-    }
-
+    /*
     if(citasDisponibles.length) {
       citasDisponibles.map(hour => {
         disponibles.filter(cita => {
           if (hour["inicio"] == cita.hora) {
-            citasDisponiblesArray.push({ hora: cita.hora, fin: hour["fin"], disponible: false })
+            citasDisponiblesArray.push({ hora: cita.hora, fin: cita.hora, disponible: false })
           } else {
-            citasDisponiblesArray.push({ hora: cita.hora, fin: null, disponible: true })
+            citasDisponiblesArray.push({ hora: cita.hora, fin: cita.hora, disponible: true })
           }
         })
       })
+    }*/
+
+    if(citas){
+      for (let index = 0; index < dates.length; index++) {
+        if (parseFloat(dates[index].replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
+          parseFloat(dates[index].replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
+          disponibles.push({ hora: dates[index], fin: (dates[index + 1] != null) ? dates[index + 1] : citas.fin, disponible: true })
+        }
+      }
+    }
+
+    for (let hour = 0; hour < citasDisponibles.length; hour++) {
+      let hours = citasDisponibles[hour];
+      for (let cita = 0; cita < disponibles.length; cita++) {
+        if(hours.inicio == disponibles[cita].hora){
+          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : citas.fin, disponible: false })
+        } else {
+          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : citas.fin, disponible: true })
+        }      
+      }
     }
 
     return res.status(200).json(
