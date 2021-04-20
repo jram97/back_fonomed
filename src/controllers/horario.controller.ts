@@ -190,19 +190,32 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
   try {
     const { id, fecha } = req.params;
     const citas = await Horario.findOne({ doctor: id, fecha: new Date(fecha) });
+    const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha) });
 
     let dates = getTimeForDate(fecha);
     let disponibles = [];
+    let citasDisponiblesArray = [];
 
     dates.filter(cita => {
       if (parseFloat(cita.replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
         parseFloat(cita.replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
-        disponibles.push({ hora: cita, disponible: true })
+        disponibles.push(cita)
       }
     })
 
+    citasDisponibles.map(hour => {
+      disponibles.filter(cita => {
+        if (hour["inicio"] == cita) {
+          citasDisponiblesArray.push({ hora: cita, disponible: false })
+        } else {
+          citasDisponiblesArray.push({ hora: cita, disponible: true })
+        }
+      })
+    })
+
+
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, disponibles)
+      response(200, 'Ejecutado con exito', true, null, citasDisponiblesArray)
     );
   } catch (error) {
     return res.status(404).json(
