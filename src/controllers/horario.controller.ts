@@ -189,27 +189,17 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
 
   try {
     const { id, fecha } = req.params;
-    const citas = await Cita.find({ doctor: id, fecha: new Date(fecha) });
+    const citas = await Horario.findOne({ doctor: id, fecha: new Date(fecha) });
 
-    let dates = getTimeForDate();
+    let dates = getTimeForDate(fecha);
     let disponibles = [];
 
-    if(citas.length){
-      citas.map(hour => {
-        dates.filter(cita => {
-          if (hour["inicio"] == cita) {
-            disponibles.push({ hora: cita, disponible: false })
-          } else {
-            disponibles.push({ hora: cita, disponible: true })
-          }
-        })
-      })
-    }else {
-      dates.map(date => {
-        disponibles.push({ hora: date, disponible: true })
-      })      
-    }
-
+    dates.filter(cita => {
+      if (parseFloat(cita.replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
+        parseFloat(cita.replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
+        disponibles.push({ hora: cita, disponible: true })
+      }
+    })
 
     return res.status(200).json(
       response(200, 'Ejecutado con exito', true, null, disponibles)

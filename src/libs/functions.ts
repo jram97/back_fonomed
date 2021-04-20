@@ -371,8 +371,8 @@ export const sendNotification = async (tokens, payload) => {
   return response;
 }
 
-export const getTimeForDate = () => {
-  const start = moment(new Date()).startOf('day');
+export const getTimeForDate = (inicio) => {
+  const start = moment(inicio).startOf('day');
 
   const times = 24 * 4; // 24 hours * 15 mins in an hour
 

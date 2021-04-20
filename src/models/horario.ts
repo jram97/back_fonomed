@@ -6,7 +6,7 @@ export interface IHorario extends Document {
   fecha: Date;
   inicio: string;
   fin: string;
-  doctor: IUser;
+  doctor: any;
   estado: boolean;
 }
 
