@@ -196,22 +196,26 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
     let disponibles = [];
     let citasDisponiblesArray = [];
 
-    dates.filter(cita => {
-      if (parseFloat(cita.replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
-        parseFloat(cita.replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
-        disponibles.push(cita)
-      }
-    })
-
-    citasDisponibles.map(hour => {
-      disponibles.filter(cita => {
-        if (hour["inicio"] == cita) {
-          citasDisponiblesArray.push({ hora: cita, fin: hour["fin"], disponible: false })
-        } else {
-          citasDisponiblesArray.push({ hora: cita, fin: null, disponible: true })
+    if(citas){
+      dates.filter(cita => {
+        if (parseFloat(cita.replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
+          parseFloat(cita.replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
+          disponibles.push(cita)
         }
       })
-    })
+    }
+
+    if(citasDisponibles.length) {
+      citasDisponibles.map(hour => {
+        disponibles.filter(cita => {
+          if (hour["inicio"] == cita) {
+            citasDisponiblesArray.push({ hora: cita, fin: hour["fin"], disponible: false })
+          } else {
+            citasDisponiblesArray.push({ hora: cita, fin: null, disponible: true })
+          }
+        })
+      })
+    }
 
 
     return res.status(200).json(
