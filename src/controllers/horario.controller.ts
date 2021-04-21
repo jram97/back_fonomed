@@ -189,31 +189,26 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
 
   try {
     const { id, fecha } = req.params;
-    const citas = await Horario.findOne({ doctor: id, fecha: new Date(fecha) });
+
+    const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+    const dia = new Date(fecha).getDay();
+
+    const horarios = await Horario.find({ doctor: id, dia: dias[dia] });
     const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha) });
 
     let dates = getTimeForDate(fecha);
     let disponibles = [];
     let citasDisponiblesArray = [];
 
-    /*
-    if(citasDisponibles.length) {
-      citasDisponibles.map(hour => {
-        disponibles.filter(cita => {
-          if (hour["inicio"] == cita.hora) {
-            citasDisponiblesArray.push({ hora: cita.hora, fin: cita.hora, disponible: false })
-          } else {
-            citasDisponiblesArray.push({ hora: cita.hora, fin: cita.hora, disponible: true })
-          }
-        })
-      })
-    }*/
-
-    if(citas){
+    if (horarios) {
       for (let index = 0; index < dates.length; index++) {
-        if (parseFloat(dates[index].replace(":", ".")) >= parseFloat(citas.inicio.replace(":", ".")) &&
-          parseFloat(dates[index].replace(":", ".")) < parseFloat(citas.fin.replace(":", "."))) {
-          disponibles.push({ hora: dates[index], fin: (dates[index + 1] != null) ? dates[index + 1] : citas.fin, disponible: true })
+        for (let hora = 0; hora < horarios.length; hora++) {
+          const element = horarios[hora];
+          if (parseFloat(dates[index].replace(":", ".")) >= parseFloat(element.inicio.replace(":", ".")) &&
+            parseFloat(dates[index].replace(":", ".")) < parseFloat(element.fin.replace(":", "."))) {
+            disponibles.push({ hora: dates[index], fin: (dates[index + 1] != null) ? dates[index + 1] : element.fin, disponible: true })
+          }
         }
       }
     }
@@ -221,16 +216,39 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
     for (let hour = 0; hour < citasDisponibles.length; hour++) {
       let hours = citasDisponibles[hour];
       for (let cita = 0; cita < disponibles.length; cita++) {
-        if(hours.inicio == disponibles[cita].hora){
-          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : citas.fin, disponible: false })
+        let valorEvaluar = disponibles[cita].hora
+        let dispo = false;
+        if (hours.inicio == disponibles[cita].hora) {
+          dispo = true;
         } else {
-          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : citas.fin, disponible: true })
-        }      
+          dispo = false;
+        }
+        citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : horarios[1]["fin"], disponible: dispo })
       }
     }
 
+    let disponiblesDates = []
+    let finalDates = []
+    for (let index = 0; index < disponibles.length; index++) {
+      const element = disponibles[index];
+      if(parseFloat(element.hora.replace(":", ",")) <= 12.00){
+       finalDates.push({hora: element.hora + " AM", fin: element.fin + " AM", disponible: element.disponible})
+     }else{
+       finalDates.push({hora: element.hora + " PM", fin: element.fin + " PM", disponible: element.disponible})
+     }
+    }
+
+    for (let index = 0; index < citasDisponiblesArray.length; index++) {
+      const element = citasDisponiblesArray[index];
+      if(parseFloat(element.hora.replace(":", ",")) <= 12.00){
+        disponiblesDates.push({hora: element.hora + " AM", fin: element.fin + " AM", disponible: element.disponible})
+     }else{
+        disponiblesDates.push({hora: element.hora + " PM", fin: element.fin + " PM", disponible: element.disponible})
+     }
+    }
+
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, ((citasDisponiblesArray.length) ? citasDisponiblesArray : disponibles))
+      response(200, 'Ejecutado con exito', true, null, ((finalDates.length) ? finalDates : disponiblesDates))
     );
   } catch (error) {
     return res.status(404).json(

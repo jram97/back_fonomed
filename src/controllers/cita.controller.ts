@@ -177,7 +177,7 @@ export const nuevo = async (
       .json(response(404, null, false, 'Campos incompletos.', null));
   }
   try {
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     const today = new Date(req.body.date.split("T")[0]);
 
     const compare = new Date(req.body.date.split("T")[0]);
@@ -192,8 +192,7 @@ export const nuevo = async (
         .status(407)
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
     }*/
-    //QUITAR +1 AL HACER PUSH
-    const dayName = days[today.getDay() + 1];
+    const dayName = days[today.getDay()];
     console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
