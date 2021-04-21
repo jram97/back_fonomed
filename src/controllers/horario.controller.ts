@@ -217,20 +217,18 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
       let hours = citasDisponibles[hour];
       for (let cita = 0; cita < disponibles.length; cita++) {
         let valorEvaluar = disponibles[cita].hora
-        let dispo = false;
         if (hours.inicio == disponibles[cita].hora) {
-          dispo = true;
+          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : horarios[1]["fin"], disponible: false })
         } else {
-          dispo = false;
+          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : horarios[1]["fin"], disponible: true })
         }
-        citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : horarios[1]["fin"], disponible: dispo })
       }
     }
 
     let disponiblesDates = []
     let finalDates = []
-    for (let index = 0; index < disponibles.length; index++) {
-      const element = disponibles[index];
+    for (let index = 0; index < citasDisponiblesArray.length; index++) {
+      const element = citasDisponiblesArray[index];
       if(parseFloat(element.hora.replace(":", ",")) <= 12.00){
        finalDates.push({hora: element.hora + " AM", fin: element.fin + " AM", disponible: element.disponible})
      }else{
@@ -238,8 +236,8 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
      }
     }
 
-    for (let index = 0; index < citasDisponiblesArray.length; index++) {
-      const element = citasDisponiblesArray[index];
+    for (let index = 0; index < disponibles.length; index++) {
+      const element = disponibles[index];
       if(parseFloat(element.hora.replace(":", ",")) <= 12.00){
         disponiblesDates.push({hora: element.hora + " AM", fin: element.fin + " AM", disponible: element.disponible})
      }else{
