@@ -225,28 +225,8 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
       }
     }
 
-    let disponiblesDates = []
-    let finalDates = []
-    for (let index = 0; index < citasDisponiblesArray.length; index++) {
-      const element = citasDisponiblesArray[index];
-      if(parseFloat(element.hora.replace(":", ",")) <= 12.00){
-       finalDates.push({hora: element.hora + " AM", fin: element.fin + " AM", disponible: element.disponible})
-     }else{
-       finalDates.push({hora: element.hora + " PM", fin: element.fin + " PM", disponible: element.disponible})
-     }
-    }
-
-    for (let index = 0; index < disponibles.length; index++) {
-      const element = disponibles[index];
-      if(parseFloat(element.hora.replace(":", ",")) <= 12.00){
-        disponiblesDates.push({hora: element.hora + " AM", fin: element.fin + " AM", disponible: element.disponible})
-     }else{
-        disponiblesDates.push({hora: element.hora + " PM", fin: element.fin + " PM", disponible: element.disponible})
-     }
-    }
-
     return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, ((finalDates.length) ? finalDates : disponiblesDates))
+      response(200, 'Ejecutado con exito', true, null, ((citasDisponiblesArray.length) ? citasDisponiblesArray : disponibles))
     );
   } catch (error) {
     return res.status(404).json(
