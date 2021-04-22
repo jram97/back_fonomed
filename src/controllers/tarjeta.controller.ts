@@ -39,10 +39,19 @@ export const nuevo = async (
       .json(response(404, null, false, 'Campos incompletos.', null));
   }
   try {
-    const nuevaTarjeta = new Tarjeta(req.body);
-    nuevaTarjeta.usuario = req.user['id']
 
-    await nuevaTarjeta.save();
+    const tarjetaExistente = await Tarjeta.find({ usuario: req.user['id']})
+
+    let nuevaTarjeta = new Tarjeta(req.body);
+
+    if(tarjetaExistente.length > 0) {
+      nuevaTarjeta.usuario = req.user['id']
+      await nuevaTarjeta.save();
+    }else {
+      nuevaTarjeta.usuario = req.user['id'];
+      nuevaTarjeta.predeterminada = true;
+      await nuevaTarjeta.save();
+    }
 
     return res.status(201).json(
       response(201, "Ejecutado con exito", true, null, nuevaTarjeta)

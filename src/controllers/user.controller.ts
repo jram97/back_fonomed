@@ -119,8 +119,8 @@ export const verificarCorreo = async (
     const user = await User.findOne({ email: correo });
 
       if (user) {
-        return res.status(200).json(
-          response(200, "Correo ya en uso", true, null, null)
+        return res.status(404).json(
+          response(404, "Correo ya en uso", true, null, null)
         );
       } else {
         return res.status(200).json(
