@@ -218,9 +218,9 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
       for (let cita = 0; cita < disponibles.length; cita++) {
         let valorEvaluar = disponibles[cita].hora
         if (hours.inicio == disponibles[cita].hora) {
-          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1]["fin"] != null) ? horarios[1]["fin"] : horarios[0]["fin"], disponible: false })
+          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : horarios[0]["fin"], disponible: false })
         } else {
-          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1]["fin"] != null) ? horarios[1]["fin"] : horarios[0]["fin"], disponible: true })
+          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : horarios[0]["fin"], disponible: true })
         }
       }
     }
