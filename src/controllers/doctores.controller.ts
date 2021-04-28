@@ -28,7 +28,6 @@ export const getAllActive = async (
       if (u.premium.recurrente) {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
-          console.log(moment().diff(exp, "minutes"));
           if (moment().diff(exp, "minutes") < 0) {
             return u;
           }
@@ -36,7 +35,6 @@ export const getAllActive = async (
       } else {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
-          console.log(moment().diff(exp, "minutes"));
           if (moment().diff(exp, "minutes") < 0) {
             return u;
           }
@@ -167,9 +165,8 @@ export const getSearch = async (
 
     if (especialidad) {
       data = data.filter((x) => {
-        var i;
-
-        for (i = 0; i < x.especialidades.especialidad.length; i++) {
+        var i = 0;
+        for (i; i < x.especialidades.especialidad.length; i++) {
           if (x.especialidades.especialidad[i].nombre == especialidad) {
             return x;
             break;
@@ -178,13 +175,31 @@ export const getSearch = async (
       });
     }
 
-    var filterUsers = data.filter(u => {
+    /*var filterUsers = data.filter(u => {
       if (u.premium.recurrente) {
         return u;
       } else {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
           console.log(moment().diff(exp, "minutes"));
+          if (moment().diff(exp, "minutes") < 0) {
+            return u;
+          }
+        }
+      }
+    });*/
+
+    var filterUsers = data.filter(u => {
+      if (u.premium.recurrente) {
+        if (u.premium.fecha) {
+          const exp = moment(u.premium.fecha).add(1, 'M');
+          if (moment().diff(exp, "minutes") < 0) {
+            return u;
+          }
+        }
+      } else {
+        if (u.premium.fecha) {
+          const exp = moment(u.premium.fecha).add(1, 'M');
           if (moment().diff(exp, "minutes") < 0) {
             return u;
           }
