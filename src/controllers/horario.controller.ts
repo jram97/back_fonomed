@@ -188,46 +188,84 @@ export const eliminarPorDia = async (
 export const getTime = async (req: Request, res: Response): Promise<Response> => {
 
   try {
-    const { id, fecha } = req.params;
+    const { id, fecha } = req.query;
 
-    const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const especiales = await Horario.find({ dia: "Especial", fecha: new Date(fecha.toString()), doctor: id });
 
-    const dia = new Date(fecha).getDay();
+    if(!especiales.length){
+      const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-    const horarios = await Horario.find({ doctor: id, dia: dias[dia] });
-    const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha) });
-
-    let dates = getTimeForDate(fecha);
-    let disponibles = [];
-    let citasDisponiblesArray = [];
-
-    if (horarios) {
-      for (let index = 0; index < dates.length; index++) {
-        for (let hora = 0; hora < horarios.length; hora++) {
-          const element = horarios[hora];
-          if (parseFloat(dates[index].replace(":", ".")) >= parseFloat(element.inicio.replace(":", ".")) &&
-            parseFloat(dates[index].replace(":", ".")) < parseFloat(element.fin.replace(":", "."))) {
-            disponibles.push({ hora: dates[index], fin: (dates[index + 1] != null) ? dates[index + 1] : element.fin, disponible: true })
+      const dia = new Date(fecha.toString()).getDay();
+  
+      const horarios = await Horario.find({ doctor: id, dia: dias[dia] });
+      const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha.toString()) });
+  
+      let dates = getTimeForDate(fecha);
+      let disponibles = [];
+      let citasDisponiblesArray = [];
+  
+      if (horarios) {
+        for (let index = 0; index < dates.length; index++) {
+          for (let hora = 0; hora < horarios.length; hora++) {
+            const element = horarios[hora];
+            if (parseFloat(dates[index].replace(":", ".")) >= parseFloat(element.inicio.replace(":", ".")) &&
+              parseFloat(dates[index].replace(":", ".")) < parseFloat(element.fin.replace(":", "."))) {
+              disponibles.push({ hora: dates[index], fin: (dates[index + 1] != null) ? dates[index + 1] : element.fin, disponible: true })
+            }
           }
         }
       }
-    }
-
-    for (let hour = 0; hour < citasDisponibles.length; hour++) {
-      let hours = citasDisponibles[hour];
-      for (let cita = 0; cita < disponibles.length; cita++) {
-        let valorEvaluar = disponibles[cita].hora
-        if (hours.inicio == disponibles[cita].hora) {
-          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : horarios[0]["fin"], disponible: false })
-        } else {
-          citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : horarios[0]["fin"], disponible: true })
+  
+      for (let hour = 0; hour < citasDisponibles.length; hour++) {
+        let hours = citasDisponibles[hour];
+        for (let cita = 0; cita < disponibles.length; cita++) {
+          let valorEvaluar = disponibles[cita].hora
+          if (hours.inicio == disponibles[cita].hora) {
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : (parseFloat(horarios[0]["fin"]) > 12) ? disponibles[cita + 1]: horarios[0]["fin"], disponible: false })
+          } else {
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : (parseFloat(horarios[0]["fin"]) > 12) ? disponibles[cita + 1]: horarios[0]["fin"], disponible: true })
+          }
         }
       }
+  
+      return res.status(200).json(
+        response(200, 'Ejecutado con exito', true, null, ((citasDisponiblesArray.length) ? citasDisponiblesArray : disponibles))
+      );
+    }else{
+      const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha.toString()) });
+  
+      let dates = getTimeForDate(fecha);
+      let disponibles = [];
+      let citasDisponiblesArray = [];
+  
+      if (especiales) {
+        for (let index = 0; index < dates.length; index++) {
+          for (let hora = 0; hora < especiales.length; hora++) {
+            const element = especiales[hora];
+            if (parseFloat(dates[index].replace(":", ".")) >= parseFloat(element.inicio.replace(":", ".")) &&
+              parseFloat(dates[index].replace(":", ".")) < parseFloat(element.fin.replace(":", "."))) {
+              disponibles.push({ hora: dates[index], fin: (dates[index + 1] != null) ? dates[index + 1] : element.fin, disponible: true })
+            }
+          }
+        }
+      }
+  
+      for (let hour = 0; hour < citasDisponibles.length; hour++) {
+        let hours = citasDisponibles[hour];
+        for (let cita = 0; cita < disponibles.length; cita++) {
+          let valorEvaluar = disponibles[cita].hora
+          if (hours.inicio == disponibles[cita].hora) {
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : especiales[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (especiales[1] != null) ? especiales[1]["fin"] : (parseFloat(especiales[0]["fin"]) > 12) ? disponibles[cita + 1]: especiales[0]["fin"], disponible: false })
+          } else {
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : especiales[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (especiales[1] != null) ? especiales[1]["fin"] : (parseFloat(especiales[0]["fin"]) > 12) ? disponibles[cita + 1]: especiales[0]["fin"], disponible: true })
+          }
+        }
+      }
+      return res.status(200).json(
+        response(200, 'Ejecutado con exito', true, null, ((citasDisponiblesArray.length) ? citasDisponiblesArray : disponibles))
+      );
     }
 
-    return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, ((citasDisponiblesArray.length) ? citasDisponiblesArray : disponibles))
-    );
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

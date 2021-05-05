@@ -22,6 +22,6 @@ router.delete("/horario/dia/:dia", passport.authenticate("jwt", { session: false
 router.delete("/horario/:id", passport.authenticate("jwt", { session: false }), eliminar);
 
 /** Get time for date */
-router.get("/horario/time/get-time/:id/:fecha", passport.authenticate("jwt", { session: false }), getTime);
+router.get("/horario/time/get-time", passport.authenticate("jwt", { session: false }), getTime);
 
 export default router;

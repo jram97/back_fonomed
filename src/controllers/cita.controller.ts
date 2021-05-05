@@ -193,7 +193,6 @@ export const nuevo = async (
         .json(response(407, null, false, 'Debes seleccionar una fecha valida.', null));
     }*/
     const dayName = days[today.getDay()];
-    console.log(dayName, today);
     var existeHorario = false, horarioDisponible = true;
     var horarios;
 
