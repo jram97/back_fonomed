@@ -156,7 +156,8 @@ const userSchema = new Schema({
     "Enfermedades Diagnosticadas": [],
     "Alérgico a": [],
     "Medicinas permanentes": [],
-    "Medicinas recetadas": []
+    "Medicinas recetadas": [],
+    "Ultimas medicinas": []
   }
 },
   { timestamps: true, minimize: false }

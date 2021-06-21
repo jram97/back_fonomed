@@ -29,6 +29,10 @@ export const actualizarExpediente = async (
                 user.expediente["Medicinas recetadas"] = user.expediente["Medicinas recetadas"].concat(req.body["Medicinas recetadas"]);
             }
 
+            if (req.body["Ultimas medicinas"]) {
+                user.expediente["Ultimas medicinas"] = user.expediente["Ultimas medicinas"].concat(req.body["Ultimas medicinas"]);
+            }
+
             await user.save();
             return res.status(200).json(
                 response(200, "Ejecutado con exito", true, null, null));

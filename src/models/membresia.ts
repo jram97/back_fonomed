@@ -16,8 +16,28 @@ const membresiaSchema = new Schema({
         ref: "User"
     },
     tarjeta: {
-        type: Schema.Types.ObjectId,
-        ref: "Tarjeta"
+        numero: {
+            type: String,
+            required: true,
+          },
+          pagadito: {
+            type: String,
+            required: false,
+            default: ""
+          },
+          token: {
+            type: String,
+            required: false,
+            default: ""
+          },
+          ultima_usada: {
+            type: Boolean,
+            default: false
+          },
+          predeterminada: {
+            type: Boolean,
+            default: false
+          }
     },
     tipo: {
         type: String,

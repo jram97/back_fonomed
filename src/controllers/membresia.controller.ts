@@ -35,10 +35,8 @@ export const nuevaMembresia = async (
                                 //console.log(newxd.premium);
                                 //}
                             } else {
-                                console.log("xd");
                                 task.stop();
                             }
-
                         },
                             {
                                 scheduled: true,
@@ -68,7 +66,6 @@ export const nuevaMembresia = async (
                         } else {
                             task.stop();
                         }
-
                     },
                         {
                             scheduled: true,
