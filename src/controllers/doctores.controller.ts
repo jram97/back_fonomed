@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 
 import User from "../models/user";
 import Rating from "../models/rating";
+import Medio from "../models/medios";
+import Horario from "../models/horario";
 
 import { response } from '../libs/functions';
 import { deleteArchive } from "../libs/functions";
@@ -67,9 +69,22 @@ export const getAll = async (
       .populate("tarjeta")
       .sort({ create_at: filtro });
 
-    return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, user)
-    );
+    const getData = async () => {
+      return Promise.all(user.map(async (u) => {
+        let horarioUser = await Horario.find({ doctor: u._id });
+        let medioUser = await Medio.find({ doctor: u._id });
+        if (horarioUser.length > 0 && medioUser.length > 0) {
+          return u;
+        }
+      }))
+    }
+
+    getData().then(data => {
+      return res.status(200).json(
+        response(200, 'Ejecutado con exito', true, null, data)
+      );
+    });
+
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)
@@ -207,9 +222,22 @@ export const getSearch = async (
       }
     });
 
-    return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, filterUsers)
-    );
+    const getData = async () => {
+      return Promise.all(filterUsers.map(async (u) => {
+        let horarioUser = await Horario.find({ doctor: u._id });
+        let medioUser = await Medio.find({ doctor: u._id });
+        if (horarioUser.length > 0 && medioUser.length > 0) {
+          return u;
+        }
+      }))
+    }
+
+    getData().then(data => {
+      return res.status(200).json(
+        response(200, 'Ejecutado con exito', true, null, data)
+      );
+    });
+
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

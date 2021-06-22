@@ -30,7 +30,7 @@ export const actualizarExpediente = async (
             }
 
             if (req.body["Ultimas medicinas"]) {
-                user.expediente["Ultimas medicinas"] = user.expediente["Ultimas medicinas"].concat(req.body["Ultimas medicinas"]);
+                user.expediente["Ultimas medicinas"] = req.body["Ultimas medicinas"];
             }
 
             await user.save();
