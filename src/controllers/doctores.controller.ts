@@ -44,9 +44,22 @@ export const getAllActive = async (
       }
     });
 
-    return res.status(200).json(
-      response(200, 'Ejecutado con exito', true, null, filterUsers)
-    );
+    const getData = async () => {
+      return Promise.all(filterUsers.map(async (u) => {
+        let horarioUser = await Horario.find({ doctor: u._id });
+        let medioUser = await Medio.find({ doctor: u._id });
+        if (horarioUser.length > 0 && medioUser.length > 0) {
+          return u;
+        }
+      }))
+    }
+
+    getData().then(data => {
+      return res.status(200).json(
+        response(200, 'Ejecutado con exito', true, null, data)
+      );
+    });
+
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)
@@ -69,21 +82,9 @@ export const getAll = async (
       .populate("tarjeta")
       .sort({ create_at: filtro });
 
-    const getData = async () => {
-      return Promise.all(user.map(async (u) => {
-        let horarioUser = await Horario.find({ doctor: u._id });
-        let medioUser = await Medio.find({ doctor: u._id });
-        if (horarioUser.length > 0 && medioUser.length > 0) {
-          return u;
-        }
-      }))
-    }
-
-    getData().then(data => {
-      return res.status(200).json(
-        response(200, 'Ejecutado con exito', true, null, data)
-      );
-    });
+    return res.status(200).json(
+      response(200, 'Ejecutado con exito', true, null, user)
+    );
 
   } catch (error) {
     return res.status(404).json(
