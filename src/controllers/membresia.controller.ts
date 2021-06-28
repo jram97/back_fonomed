@@ -148,7 +148,7 @@ export const verificarMembresia = async (
         if (user) {
             if (req.body.tipo === "CLI") {
                 console.log("cliente");
-                membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor }).populate("tarjeta");
+                membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor });
 
                 if (membresia) {
                     return res.status(200).json(
@@ -160,7 +160,7 @@ export const verificarMembresia = async (
 
             } else if (req.body.tipo === "DOC") {
                 console.log("doctor");
-                membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo }).populate("tarjeta");
+                membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo });
 
                 if (membresia) {
                     return res.status(200).json(
