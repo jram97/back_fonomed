@@ -44,7 +44,7 @@ export const nuevaMembresia = async (
                             });
 
                         return res.status(200).json(
-                            response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
+                            response(200, "ejecutado con exito", false, null, await new Membresia({ doctor: req.body.doctor, usuario: req.user['id'], tarjeta_id: req.body.tarjeta_id, tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
                     } else {
                         return res.status(201).json(
                             response(201, null, false, "No existe el doctor", null));
@@ -73,7 +73,7 @@ export const nuevaMembresia = async (
                         });
 
                     return res.status(200).json(
-                        response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
+                        response(200, "ejecutado con exito", false, null, await new Membresia({ usuario: req.user['id'], tarjeta_id: req.body.tarjeta_id, tarjeta: req.body.tarjeta, tipo: req.body.tipo }).save()));
                 } else {
                     return res.status(201).json(
                         response(404, null, false, "El tipo de usuario es invalido o viene vacio", null));
@@ -148,7 +148,7 @@ export const verificarMembresia = async (
         if (user) {
             if (req.body.tipo === "CLI") {
                 console.log("cliente");
-                membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor });
+                membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor }).populate("tarjeta_id");
 
                 if (membresia) {
                     return res.status(200).json(
@@ -160,7 +160,7 @@ export const verificarMembresia = async (
 
             } else if (req.body.tipo === "DOC") {
                 console.log("doctor");
-                membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo });
+                membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo }).populate("tarjeta_id");
 
                 if (membresia) {
                     return res.status(200).json(

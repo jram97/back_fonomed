@@ -15,6 +15,11 @@ const membresiaSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
+    tarjeta_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Tarjeta",
+      required: false
+    },
     tarjeta: {
         numero: {
             type: String,
