@@ -23,7 +23,8 @@ const membresiaSchema = new Schema({
     tarjeta: {
         numero: {
             type: String,
-            required: true,
+            required: false,
+            default: ""
           },
           pagadito: {
             type: String,
