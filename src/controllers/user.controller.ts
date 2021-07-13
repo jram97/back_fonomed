@@ -118,15 +118,15 @@ export const verificarCorreo = async (
 
     const user = await User.findOne({ email: correo });
 
-      if (user) {
-        return res.status(404).json(
-          response(404, "Correo ya en uso", true, null, null)
-        );
-      } else {
-        return res.status(200).json(
-          response(200, "Correo disponible", true, null, null)
-        );
-      }
+    if (user) {
+      return res.status(404).json(
+        response(404, "Correo ya en uso", true, null, null)
+      );
+    } else {
+      return res.status(200).json(
+        response(200, "Correo disponible", true, null, null)
+      );
+    }
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)
@@ -328,15 +328,15 @@ export const cambiarImagen = async (
   try {
     if (req.files["foto"]) {
       let url = req.files["foto"][0]["location"];
-        await User.findByIdAndUpdate(req.user['id'], { foto: url });
-        return res.status(201).json(
-          response(201, "Se cambio la imagen", true, null, url)
-        );
-      } else {
-        return res.status(201).json(
-          response(201, "No existe ninguna imagen", true, null, null)
-        );
-      }
+      await User.findByIdAndUpdate(req.user['id'], { foto: url });
+      return res.status(201).json(
+        response(201, "Se cambio la imagen", true, null, url)
+      );
+    } else {
+      return res.status(201).json(
+        response(201, "No existe ninguna imagen", true, null, null)
+      );
+    }
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)
@@ -466,6 +466,9 @@ export const doctorDisponible = async (
     const rechazaron = req.body.doctores
     let data = doctores;
 
+    console.log({ "msg": "Lista de doctores", "doctores": doctores });
+    console.log({ "msg": "Lista de doctores length", "doctores length": doctores.length });
+
     data = data.filter((x, index) => {
       var i;
       //console.log("Doctor", index);
@@ -476,7 +479,10 @@ export const doctorDisponible = async (
       }
     });
 
-   data = data.filter(u => {
+    console.log({ "msg": "Lista de doctores con medico general", "doctores": data });
+    console.log({ "msg": "Lista de doctores length", "doctores length": data.length });
+
+    data = data.filter(u => {
       if (u.premium.recurrente) {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
@@ -497,6 +503,9 @@ export const doctorDisponible = async (
         }
       }
     });
+
+    console.log({ "msg": "Lista de doctores ya filtrado con fecha de recurrencia", "doctores": data });
+    console.log({ "msg": "Lista de doctores length", "doctores length": data.length });
 
     if (data.length < 1) {
       return res.status(400).json(
