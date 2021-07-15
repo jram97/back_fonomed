@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 
 import Tarjeta from "../models/tarjeta";
+import Membresia from "../models/membresia";
 
 import { response } from '../libs/functions'
 
@@ -124,11 +125,21 @@ export const eliminar = async (
       .json(response(404, null, false, 'Faltan parametros en la URL.', null));
   }
   try {
-    await Tarjeta.findByIdAndDelete(req.params.id);
+    const tarjeta = await Tarjeta.findById(req.params.id)
 
-    return res.status(200).json(
-      response(200, "Ejecutado con exito", true, null, null)
-    );
+    if(tarjeta) {
+      const existeMembresiaId = Membresia.find({ 'tarjeta_id.numero': tarjeta.numero }).populate('tarjeta_id');
+      const existeMembresiaObject = Membresia.find({ 'tarjeta.numero': tarjeta.numero }).populate('tarjeta_id');
+
+      if(existeMembresiaId || existeMembresiaObject){
+        await Tarjeta.findByIdAndDelete(tarjeta._id);
+      }
+      
+      return res.status(200).json(
+        response(200, "Ejecutado con exito", true, null, null)
+      );
+    }
+
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)

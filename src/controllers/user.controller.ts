@@ -466,9 +466,6 @@ export const doctorDisponible = async (
     const rechazaron = req.body.doctores
     let data = doctores;
 
-    console.log({ "msg": "Lista de doctores", "doctores": doctores });
-    console.log({ "msg": "Lista de doctores length", "doctores length": doctores.length });
-
     data = data.filter((x, index) => {
       var i;
       //console.log("Doctor", index);
@@ -478,9 +475,6 @@ export const doctorDisponible = async (
         }
       }
     });
-
-    console.log({ "msg": "Lista de doctores con medico general", "doctores": data });
-    console.log({ "msg": "Lista de doctores length", "doctores length": data.length });
 
     data = data.filter(u => {
       if (u.premium.recurrente) {
@@ -503,9 +497,6 @@ export const doctorDisponible = async (
         }
       }
     });
-
-    console.log({ "msg": "Lista de doctores ya filtrado con fecha de recurrencia", "doctores": data });
-    console.log({ "msg": "Lista de doctores length", "doctores length": data.length });
 
     if (data.length < 1) {
       return res.status(400).json(
