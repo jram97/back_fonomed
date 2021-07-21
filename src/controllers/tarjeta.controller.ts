@@ -45,7 +45,7 @@ export const nuevo = async (
 
     if (existeTarjeta.length > 0) {
       return res.status(200).json(
-        response(200, null, false, "Tarjeta ya existe", null)
+        response(200, null, false, "Tarjeta ya existe", existeTarjeta)
       );
     } else {
 
