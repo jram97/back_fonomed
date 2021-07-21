@@ -137,7 +137,7 @@ export const eliminar = async (
     const tarjeta = await Tarjeta.findById(req.params.id)
 
     if (tarjeta) {
-      const existeMembresiaId = Membresia.findOne({ tarjeta_id: tarjeta._id });
+      const existeMembresiaId = Membresia.findOne({ 'tarjeta_id._id': tarjeta._id });
 
       if (existeMembresiaId) {
         return res.status(400).json(
