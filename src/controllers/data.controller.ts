@@ -7,7 +7,7 @@ import { response } from '../libs/functions';
 
 export const cargarData = async (req: Request, res: Response): Promise<Response> => {
 
-    const evaluar = "Medico General";
+    const evaluar = "Medicina General";
     const e = await Especialidades.findOne({ nombre: evaluar });
 
     if(!e){

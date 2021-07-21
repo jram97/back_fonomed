@@ -470,7 +470,7 @@ export const doctorDisponible = async (
       var i;
       //console.log("Doctor", index);
       for (i = 0; i < x.especialidades.especialidad.length; i++) {
-        if (x.especialidades.especialidad[i].nombre == "Medico General") {
+        if (x.especialidades.especialidad[i].nombre == "Medicina General") {
           return x;
         }
       }

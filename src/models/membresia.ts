@@ -20,33 +20,12 @@ const membresiaSchema = new Schema({
       ref: "Tarjeta",
       required: false
     },
-    tarjeta: {
-        numero: {
-            type: String,
-            required: false,
-            default: ""
-          },
-          pagadito: {
-            type: String,
-            required: false,
-            default: ""
-          },
-          token: {
-            type: String,
-            required: false,
-            default: ""
-          },
-          ultima_usada: {
-            type: Boolean,
-            default: false
-          },
-          predeterminada: {
-            type: Boolean,
-            default: false
-          }
-    },
     tipo: {
         type: String,
+    },
+    status: {
+        type: Boolean,
+        default: true
     }
 },
     { timestamps: true }
