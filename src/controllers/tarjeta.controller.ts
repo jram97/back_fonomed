@@ -41,22 +41,31 @@ export const nuevo = async (
   }
   try {
 
-    const tarjetaExistente = await Tarjeta.find({ usuario: req.user['id']})
+    const existeTarjeta = await Tarjeta.find({ numero: req.body.numero });
 
-    let nuevaTarjeta = new Tarjeta(req.body);
+    if (existeTarjeta.length > 0) {
+      return res.status(404).json(
+        response(404, null, false, "Tarjeta ya existe", null)
+      );
+    } else {
 
-    if(tarjetaExistente.length > 0) {
-      nuevaTarjeta.usuario = req.user['id']
-      await nuevaTarjeta.save();
-    }else {
-      nuevaTarjeta.usuario = req.user['id'];
-      nuevaTarjeta.predeterminada = true;
-      await nuevaTarjeta.save();
+      const tarjetaExistente = await Tarjeta.find({ usuario: req.user['id'] })
+
+      let nuevaTarjeta = new Tarjeta(req.body);
+
+      if (tarjetaExistente.length > 0) {
+        nuevaTarjeta.usuario = req.user['id']
+        await nuevaTarjeta.save();
+      } else {
+        nuevaTarjeta.usuario = req.user['id'];
+        nuevaTarjeta.predeterminada = true;
+        await nuevaTarjeta.save();
+      }
+      return res.status(201).json(
+        response(201, "Ejecutado con exito", true, null, nuevaTarjeta)
+      );
     }
 
-    return res.status(201).json(
-      response(201, "Ejecutado con exito", true, null, nuevaTarjeta)
-    );
   } catch (error) {
     return res.status(404).json(
       response(404, null, false, 'Algo salio mal: ' + error, null)
@@ -127,15 +136,15 @@ export const eliminar = async (
   try {
     const tarjeta = await Tarjeta.findById(req.params.id)
 
-    if(tarjeta) {
+    if (tarjeta) {
       const existeMembresiaId = Membresia.find({ 'tarjeta_id.numero': tarjeta.numero }).populate('tarjeta_id');
       const existeMembresiaObject = Membresia.find({ 'tarjeta.numero': tarjeta.numero }).populate('tarjeta_id');
 
-      if(existeMembresiaId || existeMembresiaObject){
+      if (existeMembresiaId.length > 0 || existeMembresiaObject.length > 0) {
         return res.status(400).json(
           response(400, null, false, "Tarjeta esta en uso, imposible eliminar", null)
         );
-      }else{
+      } else {
         await Tarjeta.findByIdAndDelete(tarjeta._id);
         return res.status(200).json(
           response(200, "Ejecutado con exito", true, null, null)
