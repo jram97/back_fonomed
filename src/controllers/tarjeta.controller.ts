@@ -137,10 +137,10 @@ export const eliminar = async (
     const tarjeta = await Tarjeta.findById(req.params.id)
 
     if (tarjeta) {
-      const existeMembresiaId = Membresia.find({ 'tarjeta_id.numero': tarjeta.numero }).populate('tarjeta_id');
-      const existeMembresiaObject = Membresia.find({ 'tarjeta.numero': tarjeta.numero }).populate('tarjeta_id');
+      const existeMembresiaId = Membresia.findOne({ 'tarjeta_id.numero': tarjeta.numero }).populate('tarjeta_id');
+      const existeMembresiaObject = Membresia.findOne({ 'tarjeta.numero': tarjeta.numero }).populate('tarjeta_id');
 
-      if (existeMembresiaId.length > 0 || existeMembresiaObject.length > 0) {
+      if (existeMembresiaId || existeMembresiaObject) {
         return res.status(400).json(
           response(400, null, false, "Tarjeta esta en uso, imposible eliminar", null)
         );
