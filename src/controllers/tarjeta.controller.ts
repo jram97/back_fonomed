@@ -41,11 +41,11 @@ export const nuevo = async (
   }
   try {
 
-    const existeTarjeta = await Tarjeta.find({ numero: req.body.numero });
+    const existeTarjeta = await Tarjeta.find({ numero: req.body.numero, usuario: req.user["id"]});
 
     if (existeTarjeta.length > 0) {
-      return res.status(404).json(
-        response(404, null, false, "Tarjeta ya existe", null)
+      return res.status(200).json(
+        response(200, null, false, "Tarjeta ya existe", null)
       );
     } else {
 
