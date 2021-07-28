@@ -8,7 +8,7 @@ import User from "../models/user";
 import { sendEmailPagoCita } from '../libs/functions';
 import moment, { now } from 'moment';
 import cron from 'node-cron';
-import { sendNotification } from '../libs/functions'
+import { sendNotification, notificarCitaCliente, notificarCitaDoctor } from '../libs/functions'
 
 import { response, verificarCita, verificarHorario, filtrarCitasCaducadas, filtrarCitasHistorial, minutesToHours, hoursToMinutes, sendEmailCitaGratis } from '../libs/functions';
 import cita from '../models/cita';
@@ -185,7 +185,7 @@ export const nuevo = async (
     compare.setHours(req.body.inicio.split(":")[0], req.body.inicio.split(":")[1]);
 
     const now = new Date();
-    console.log(`Hora: ${now.getHours()}:${now.getMinutes()}, y de moment: ${moment(now)}, horas: ${moment(now).hour()}`);
+    // console.log(`Hora: ${now.getHours()}:${now.getMinutes()}, y de moment: ${moment(now)}, horas: ${moment(now).hour()}`);
 
     /*if ((moment(now)).isAfter(moment(compare))) {
       return res
@@ -230,8 +230,6 @@ export const nuevo = async (
         ]
       });
 
-      console.log('cita');
-
       for (i = 0; i < citas.length; i++) {
         if (!verificarCita(citas[i], req.body.inicio, req.body.fin)) {
           horarioDisponible = false;
@@ -248,6 +246,8 @@ export const nuevo = async (
         var citaCreada = await (await nuevaCita.save()).populate("usuario");
 
         var populadaUsuario = await Cita.populate(citaCreada, { path: "usuario", select: "nombre_completo foto" });
+
+        /** Envio de correos */
 
         return res.status(201).json(
           response(201, 'Ejecutado con exito', true, null, await Cita.populate(populadaUsuario, { path: "doctor", select: "nombre_completo rating num_votes foto", populate: { path: "especialidades.especialidad" } }))
@@ -308,11 +308,12 @@ export const concretar = async (
       const deleted = await Cita.findByIdAndDelete(req.body.reprogramar).populate("usuario").populate("doctor");
       const payload = {
         notification: {
-          title: "Reprogramacion cita",
+          title: "Reprogramación cita",
           body: `La cita con el paciente ${deleted.usuario.nombre_completo} ha sido reprogramada`
         }
       }
       sendNotification(deleted.doctor.firebaseTokens, payload);
+      notificarCitaDoctor(deleted.doctor.nombre_completo, deleted.doctor.email, payload.notification.body, payload.notification.title);
     }
 
     if (req.body.cancelado === "Cancelado") {
@@ -336,6 +337,7 @@ export const concretar = async (
               }
             }
             sendNotification(citaValidar.usuario.firebaseTokens, payload);
+            notificarCitaCliente(citaValidar.usuario.nombre_completo, citaValidar.usuario.email, payload.notification.body, payload.notification.title);
             task.stop();
           }
         },
@@ -344,7 +346,7 @@ export const concretar = async (
             timezone: "America/Mexico_City"
           });
 
-        if(!req.body.urgente){
+        if (!req.body.urgente) {
           const payload = {
             notification: {
               title: "Se le ha programado una cita",
@@ -352,12 +354,13 @@ export const concretar = async (
             }
           }
           sendNotification(updated.doctor.firebaseTokens, payload);
+          notificarCitaDoctor(updated.doctor.nombre_completo, updated.doctor.email, payload.notification.body, payload.notification.title);
         }
 
-        console.log("Hora", `${date}`);
+        // console.log("Hora", `${date}`);
 
         var horaNotificacion = minutesToHours(hoursToMinutes(updated.inicio) - 5).split(":");
-        console.log("Hora inicio nueva", horaNotificacion);
+        // console.log("Hora inicio nueva", horaNotificacion);
         const notificarClienteDoctor = cron.schedule(`0 ${horaNotificacion[1]} ${horaNotificacion[0]} ${dateOfMonth} ${month} *`, async () => {
           const cliPayload = {
             notification: {
@@ -366,6 +369,7 @@ export const concretar = async (
             }
           }
           sendNotification(updated.usuario.firebaseTokens, cliPayload);
+          notificarCitaCliente(updated.usuario.nombre_completo, updated.usuario.email, cliPayload.notification.body, cliPayload.notification.title);
 
           const docPayload = {
             notification: {
@@ -374,7 +378,7 @@ export const concretar = async (
             }
           }
           sendNotification(updated.doctor.firebaseTokens, docPayload);
-
+          notificarCitaDoctor(updated.usuario.nombre_completo, updated.usuario.email, cliPayload.notification.body, cliPayload.notification.title);
           notificarClienteDoctor.stop();
         },
           {
@@ -398,6 +402,7 @@ export const concretar = async (
             sendEmailCitaGratis(user.nombre_completo, user.email);
           } else {
             sendEmailPagoCita(user.nombre_completo, user.email);
+            notificarCitaCliente(user.nombre_completo, user.email, "Cita programada con exito", `Tu cita se ha programado para el día ${updated.dia} ${dateOfMonth}-${month}-${date.getFullYear()}.`);
           }
 
           const nuevoPago = new Pago({

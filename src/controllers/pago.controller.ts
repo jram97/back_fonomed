@@ -116,7 +116,7 @@ export const nuevo = async (
   try {
 
     const nuevoPago = new Pago(req.body);
-    console.log(nuevoPago);
+    //console.log(nuevoPago);
     nuevoPago.usuario = req.user['id'];
     await nuevoPago.save();
 
@@ -128,7 +128,7 @@ export const nuevo = async (
           recurrente: req.body.recurrente,
           fecha: new Date()
         }
-        console.log("premium", premium)
+        //console.log("premium", premium)
         await User.findByIdAndUpdate(req.user['id'], {
           tarjeta: req.body.tarjeta,
           premium: premium
@@ -147,10 +147,10 @@ export const nuevo = async (
     const user = await User.findById(req.user['id']);
 
     if (req.body.cita) {
-      console.log("cita");
+      //console.log("cita");
       sendEmailPagoCita(user.nombre_completo, user.email);
     } else {
-      console.log("no cita");
+      //console.log("no cita");
       sendEmailPago(user.nombre_completo, user.email);
     }
 

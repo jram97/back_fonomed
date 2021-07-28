@@ -21,7 +21,7 @@ export const nuevaMembresia = async (
                     const doctor = await User.findById(req.body.doctor);
                     if (doctor) {
                         const fecha = new Date();
-                        console.log(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`);
+                        //console.log(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`);
                         const task = cron.schedule(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`, async () => {
                             const membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor, tipo: req.body.tipo });
 
@@ -31,7 +31,7 @@ export const nuevaMembresia = async (
                                 const premium = { ...user.premium }
 
                                 premium[`${membresia.doctor}`].fecha = new Date();
-                                console.log(await User.findByIdAndUpdate({ _id: user._id }, { premium: premium }))
+                                await User.findByIdAndUpdate({ _id: user._id }, { premium: premium })
                                 //console.log(newxd.premium);
                                 //}
                             } else {
@@ -51,7 +51,7 @@ export const nuevaMembresia = async (
                     }
                 } else if (req.body.tipo === "DOC") {
                     const fecha = new Date();
-                    console.log(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`);
+                    //console.log(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`);
                     const task = cron.schedule(`${fecha.getSeconds()} ${fecha.getMinutes()} ${fecha.getHours()} ${fecha.getDate()} * *`, async () => {
                         const membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo });
 
@@ -60,7 +60,7 @@ export const nuevaMembresia = async (
                             const premium = { ...user.premium }
 
                             premium.fecha = new Date();
-                            console.log(await User.findByIdAndUpdate({ _id: user._id }, { premium: premium }))
+                            await User.findByIdAndUpdate({ _id: user._id }, { premium: premium })
                             //console.log(user.premium);
                             //}
                         } else {
@@ -113,7 +113,7 @@ export const cancelarMembresia = async (
                         response(201, null, false, "No existe el doctor", null));
                 }
             } else if (req.body.tipo == "DOC") {
-                console.log('doctor');
+                //console.log('doctor');
                 await Membresia.findOneAndDelete({ usuario: req.user['id'], tipo: req.body.tipo });
                 var premium = { ...user.premium };
                 premium.recurrente = false;
@@ -147,7 +147,7 @@ export const verificarMembresia = async (
         var membresia;
         if (user) {
             if (req.body.tipo === "CLI") {
-                console.log("cliente");
+                //console.log("cliente");
                 membresia = await Membresia.findOne({ usuario: req.user['id'], doctor: req.body.doctor }).populate("tarjeta_id");
 
                 if (membresia) {
@@ -159,7 +159,7 @@ export const verificarMembresia = async (
                 }
 
             } else if (req.body.tipo === "DOC") {
-                console.log("doctor");
+                //console.log("doctor");
                 membresia = await Membresia.findOne({ usuario: req.user['id'], tipo: req.body.tipo }).populate("tarjeta_id");
 
                 if (membresia) {

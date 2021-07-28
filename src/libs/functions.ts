@@ -105,7 +105,7 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
     });
     return true;
   } catch (err) {
@@ -129,7 +129,55 @@ export const sendEmailPago = (nombre: string, email: string) => {
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/** Notificar cita Doctor */
+export const notificarCitaDoctor = (nombre: string, email: string, payload: string, title: string) => {
+  try {
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "FONOMED✔!",
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
+                    <p style="font-size: 15px;color: #808080; line-height: 1.5;">${title}<br>
+                    ${payload}</p><br>
+
+                    <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
+    };
+
+    mg.messages().send(mailOptions, function (error, body) {
+      //console.log(body);
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/** Notificar cita Cliente */
+export const notificarCitaCliente = (nombre: string, email: string, payload: string, title: string) => {
+  try {
+
+    let mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "FONOMED✔!",
+      html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
+                    <p style="font-size: 15px;color: #808080; line-height: 1.5;">${title}<br>
+                    ${payload}</p><br>
+
+                    <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
+    };
+
+    mg.messages().send(mailOptions, function (error, body) {
+      //console.log(body);
     });
     return true;
   } catch (err) {
@@ -153,14 +201,12 @@ export const sendEmailPagoCita = (nombre: string, email: string) => {
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
     });
     return true;
   } catch (err) {
     return false;
   }
-
-
 }
 
 export const sendEmailCitaGratis = (nombre: string, email: string) => {
@@ -178,14 +224,12 @@ export const sendEmailCitaGratis = (nombre: string, email: string) => {
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
     });
     return true;
   } catch (err) {
     return false;
   }
-
-
 }
 
 /** Enviar correo : cancelacion exitosa */
@@ -204,7 +248,7 @@ export const sendEmailPagoCancelar = (nombre: string, email: string) => {
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
     });
 
     return true;
@@ -228,7 +272,7 @@ export const correoContacto = (campos: any) => {
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
     });
     return true;
   } catch (err) {
@@ -253,7 +297,7 @@ export const sendEmailCambioPassword = (nombre: string, email: string, code: str
     };
 
     mg.messages().send(mailOptions, function (error, body) {
-      console.log(body);
+      //console.log(body);
     });
     return true;
   } catch (err) {
@@ -339,9 +383,9 @@ export const filtrarCitasCaducadas = (citas: any, estado: any) => {
 
     const now = moment();
     const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate()); //<- Antes tenia +1 el get date
-    console.log("Fecha al pasarla a moment y ponerle hora", mFechaCita);
+    //console.log("Fecha al pasarla a moment y ponerle hora", mFechaCita);
 
-    console.log("Diferencia en pendientes", now.diff(mFechaCita, "minutes"));
+    //console.log("Diferencia en pendientes", now.diff(mFechaCita, "minutes"));
     if ((now.diff(mFechaCita, "minutes") <= 0) && (cita[estado] != "Completado")) {
       return cita;
     }
@@ -355,9 +399,9 @@ export const filtrarCitasHistorial = (citas: any, estado: any) => {
     fechaCita.setDate(fechaCita.getDate() + 1);
     const now = moment();
     const mFechaCita = moment(fechaCita).hour(cita.fin.split(":")[0]).minute(cita.fin.split(":")[1]).date(fechaCita.getDate());//<- Antes tenia +1 el get date
-    console.log(fechaCita);
+    //console.log(fechaCita);
 
-    console.log("Diferencia en historial", now.diff(mFechaCita, "minutes"));
+    //console.log("Diferencia en historial", now.diff(mFechaCita, "minutes"));
     if ((now.diff(mFechaCita, "minutes") > 0) || cita[estado] == "Completado") {
       return cita;
     }
@@ -367,7 +411,7 @@ export const filtrarCitasHistorial = (citas: any, estado: any) => {
 
 export const sendNotification = async (tokens, payload) => {
   const response = await admin.messaging().sendToDevice(tokens, payload);
-  console.log(response);
+  //console.log(response);
   return response;
 }
 

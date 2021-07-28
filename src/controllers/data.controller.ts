@@ -10,7 +10,7 @@ export const cargarData = async (req: Request, res: Response): Promise<Response>
     const evaluar = "Medicina General";
     const e = await Especialidades.findOne({ nombre: evaluar });
 
-    if(!e){
+    if (!e) {
         const especialidad1 = new Especialidades({
             nombre: evaluar
         });
@@ -61,11 +61,23 @@ export const cargarData = async (req: Request, res: Response): Promise<Response>
         await pais7.save();
 
         return res.status(200).json(
-          response(200, 'Ejecutado con exito', true, null, null)
+            response(200, 'Ejecutado con exito', true, null, null)
         );
-    }else {
-      return res.status(404).json(
-        response(404, null, false, 'Data ya sido cargada', null)
-      );
+    } else {
+        return res.status(404).json(
+            response(404, null, false, 'Data ya sido cargada', null)
+        );
     }
+};
+
+/** Logs */
+export const responseLogs = async (req: Request, res: Response): Promise<Response> => {
+
+    console.log({ msg: req.body.message, path: req.body.path, date: new Date() })
+
+    return res.status(200).json({
+        msg: req.body.message,
+        path: req.body.path,
+        date: new Date()
+    });
 };

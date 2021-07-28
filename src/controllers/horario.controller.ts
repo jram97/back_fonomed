@@ -167,7 +167,7 @@ export const eliminarPorDia = async (
 ): Promise<Response> => {
   try {
     const { dia } = req.params
-    console.log(req.query.fecha);
+    //console.log(req.query.fecha);
     if (req.query.fecha) {
       const fecha = new Date(String(req.query.fecha).split("T")[0]);
       await Horario.deleteMany({ dia: dia, doctor: req.user['id'], fecha: fecha });
@@ -192,18 +192,18 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
 
     const especiales = await Horario.find({ dia: "Especial", fecha: new Date(fecha.toString()), doctor: id });
 
-    if(!especiales.length){
+    if (!especiales.length) {
       const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
       const dia = new Date(fecha.toString()).getDay();
-  
+
       const horarios = await Horario.find({ doctor: id, dia: dias[dia] });
       const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha.toString()) });
-  
+
       let dates = getTimeForDate(fecha);
       let disponibles = [];
       let citasDisponiblesArray = [];
-  
+
       if (horarios) {
         for (let index = 0; index < dates.length; index++) {
           for (let hora = 0; hora < horarios.length; hora++) {
@@ -215,29 +215,29 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
           }
         }
       }
-  
+
       for (let hour = 0; hour < citasDisponibles.length; hour++) {
         let hours = citasDisponibles[hour];
         for (let cita = 0; cita < disponibles.length; cita++) {
           let valorEvaluar = disponibles[cita].hora
           if (hours.inicio == disponibles[cita].hora) {
-            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : (parseFloat(horarios[0]["fin"]) > 12) ? disponibles[cita + 1]: horarios[0]["fin"], disponible: false })
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : (parseFloat(horarios[0]["fin"]) > 12) ? disponibles[cita + 1] : horarios[0]["fin"], disponible: false })
           } else {
-            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : (parseFloat(horarios[0]["fin"]) > 12) ? disponibles[cita + 1]: horarios[0]["fin"], disponible: true })
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : horarios[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (horarios[1] != null) ? horarios[1]["fin"] : (parseFloat(horarios[0]["fin"]) > 12) ? disponibles[cita + 1] : horarios[0]["fin"], disponible: true })
           }
         }
       }
-  
+
       return res.status(200).json(
         response(200, 'Ejecutado con exito', true, null, ((citasDisponiblesArray.length) ? citasDisponiblesArray : disponibles))
       );
-    }else{
+    } else {
       const citasDisponibles = await Cita.find({ doctor: id, fecha: new Date(fecha.toString()) });
-  
+
       let dates = getTimeForDate(fecha);
       let disponibles = [];
       let citasDisponiblesArray = [];
-  
+
       if (especiales) {
         for (let index = 0; index < dates.length; index++) {
           for (let hora = 0; hora < especiales.length; hora++) {
@@ -249,15 +249,15 @@ export const getTime = async (req: Request, res: Response): Promise<Response> =>
           }
         }
       }
-  
+
       for (let hour = 0; hour < citasDisponibles.length; hour++) {
         let hours = citasDisponibles[hour];
         for (let cita = 0; cita < disponibles.length; cita++) {
           let valorEvaluar = disponibles[cita].hora
           if (hours.inicio == disponibles[cita].hora) {
-            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : especiales[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (especiales[1] != null) ? especiales[1]["fin"] : (parseFloat(especiales[0]["fin"]) > 12) ? disponibles[cita + 1]: especiales[0]["fin"], disponible: false })
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : especiales[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (especiales[1] != null) ? especiales[1]["fin"] : (parseFloat(especiales[0]["fin"]) > 12) ? disponibles[cita + 1] : especiales[0]["fin"], disponible: false })
           } else {
-            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : especiales[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (especiales[1] != null) ? especiales[1]["fin"] : (parseFloat(especiales[0]["fin"]) > 12) ? disponibles[cita + 1]: especiales[0]["fin"], disponible: true })
+            citasDisponiblesArray.push({ hora: disponibles[cita].hora, fin: (parseFloat(valorEvaluar) <= 12) ? (parseFloat(disponibles[cita + 1].hora) <= 12) ? disponibles[cita + 1].hora : especiales[0]["fin"] : (disponibles[cita + 1] != null) ? disponibles[cita + 1].hora : (especiales[1] != null) ? especiales[1]["fin"] : (parseFloat(especiales[0]["fin"]) > 12) ? disponibles[cita + 1] : especiales[0]["fin"], disponible: true })
           }
         }
       }

@@ -34,7 +34,7 @@ export const nuevo = async (
       const paths = req.files['fotos'].map(function (fotos) {
         return fotos.location;
       });
-      
+
       const { descripcion } = req.body;
       const emergenciaNew = new Emergencia({ descripcion, fotos: paths, usuario: req.user["id"] })
       await emergenciaNew.save();

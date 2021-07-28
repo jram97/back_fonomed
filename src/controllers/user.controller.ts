@@ -179,7 +179,7 @@ export const verifySendEmail = async (
     } else {
       let code = generateCode();
       sendEmail(nombre, email, code);
-      console.log(`Correo enviado a ${email}`);
+      //console.log(`Correo enviado a ${email}`);
       const newVerify = new Verify({ nombre, email, code });
       await newVerify.save();
       return res.status(201).json(
@@ -199,7 +199,7 @@ export const enviarSMS = async (req: Request, res: Response): Promise<Response> 
     .services(twilio.serviceSID)
     .verifications.create({ to: `+${req.query.to}`, channel: 'sms' })
     .then((data: any) => {
-      console.log(`Mensaje enviado a ${req.query.to}`);
+      //console.log(`Mensaje enviado a ${req.query.to}`);
       return res.status(201).json(
         response(201, "Se a enviado el codigo al telefono: " + req.query.to, true, null, data)
       );
@@ -221,7 +221,7 @@ export const recibirSMS = async (req: Request, res: Response) => {
     })
     .then((data: any) => {
       if (data.status === "approved") {
-        console.log(`Codigo valido, telefono: ${req.query.phonenumber}`);
+        //console.log(`Codigo valido, telefono: ${req.query.phonenumber}`);
         return res.status(201).json(
           response(201, "Codigo valido", true, null, data)
         );
@@ -324,7 +324,7 @@ export const cambiarImagen = async (
   res: Response
 ): Promise<Response> => {
 
-  console.log(req.files)
+  //console.log(req.files)
   try {
     if (req.files["foto"]) {
       let url = req.files["foto"][0]["location"];
@@ -480,8 +480,8 @@ export const doctorDisponible = async (
       if (u.premium.recurrente) {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
-          console.log(exp, u.premium.fecha);
-          console.log(moment().diff(exp, "minutes"));
+          //console.log(exp, u.premium.fecha);
+          // console.log(moment().diff(exp, "minutes"));
           if (moment().diff(exp, "minutes") < 0) {
             return u;
           }
@@ -489,8 +489,8 @@ export const doctorDisponible = async (
       } else {
         if (u.premium.fecha) {
           const exp = moment(u.premium.fecha).add(1, 'M');
-          console.log(exp, u.premium.fecha);
-          console.log(moment().diff(exp, "minutes"));
+          //console.log(exp, u.premium.fecha);
+          //console.log(moment().diff(exp, "minutes"));
           if (moment().diff(exp, "minutes") < 0) {
             return u;
           }
@@ -613,7 +613,7 @@ export const verifySendEmailCambioPassword = async (
       let code = generateCode();
       const newVerify = new Verify({ nombre: userExists.nombre_completo, email, code });
       sendEmailCambioPassword(userExists.nombre_completo, email, code);
-      console.log(`Correo enviado a ${email}`);
+      //console.log(`Correo enviado a ${email}`);
       await newVerify.save();
 
       return res.status(201).json(
