@@ -862,3 +862,18 @@ export const cambiarEstadoDoctores = async (
     );
   }
 };
+
+export const miId = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    return res.status(201).json(
+      response(201, "Exito", true, null, { id: req.user['id'] })
+    );
+  } catch (error) {
+    return res.status(404).json(
+      response(404, null, false, 'Algo salio mal: ' + error, null)
+    );
+  }
+};

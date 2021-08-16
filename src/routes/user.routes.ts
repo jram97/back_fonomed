@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from "passport";
 import { getSearch, getAllActive, getAll, getById, cuentaPagadito, nuevoRating, eliminar, getByToken, } from '../controllers/doctores.controller'
 import { actualizarExpediente, expedientePaciente, expediente, notificacionSolicitud } from '../controllers/expediente.controller'
-import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById, contacto, removeAllFirebaseTokens, quitarRecurrentes, cambiarEstadoDoctores, cambiarImagen } from '../controllers/user.controller';
+import { sendTokenForCall, doctorDisponible, agregarTokenFirebase, eliminarTokenFirebase, notificar, updateUserById, contacto, removeAllFirebaseTokens, quitarRecurrentes, cambiarEstadoDoctores, cambiarImagen, miId } from '../controllers/user.controller';
 import { nuevaMembresia, cancelarMembresia, verificarMembresia } from '../controllers/membresia.controller';
 
 import upload from "../libs/multer";
@@ -60,6 +60,9 @@ router.put('/doctores/comentarios/agregar', passport.authenticate("jwt", { sessi
 
 /** Cambiar/Actualizar Imagen */
 router.route('/user/imagen').put(upload.fields([{ name: "foto", maxCount: 1 }]), passport.authenticate("jwt", { session: false }), cambiarImagen);
+
+/**Obtener mi id */
+router.post('/me', passport.authenticate("jwt", { session: false }), miId);
 
 
 export default router;
