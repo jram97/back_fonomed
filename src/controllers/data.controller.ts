@@ -1,9 +1,19 @@
 import { Request, Response } from 'express'
+import bcrypt from "bcrypt";
 
 import Especialidades from "../models/especialidad";
 import Pais from "../models/pais";
+import User from "../models/user";
+
+
 
 import { response } from '../libs/functions';
+
+async function createNewPassword(password: string) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+}
 
 export const cargarData = async (req: Request, res: Response): Promise<Response> => {
 
@@ -59,6 +69,30 @@ export const cargarData = async (req: Request, res: Response): Promise<Response>
             nombre: "Panamá"
         })
         await pais7.save();
+
+        const password = await createNewPassword("D4dmin01");
+
+        const userDoctor = new User({
+            nombre_completo: "Doctor Roots",
+            email: "doctor@fonomed.com",
+            password: password,
+            genero: "Masculino",
+            telefono: "25201011",
+            tipo: "DOC",
+            foto: `https://ui-avatars.com/api/?name=Doctor`
+        });
+        await userDoctor.save();
+
+        const userPaciente = new User({
+            nombre_completo: "Paciente Roots",
+            email: "paciente@fonomed.com",
+            password: password,
+            genero: "Masculino",
+            telefono: "25201010",
+            tipo: "CLI",
+            foto: `https://ui-avatars.com/api/?name=Paciente`
+        });
+        await userPaciente.save();
 
         return res.status(200).json(
             response(200, 'Ejecutado con exito', true, null, null)
