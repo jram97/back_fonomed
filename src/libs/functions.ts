@@ -98,7 +98,7 @@ export const sendEmail = (nombre: string, email: string, code: string) => {
       subject: "FONOMED✔!",
       html: `<p style="font-size: 16px;color: #808080"">¡Estimado/a ${nombre}!<p>
                     <p style="font-size: 15px;color: #808080; line-height: 1.5;">Te saludamos de parte de Fonomed<br>
-                    Para verificar tu cuenta por favor ingresa el siguiente codigo</p><br>
+                    Para verificar tu cuenta por favor ingresa el siguiente código</p><br>
                     <center><h3>${code}</h3></center><br><br>
 
                     <p style="font-size: 12px;color: #808080">Att: Equipo de Fonomed</p>`
