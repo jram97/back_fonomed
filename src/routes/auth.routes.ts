@@ -52,7 +52,7 @@ router.post("/verificar", verificarCorreo);
 /** Cambio de contraseña */
 router.put("/cambio-contrasenia", passport.authenticate("jwt", { session: false }), cambiarContrasenia);
 /** Enviar email cambio de contraseña */
-router.post("/enviarmail/cambiopass", limitAPI, verifySendEmailCambioPassword);
+router.post("/enviarmail/cambiopass", verifySendEmailCambioPassword);
 /** Recibir email cambio de contraseña */
 router.post("/recibirmail/cambiopass", verifyRecibirEmailCambioPassword);
 
